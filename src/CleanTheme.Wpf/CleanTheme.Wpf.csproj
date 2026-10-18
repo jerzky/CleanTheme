@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Description>A light, neutral and dense WPF theme: one navy accent for primary actions, green/amber/red only for status.</Description>
+    <Description>A neutral, dense WPF theme with live light and dark modes: one accent for primary actions, green/amber/red only for status.</Description>
+    <!-- LibraryImport (WindowTheme's DWM call) generates unsafe marshalling code. -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="CleanTheme.Wpf.Tests" />

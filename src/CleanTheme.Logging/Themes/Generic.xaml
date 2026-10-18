@@ -19,42 +19,42 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <TextBlock Text="{Binding TimestampUtc, StringFormat=HH:mm:ss.fff}" Foreground="{StaticResource TextSubtle}" Margin="0,0,12,0" />
-            <TextBlock x:Name="Tag" Grid.Column="1" Text="{Binding LevelTag}" Foreground="{StaticResource TextSubtle}" Margin="0,0,12,0" />
+            <TextBlock Text="{Binding TimestampUtc, StringFormat=HH:mm:ss.fff}" Foreground="{DynamicResource TextSubtle}" Margin="0,0,12,0" />
+            <TextBlock x:Name="Tag" Grid.Column="1" Text="{Binding LevelTag}" Foreground="{DynamicResource TextSubtle}" Margin="0,0,12,0" />
             <TextBlock Grid.Column="2" Text="{Binding Origin}" ToolTip="{Binding Category}" Width="110" Margin="0,0,12,0"
-                       TextTrimming="CharacterEllipsis" Foreground="{StaticResource TextMuted}"
+                       TextTrimming="CharacterEllipsis" Foreground="{DynamicResource TextMuted}"
                        Visibility="{Binding ShowOrigin, RelativeSource={RelativeSource AncestorType=logging:LogView}, Converter={StaticResource LogBooleanToVisibility}}" />
             <TextBlock x:Name="Message" Grid.Column="3" Text="{Binding Message}" TextWrapping="NoWrap" />
         </Grid>
         <DataTemplate.Triggers>
             <DataTrigger Binding="{Binding Level}" Value="Information">
-                <Setter TargetName="Tag" Property="Foreground" Value="{StaticResource Accent}" />
+                <Setter TargetName="Tag" Property="Foreground" Value="{DynamicResource Accent}" />
             </DataTrigger>
             <DataTrigger Binding="{Binding Level}" Value="Warning">
-                <Setter TargetName="Tag" Property="Foreground" Value="{StaticResource Warning}" />
-                <Setter TargetName="Message" Property="Foreground" Value="{StaticResource Warning}" />
+                <Setter TargetName="Tag" Property="Foreground" Value="{DynamicResource Warning}" />
+                <Setter TargetName="Message" Property="Foreground" Value="{DynamicResource Warning}" />
             </DataTrigger>
             <DataTrigger Binding="{Binding Level}" Value="Error">
-                <Setter TargetName="Tag" Property="Foreground" Value="{StaticResource Negative}" />
-                <Setter TargetName="Message" Property="Foreground" Value="{StaticResource Negative}" />
+                <Setter TargetName="Tag" Property="Foreground" Value="{DynamicResource Negative}" />
+                <Setter TargetName="Message" Property="Foreground" Value="{DynamicResource Negative}" />
             </DataTrigger>
             <DataTrigger Binding="{Binding Level}" Value="Critical">
-                <Setter TargetName="Tag" Property="Foreground" Value="{StaticResource Negative}" />
-                <Setter TargetName="Message" Property="Foreground" Value="{StaticResource Negative}" />
+                <Setter TargetName="Tag" Property="Foreground" Value="{DynamicResource Negative}" />
+                <Setter TargetName="Message" Property="Foreground" Value="{DynamicResource Negative}" />
                 <Setter TargetName="Message" Property="FontWeight" Value="SemiBold" />
             </DataTrigger>
             <DataTrigger Binding="{Binding Level}" Value="Debug">
-                <Setter TargetName="Message" Property="Foreground" Value="{StaticResource TextSubtle}" />
+                <Setter TargetName="Message" Property="Foreground" Value="{DynamicResource TextSubtle}" />
             </DataTrigger>
             <DataTrigger Binding="{Binding Level}" Value="Trace">
-                <Setter TargetName="Message" Property="Foreground" Value="{StaticResource TextSubtle}" />
+                <Setter TargetName="Message" Property="Foreground" Value="{DynamicResource TextSubtle}" />
             </DataTrigger>
         </DataTemplate.Triggers>
     </DataTemplate>
 
     <!-- Compact funnel button in the filter bar. Tag="Active" (set by LogView while a filter is on) tints it. -->
     <Style x:Key="LogFilterButton" TargetType="ToggleButton">
-        <Setter Property="Foreground" Value="{StaticResource TextMuted}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Focusable" Value="False" />
@@ -70,15 +70,15 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Chrome" Property="Background" Value="{StaticResource Hover}" />
-                            <Setter Property="Foreground" Value="{StaticResource Text}" />
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Hover}" />
+                            <Setter Property="Foreground" Value="{DynamicResource Text}" />
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
-                            <Setter TargetName="Chrome" Property="Background" Value="{StaticResource Pressed}" />
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Pressed}" />
                         </Trigger>
                         <Trigger Property="Tag" Value="Active">
-                            <Setter TargetName="Chrome" Property="Background" Value="{StaticResource AccentSoft}" />
-                            <Setter Property="Foreground" Value="{StaticResource Accent}" />
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource AccentSoft}" />
+                            <Setter Property="Foreground" Value="{DynamicResource Accent}" />
                             <Setter Property="FontWeight" Value="SemiBold" />
                         </Trigger>
                     </ControlTemplate.Triggers>
@@ -99,10 +99,10 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Chrome" Property="Background" Value="{StaticResource Hover}" />
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Hover}" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Chrome" Property="Background" Value="{StaticResource AccentSoft}" />
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource AccentSoft}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -121,9 +121,9 @@
     </ContextMenu>
 
     <Style TargetType="logging:LogView">
-        <Setter Property="Background" Value="{StaticResource SurfaceSunken}" />
-        <Setter Property="Foreground" Value="{StaticResource TextLog}" />
-        <Setter Property="BorderBrush" Value="{StaticResource Border}" />
+        <Setter Property="Background" Value="{DynamicResource SurfaceSunken}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextLog}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Border}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="FontFamily" Value="{StaticResource MonoFont}" />
         <Setter Property="FontSize" Value="12" />
@@ -150,7 +150,7 @@
                             BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4" SnapsToDevicePixels="True">
                         <DockPanel>
                             <!-- Filter bar: line count on the left, filter popout on the right. -->
-                            <Border x:Name="FilterBar" DockPanel.Dock="Top" BorderBrush="{StaticResource Divider}" BorderThickness="0,0,0,1"
+                            <Border x:Name="FilterBar" DockPanel.Dock="Top" BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1"
                                     Padding="10,3,4,3" TextElement.FontFamily="{StaticResource UiFont}" TextElement.FontSize="11.5">
                                 <DockPanel>
                                     <ToggleButton x:Name="PART_FilterButton" DockPanel.Dock="Right" Style="{StaticResource LogFilterButton}"
@@ -161,7 +161,7 @@
                                                         Text="{Binding Feed.TextFilter, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
                                     <!-- "340 lines", or "120 of 340 lines" while filtered. -->
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
-                                                TextElement.Foreground="{StaticResource TextSubtle}">
+                                                TextElement.Foreground="{DynamicResource TextSubtle}">
                                         <TextBlock Text="{Binding Feed.Visible.Count, RelativeSource={RelativeSource TemplatedParent}}" />
                                         <TextBlock x:Name="OfTotal" Visibility="Collapsed"
                                                    Text="{Binding Feed.TotalCount, RelativeSource={RelativeSource TemplatedParent}, StringFormat={}&#160;of {0}}" />
@@ -170,10 +170,10 @@
 
                                     <Popup x:Name="PART_FilterPopup" PlacementTarget="{Binding ElementName=PART_FilterButton}"
                                            StaysOpen="False" AllowsTransparency="True" PopupAnimation="None" Focusable="False">
-                                        <Border Background="{StaticResource Surface}" BorderBrush="{StaticResource BorderStrong}" BorderThickness="1"
+                                        <Border Background="{DynamicResource Surface}" BorderBrush="{DynamicResource BorderStrong}" BorderThickness="1"
                                                 CornerRadius="6" Padding="14,6,14,12" Width="300" Margin="0,0,8,8"
                                                 TextElement.FontFamily="{StaticResource UiFont}" TextElement.FontSize="13"
-                                                TextElement.Foreground="{StaticResource Text}">
+                                                TextElement.Foreground="{DynamicResource Text}">
                                             <Border.Effect>
                                                 <DropShadowEffect BlurRadius="12" ShadowDepth="2" Direction="270" Opacity="0.12" />
                                             </Border.Effect>

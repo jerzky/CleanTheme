@@ -56,6 +56,12 @@ internal static class Sta
     /// <summary>Gives an element a size and runs layout, so templates apply and item containers exist.</summary>
     public static void Layout(FrameworkElement element, double width = 400, double height = 300)
     {
+        // Colors are DynamicResources found through the tree, as under an app that merges the theme.
+        if (!element.Resources.MergedDictionaries.OfType<CleanThemeResources>().Any())
+        {
+            element.Resources.MergedDictionaries.Add(new CleanThemeResources());
+        }
+
         // An element outside a window only looks up its theme (Generic.xaml) style once initialized.
         if (!element.IsInitialized)
         {

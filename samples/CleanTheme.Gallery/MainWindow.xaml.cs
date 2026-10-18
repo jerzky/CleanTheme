@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using CleanTheme.Logging;
+using CleanTheme.Wpf;
 using CleanTheme.Wpf.Controls;
 using Microsoft.Extensions.Logging;
 
@@ -28,6 +29,8 @@ public partial class MainWindow : Window
             .ToArray();
         StartDate.SelectedDate = DateTime.Today;
 
+        ThemeChoice.SelectedIndex = (int)ThemeManager.Mode; // Light, Dark, System, in enum order.
+
         Log.Feed = _feed;
         LogWindowOpened(_logger);
     }
@@ -45,6 +48,15 @@ public partial class MainWindow : Window
     }
 
     private void OnClearLog(object sender, RoutedEventArgs e) => _feed.Clear();
+
+    private void OnThemeChoiceChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (ThemeChoice.SelectedIndex >= 0)
+        {
+            ThemeManager.Mode = (CleanThemeMode)ThemeChoice.SelectedIndex;
+            LogThemeChanged(_logger, ThemeManager.Mode, ThemeManager.ActualMode);
+        }
+    }
 
     private void OnShowToast(object sender, RoutedEventArgs e)
     {
@@ -87,6 +99,9 @@ public partial class MainWindow : Window
 
     [LoggerMessage(Level = LogLevel.Information, Message = "Gallery window opened")]
     private static partial void LogWindowOpened(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Theme set to {Mode} ({ActualMode})")]
+    private static partial void LogThemeChanged(ILogger logger, CleanThemeMode mode, CleanThemeMode actualMode);
 
     [LoggerMessage(Level = LogLevel.Error, Message = "Node {Callsign} failed")]
     private static partial void LogNodeFailed(ILogger logger, Exception exception, string callsign);

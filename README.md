@@ -1,6 +1,7 @@
 # CleanTheme
 
-A light, neutral and dense WPF theme. One accent (navy) for primary actions; green, amber and red only for status.
+A neutral, dense WPF theme with live light and dark modes. One accent for primary actions; green, amber and red only
+for status.
 Templates stay minimal: controls are restyled with setters wherever the stock template allows it.
 
 Originally the Strato Launcher theme.
@@ -21,21 +22,22 @@ The packages are published to GitHub Packages (`https://nuget.pkg.github.com/jer
 
 ## Use the theme
 
-Merge the theme into your application resources:
+Merge the theme into your **application** resources (context menus and tool tips live outside window trees and find
+the palette there):
 
 ```xml
 <Application xmlns:clean="https://github.com/jerzky/CleanTheme" ...>
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <clean:CleanThemeResources />
+                <clean:CleanThemeResources Mode="System" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
 ```
 
-or by URI: `pack://application:,,,/CleanTheme.Wpf;component/Themes/CleanTheme.xaml` (also `CleanThemeResources.ThemeUri`).
+Merging `CleanThemeResources.ThemeUri` by `Source` also works, but gives the light palette only, with no switching.
 
 Give windows the base look (implicit styles don't reach `Window` subclasses):
 
@@ -44,6 +46,24 @@ Give windows the base look (implicit styles don't reach `Window` subclasses):
 ```
 
 The `https://github.com/jerzky/CleanTheme` XML namespace covers both packages.
+
+## Light and dark
+
+`ThemeManager.Mode` is `Light` (the default), `Dark` or `System` (follows the Windows app-mode setting as it changes).
+It is app-wide; set it in XAML on `CleanThemeResources` or from code, from any thread:
+
+```csharp
+ThemeManager.Mode = CleanThemeMode.Dark;   // everything recolors live
+ThemeManager.ActualModeChanged += ...;     // Light or Dark in effect (raised off the UI thread for System changes)
+```
+
+Windows styled with `CleanWindow` (and `CleanDialog`s) get a matching title bar; for other windows set
+`clean:WindowTheme.FollowTheme="True"`.
+
+**Reference palette colors with `DynamicResource`** (`Background="{DynamicResource Surface}"`). A `StaticResource`
+reads the color once and won't follow a switch. Styles (`{StaticResource PrimaryButton}`) can stay static: their colors
+are dynamic inside. Use `AccentFill` / `NegativeFill` with `OnAccent` for solid fills under text; `Accent` and `Negative`
+are for text, lines and tints.
 
 ## Controls
 
@@ -94,7 +114,7 @@ bool delete = CleanMessageBox.Confirm(owner, "This removes the file.", "Delete s
 string? name = CleanMessageBox.Prompt(owner, "Save scenario", "Name", "New scenario", "Save");   // null when cancelled
 ```
 
-The controls carry their own default styles (with the palette), so they look right even before the theme is merged.
+The controls carry their own default styles; their colors come from the merged theme.
 
 ## Log
 
@@ -157,8 +177,9 @@ unit inside a `Source` scope.
 |---|---|
 | Surfaces | `AppBackground`, `Surface`, `SurfaceSunken`, `Hover`, `Pressed`, `Border`, `BorderStrong`, `Divider` |
 | Text | `Text`, `TextMuted`, `TextSubtle`, `TextLog`, `UiFont`, `MonoFont` |
-| Accent | `Accent`, `AccentHover`, `AccentPressed`, `AccentSoft` |
-| Status | `Positive(Soft)`, `Warning(Soft)`, `Negative(Soft)`, `NegativeBorder`, `NeutralSoft` |
+| Accent | `Accent` (text/lines), `AccentFill` + `AccentHover` + `AccentPressed` (solid fills), `AccentSoft`, `OnAccent` |
+| Status | `Positive(Soft)`, `Warning(Soft)`, `Negative(Soft)`, `NegativeFill` + `NegativeHover` + `NegativePressed`, `NegativeBorder`, `NeutralSoft` |
+| Tool tips | `ToolTipBackground`, `ToolTipText` |
 | Text styles | `CardTitle`, `FieldLabel`, `MetricLabel`, `MetricValue` |
 | Containers | `CleanWindow`, `Card`, `Pill` (style keys for plain `Border`s; the controls above are the richer option) |
 | Buttons | implicit `Button`, `PrimaryButton`, `DangerButton`, `GhostButton`, `RowButton`, `SegmentButton` (for `ToggleButton` / `RadioButton`, highlights on `IsChecked`) |
@@ -174,7 +195,9 @@ unit inside a `Source` scope.
 | Buttons (more) | `DangerPrimaryButton` (solid red, for confirming destructive actions) |
 | Log | `LogList` (monospace `ListBox`) |
 
-Resource keys are public API: renaming or removing one is a breaking change.
+Palette keys live in `Themes/Palette.Light.xaml` and `Themes/Palette.Dark.xaml`, which must define the same keys (a
+test checks this, and the text contrast in both). Resource keys are public API: renaming or removing one is a breaking
+change.
 
 ## Develop
 

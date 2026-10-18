@@ -10,14 +10,20 @@
     <Grid>
         <DockPanel>
             <!-- Header: title, status, menu bar -->
-            <Border DockPanel.Dock="Top" Background="{StaticResource Surface}" BorderBrush="{StaticResource Border}"
+            <Border DockPanel.Dock="Top" Background="{DynamicResource Surface}" BorderBrush="{DynamicResource Border}"
                     BorderThickness="0,0,0,1" Padding="20,8">
                 <DockPanel>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <TextBlock Text="CleanTheme" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center" />
-                        <TextBlock Text="Gallery" FontSize="18" Foreground="{StaticResource TextSubtle}" Margin="6,0,16,0" VerticalAlignment="Center" />
+                        <TextBlock Text="Gallery" FontSize="18" Foreground="{DynamicResource TextSubtle}" Margin="6,0,16,0" VerticalAlignment="Center" />
                         <clean:StatusPill State="Positive" Content="Running" ToolTip="Hosted services are logging" />
                     </StackPanel>
+                    <clean:SegmentedControl x:Name="ThemeChoice" DockPanel.Dock="Right" Margin="16,0,0,0" VerticalAlignment="Center"
+                                            SelectionChanged="OnThemeChoiceChanged" ToolTip="Theme">
+                        <clean:SegmentedItem Content="Light" />
+                        <clean:SegmentedItem Content="Dark" />
+                        <clean:SegmentedItem Content="System" />
+                    </clean:SegmentedControl>
                     <Menu HorizontalAlignment="Right" VerticalAlignment="Center">
                         <MenuItem Header="_File">
                             <MenuItem Header="_New scenario" InputGestureText="Ctrl+N" Click="OnNewScenario" />
@@ -187,7 +193,7 @@
                             <TabItem Header="Expanders">
                                 <StackPanel>
                                     <Expander Header="Connection" IsExpanded="True">
-                                        <TextBlock Text="UDP 127.0.0.1:9050, 3 clients" Foreground="{StaticResource TextMuted}" />
+                                        <TextBlock Text="UDP 127.0.0.1:9050, 3 clients" Foreground="{DynamicResource TextMuted}" />
                                     </Expander>
                                     <Expander Header="Advanced" Margin="0,6,0,0">
                                         <CheckBox Content="Verbose snapshots" />

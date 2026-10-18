@@ -1,0 +1,46 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        Dark palette (neutral slate): same keys as Palette.Light.xaml. The accent is a lighter blue so text and lines stay
+        readable; AccentFill is darker than Accent so white text on filled buttons keeps its contrast.
+    -->
+
+    <Color x:Key="AppBackgroundColor">#11161D</Color>
+    <SolidColorBrush x:Key="AppBackground" Color="#11161D" />
+    <SolidColorBrush x:Key="Surface" Color="#1A212B" />
+    <SolidColorBrush x:Key="SurfaceSunken" Color="#151B23" />
+    <SolidColorBrush x:Key="Hover" Color="#222B37" />
+    <SolidColorBrush x:Key="Pressed" Color="#2A3441" />
+    <SolidColorBrush x:Key="Border" Color="#2A3441" />
+    <SolidColorBrush x:Key="BorderStrong" Color="#3A4655" />
+    <SolidColorBrush x:Key="Divider" Color="#222A35" />
+
+    <SolidColorBrush x:Key="Text" Color="#E6EAF0" />
+    <SolidColorBrush x:Key="TextMuted" Color="#9AA5B4" />
+    <SolidColorBrush x:Key="TextSubtle" Color="#6F7B8B" />
+    <SolidColorBrush x:Key="TextLog" Color="#C9D1DC" />
+
+    <SolidColorBrush x:Key="Accent" Color="#5B8DEF" />
+    <SolidColorBrush x:Key="AccentFill" Color="#3A6AD0" />
+    <SolidColorBrush x:Key="AccentHover" Color="#4676D8" />
+    <SolidColorBrush x:Key="AccentPressed" Color="#3160BE" />
+    <SolidColorBrush x:Key="AccentSoft" Color="#1E2B42" />
+    <SolidColorBrush x:Key="OnAccent" Color="#FFFFFF" />
+
+    <SolidColorBrush x:Key="Positive" Color="#4CC38A" />
+    <SolidColorBrush x:Key="PositiveSoft" Color="#173326" />
+    <SolidColorBrush x:Key="Warning" Color="#E5B454" />
+    <SolidColorBrush x:Key="WarningSoft" Color="#3A2F14" />
+    <SolidColorBrush x:Key="Negative" Color="#F2766B" />
+    <SolidColorBrush x:Key="NegativeFill" Color="#C93A30" />
+    <SolidColorBrush x:Key="NegativeSoft" Color="#3D1D1B" />
+    <SolidColorBrush x:Key="NegativeBorder" Color="#6B2B26" />
+    <SolidColorBrush x:Key="NegativeHover" Color="#D2463C" />
+    <SolidColorBrush x:Key="NegativePressed" Color="#B3332A" />
+    <SolidColorBrush x:Key="NeutralSoft" Color="#252E3A" />
+
+    <SolidColorBrush x:Key="ToolTipBackground" Color="#2E3846" />
+    <SolidColorBrush x:Key="ToolTipText" Color="#E6EAF0" />
+
+</ResourceDictionary>

@@ -21,7 +21,7 @@ public sealed class NewControlTests
         Assert.Same(theme["Surface"], fill.Background);
 
         box.IsChecked = true;
-        Assert.Same(theme["Accent"], fill.Background);
+        Assert.Same(theme["AccentFill"], fill.Background);
         Assert.Equal(Visibility.Visible, ((FrameworkElement)box.Template.FindName("Check", box)).Visibility);
 
         box.IsChecked = null;
@@ -168,6 +168,7 @@ public sealed class NewControlTests
     public void CleanDialog_buttons_set_the_result_and_close() => Sta.Run(() =>
     {
         var dialog = CleanMessageBox.Create(null, "Delete the scenario?", "Delete", "Delete Baltic CAP", "Delete", "Cancel", isDanger: true);
+        dialog.Resources.MergedDictionaries.Add(new CleanThemeResources());
         var closed = false;
         dialog.Closed += (_, _) => closed = true;
         dialog.Show();
@@ -189,6 +190,7 @@ public sealed class NewControlTests
     public void Prompt_dialog_does_not_confirm_blank_text() => Sta.Run(() =>
     {
         var prompt = CleanMessageBox.CreatePrompt(null, "Save scenario", "Name", "   ");
+        prompt.Resources.MergedDictionaries.Add(new CleanThemeResources());
         prompt.Show();
         Sta.DoEvents();
         var primary = (Button)prompt.Template.FindName("PART_PrimaryButton", prompt);
@@ -207,6 +209,7 @@ public sealed class NewControlTests
     public void Message_box_without_secondary_text_hides_that_button() => Sta.Run(() =>
     {
         var dialog = CleanMessageBox.Create(null, "Saved.", "Scenario", null, "OK", null, isDanger: false);
+        dialog.Resources.MergedDictionaries.Add(new CleanThemeResources());
         dialog.Show();
         Sta.DoEvents();
 
