@@ -20,6 +20,7 @@ public sealed class CleanThemeResourcesTests
         "ButtonBaseStyle", "PrimaryButton", "DangerButton", "GhostButton", "SegmentButton", "RowButton",
         "NumericTextBox", "NumericHeader", "NumericCell", "LogList",
         "ScrollBarThumb", "ScrollBarPageButton", "VerticalScrollBarTemplate", "HorizontalScrollBarTemplate",
+        "CleanContextMenu", "CleanMenuItem",
     ];
 
     private static readonly Type[] ImplicitlyStyled =

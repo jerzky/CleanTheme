@@ -1,5 +1,6 @@
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using CleanTheme.Wpf.Tests;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -188,6 +189,49 @@ public sealed partial class LoggerProviderAndViewTests
 
         feed.ResetFilters();
         Assert.Equal(0, categoryBox.SelectedIndex);
+    });
+
+    [Fact]
+    public void LogView_selects_lines_and_copies_them_in_display_order() => Sta.Run(() =>
+    {
+        var feed = LogFeed.CreateForCurrentThread();
+        var t = new DateTime(2026, 10, 18, 12, 0, 0, DateTimeKind.Utc);
+        feed.Add(new LogEntry(t, LogLevel.Information, "UAV-1", "first"));
+        feed.Add(new LogEntry(t, LogLevel.Warning, null, "second") { Category = "App.Server" });
+        feed.Add(new LogEntry(t, LogLevel.Error, null, "third"));
+        var view = new LogView { Feed = feed };
+        Sta.Layout(view);
+
+        Assert.Equal(SelectionMode.Extended, view.SelectionMode);
+        Assert.False(ApplicationCommands.Copy.CanExecute(null, view));
+
+        // Selected last line first: the copy still follows the display order.
+        view.SelectedItems.Add(feed.Visible[2]);
+        view.SelectedItems.Add(feed.Visible[0]);
+
+        Assert.True(ApplicationCommands.Copy.CanExecute(null, view));
+        Assert.Equal(
+            $"12:00:00.000  INF  UAV-1  first{Environment.NewLine}12:00:00.000  ERR  third",
+            view.GetSelectedText());
+        Assert.Equal(3, view.GetAllText().Split(Environment.NewLine).Length);
+
+        ApplicationCommands.SelectAll.Execute(null, view);
+        Assert.Equal(3, view.SelectedItems.Count);
+    });
+
+    [Fact]
+    public void LogView_context_menu_offers_copy_copy_all_and_select_all() => Sta.Run(() =>
+    {
+        var view = new LogView { Feed = LogFeed.CreateForCurrentThread() };
+        Sta.Layout(view);
+
+        var commands = view.ContextMenu.Items.Cast<MenuItem>().Select(item => item.Command).ToArray();
+
+        Assert.Equal([ApplicationCommands.Copy, LogView.CopyAllCommand, ApplicationCommands.SelectAll], commands);
+        // Each view gets its own menu: a ContextMenu has a single owner.
+        var other = new LogView();
+        Sta.Layout(other);
+        Assert.NotSame(view.ContextMenu, other.ContextMenu);
     });
 
     private static IEnumerable<string> Labels(ComboBox box) => box.Items.Cast<ComboBoxItem>().Select(item => (string)item.Content);

@@ -87,6 +87,39 @@
         </Setter>
     </Style>
 
+    <!-- One selectable line: no chrome, a soft hover, the accent tint when selected. -->
+    <Style x:Key="LogLineContainer" TargetType="ListBoxItem">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border x:Name="Chrome" Background="Transparent" Padding="4,0" SnapsToDevicePixels="True">
+                        <ContentPresenter />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{StaticResource Hover}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{StaticResource AccentSoft}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- x:Shared="False": each LogView gets its own menu (a ContextMenu has one parent). -->
+    <ContextMenu x:Key="LogContextMenu" x:Shared="False" Style="{StaticResource CleanContextMenu}">
+        <MenuItem Header="Copy" Command="ApplicationCommands.Copy" InputGestureText="Ctrl+C"
+                  CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+        <MenuItem Header="Copy all lines" Command="logging:LogView.CopyAllCommand"
+                  CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+        <MenuItem Header="Select all" Command="ApplicationCommands.SelectAll" InputGestureText="Ctrl+A"
+                  CommandTarget="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+    </ContextMenu>
+
     <Style TargetType="logging:LogView">
         <Setter Property="Background" Value="{StaticResource SurfaceSunken}" />
         <Setter Property="Foreground" Value="{StaticResource TextLog}" />
@@ -94,8 +127,10 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="FontFamily" Value="{StaticResource MonoFont}" />
         <Setter Property="FontSize" Value="12" />
-        <Setter Property="Padding" Value="8,4" />
-        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Padding" Value="4" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource LogLineContainer}" />
+        <Setter Property="ContextMenu" Value="{StaticResource LogContextMenu}" />
         <Setter Property="ItemTemplate" Value="{StaticResource LogEntryTemplate}" />
         <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
         <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling" />

@@ -112,6 +112,9 @@ feed.Post(new LogEntry(DateTime.UtcNow, LogLevel.Information, Source: "UAV-1", M
   holds still once you scroll up. Its top bar shows the line count ("120 of 340 lines" while filtered) and a **Filter**
   popout with level, source, category and message-text filters; the button turns navy while a filter is on. Hide the
   bar with `ShowFilterBar="False"`.
+- `LogView` is a `ListBox`: select lines with click, Shift/Ctrl-click, drag or Ctrl+A, and copy them with Ctrl+C or the
+  right-click menu (Copy, Copy all lines, Select all). Copies are plain text in display order, one `LogEntry.Text` per
+  line (time, level, origin, message, stack trace).
 
 The gallery sample is set up this way: a Generic Host whose hosted services log through `ILogger`, one of them per
 unit inside a `Source` scope.
@@ -130,6 +133,7 @@ unit inside a `Source` scope.
 | Inputs | implicit `TextBox`, `ComboBox`, `ComboBoxItem`; `NumericTextBox` |
 | Tables | implicit `DataGrid`, `DataGridColumnHeader`, `DataGridRow`, `DataGridCell`; `NumericHeader`, `NumericCell` |
 | Scrolling | implicit `ScrollBar` (thin, rounded thumb with a minimum length, no arrows) and `ScrollViewer` |
+| Menus | `CleanContextMenu` (opt-in, sets `CleanMenuItem` on its items; plain command items, no submenus) |
 | Log | `LogList` (monospace `ListBox`) |
 
 Resource keys are public API: renaming or removing one is a breaking change.

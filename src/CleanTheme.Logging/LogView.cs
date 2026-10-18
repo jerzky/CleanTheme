@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 
 namespace CleanTheme.Logging;
 
@@ -13,13 +14,20 @@ namespace CleanTheme.Logging;
 /// is scrolled to the bottom and holding still once the user scrolls up. A bar on top shows the line count and a filter
 /// popout (level, source, category, text) that edits the feed's filters.
 /// </summary>
+/// <remarks>
+/// Lines are selectable (click, Shift/Ctrl-click, drag, Ctrl+A). Ctrl+C or the context menu copies the selected lines,
+/// <see cref="CopyAllCommand"/> every visible line, as <see cref="LogEntry.Text"/> in display order.
+/// </remarks>
 [TemplatePart(Name = ScrollViewerPart, Type = typeof(ScrollViewer))]
 [TemplatePart(Name = FilterPopupPart, Type = typeof(Popup))]
 [TemplatePart(Name = SourceBoxPart, Type = typeof(ComboBox))]
 [TemplatePart(Name = CategoryBoxPart, Type = typeof(ComboBox))]
 [TemplatePart(Name = ResetButtonPart, Type = typeof(ButtonBase))]
-public sealed class LogView : ItemsControl
+public sealed class LogView : ListBox
 {
+    /// <summary>Copies every visible line. Bound on each LogView; also offered in its context menu.</summary>
+    public static RoutedUICommand CopyAllCommand { get; } = new("Copy all lines", nameof(CopyAllCommand), typeof(LogView));
+
     /// <summary>The first choice of the source box, which clears <see cref="LogFeed.SourceFilter"/>.</summary>
     public const string AllSourcesLabel = "All sources";
 
@@ -47,16 +55,23 @@ public sealed class LogView : ItemsControl
     private readonly ChoiceBox _sourceChoices;
     private readonly ChoiceBox _categoryChoices;
     private ScrollViewer? _scrollViewer;
+    private FrameworkElement? _filterBar;
     private ButtonBase? _resetButton;
     private bool _following = true;
 
     static LogView()
     {
         DefaultStyleKeyProperty.OverrideMetadata(typeof(LogView), new FrameworkPropertyMetadata(typeof(LogView)));
+        SelectionModeProperty.OverrideMetadata(typeof(LogView), new FrameworkPropertyMetadata(SelectionMode.Extended));
     }
 
     public LogView()
     {
+        CommandBindings.Add(new CommandBinding(ApplicationCommands.Copy, (_, _) => CopyToClipboard(GetSelectedText()), (_, e) => e.CanExecute = SelectedItems.Count > 0));
+        CommandBindings.Add(new CommandBinding(CopyAllCommand, (_, _) => CopyToClipboard(GetAllText()), (_, e) => e.CanExecute = Items.Count > 0));
+        // ListBox binds Ctrl+A to a private command of its own; this makes ApplicationCommands.SelectAll (the menu item) work too.
+        CommandBindings.Add(new CommandBinding(ApplicationCommands.SelectAll, (_, _) => SelectAll(), (_, e) => e.CanExecute = Items.Count > 0));
+
         _sourceChoices = new ChoiceBox(
             AllSourcesLabel,
             feed => feed.Sources,
@@ -113,6 +128,7 @@ public sealed class LogView : ItemsControl
         base.OnApplyTemplate();
 
         _scrollViewer = GetTemplateChild(ScrollViewerPart) as ScrollViewer;
+        _filterBar = GetTemplateChild("FilterBar") as FrameworkElement;
         _resetButton = GetTemplateChild(ResetButtonPart) as ButtonBase;
         if (GetTemplateChild(FilterPopupPart) is Popup popup)
         {
@@ -134,7 +150,24 @@ public sealed class LogView : ItemsControl
         _categoryChoices.Attach(GetTemplateChild(CategoryBoxPart) as ComboBox, Feed);
     }
 
-    // The stock ItemsControl peer reports only items, hiding the filter bar from screen readers and UI tests.
+    /// <summary>The selected lines as text, in display order (not selection order), one per line.</summary>
+    internal string GetSelectedText() =>
+        JoinLines(SelectedItems.OfType<LogEntry>().Select(entry => (Index: Items.IndexOf(entry), Entry: entry)).OrderBy(x => x.Index).Select(x => x.Entry));
+
+    /// <summary>Every visible line as text.</summary>
+    internal string GetAllText() => JoinLines(Items.OfType<LogEntry>());
+
+    private static string JoinLines(IEnumerable<LogEntry> entries) => string.Join(Environment.NewLine, entries.Select(entry => entry.Text));
+
+    private static void CopyToClipboard(string text)
+    {
+        if (text.Length > 0)
+        {
+            Clipboard.SetText(text);
+        }
+    }
+
+    // The stock ListBox peer reports only the lines; this one also exposes the filter bar's controls.
     protected override AutomationPeer OnCreateAutomationPeer() => new LogViewAutomationPeer(this);
 
     private static void OnFeedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -260,10 +293,39 @@ public sealed class LogView : ItemsControl
         }
     }
 
-    private sealed class LogViewAutomationPeer(LogView owner) : FrameworkElementAutomationPeer(owner)
+    /// <summary>A list (so lines keep their selection semantics) whose first children are the filter bar's controls.</summary>
+    private sealed class LogViewAutomationPeer(LogView owner) : ListBoxAutomationPeer(owner)
     {
         protected override string GetClassNameCore() => nameof(LogView);
 
-        protected override AutomationControlType GetAutomationControlTypeCore() => AutomationControlType.Group;
+        protected override List<AutomationPeer> GetChildrenCore()
+        {
+            var children = base.GetChildrenCore() ?? [];
+            if (owner._filterBar is { IsVisible: true } bar)
+            {
+                children.InsertRange(0, PeersBelow(bar));
+            }
+            return children;
+        }
+
+        // Elements without a peer of their own (borders, panels) are walked through to the controls inside.
+        private static IEnumerable<AutomationPeer> PeersBelow(DependencyObject parent)
+        {
+            for (var i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = System.Windows.Media.VisualTreeHelper.GetChild(parent, i);
+                if (child is UIElement element && UIElementAutomationPeer.CreatePeerForElement(element) is { } peer)
+                {
+                    yield return peer;
+                }
+                else
+                {
+                    foreach (var nested in PeersBelow(child))
+                    {
+                        yield return nested;
+                    }
+                }
+            }
+        }
     }
 }
