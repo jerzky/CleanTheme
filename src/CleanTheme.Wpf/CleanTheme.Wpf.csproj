@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>A light, neutral and dense WPF theme: one navy accent for primary actions, green/amber/red only for status.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="CleanTheme.Wpf.Tests" />
+  </ItemGroup>
+</Project>

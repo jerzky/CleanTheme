@@ -1,0 +1,53 @@
+name: Publish
+
+# Pushing a version tag (for example v0.1.0) builds, tests and publishes the package to GitHub Packages.
+# The version comes from the tag through MinVer. Packages never go to nuget.org.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  FEED: https://nuget.pkg.github.com/jerzky/index.json
+
+jobs:
+  publish:
+    name: Pack and publish
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # MinVer reads the version from tags, which a shallow clone does not have.
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Build
+        run: dotnet build CleanTheme.slnx --configuration Release
+
+      - name: Test
+        run: dotnet test CleanTheme.slnx --configuration Release --no-build
+
+      - name: Pack
+        run: dotnet pack CleanTheme.slnx --configuration Release --no-build --output packages
+
+      - name: Upload packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: packages
+          path: packages/*.nupkg
+
+      - name: Push to GitHub Packages
+        shell: pwsh
+        run: |
+          foreach ($package in Get-ChildItem packages/*.nupkg) {
+            dotnet nuget push $package.FullName --source $env:FEED --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+          }

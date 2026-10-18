@@ -1,0 +1,30 @@
+<Project>
+  <!-- Packaging for the libraries under src/. Everything else in the repository stays unpackable. -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <Authors>jerzky</Authors>
+    <Product>CleanTheme</Product>
+    <Copyright>Copyright © jerzky</Copyright>
+    <PackageProjectUrl>https://github.com/jerzky/CleanTheme</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/jerzky/CleanTheme</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>wpf;theme;styles;xaml</PackageTags>
+
+    <!-- Versions come from git tags: v0.1.0 builds 0.1.0; later commits build 0.1.1-alpha.0.<height>. -->
+    <MinVerTagPrefix>v</MinVerTagPrefix>
+
+    <DebugType>embedded</DebugType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MinVer" PrivateAssets="all" />
+    <None Include="$(MSBuildThisFileDirectory)../README.md" Pack="true" PackagePath="\" Visible="false" />
+  </ItemGroup>
+</Project>

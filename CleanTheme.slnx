@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CleanTheme.Wpf/CleanTheme.Wpf.csproj" />
+  </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/CleanTheme.Gallery/CleanTheme.Gallery.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/CleanTheme.Wpf.Tests/CleanTheme.Wpf.Tests.csproj" />
+  </Folder>
+</Solution>

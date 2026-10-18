@@ -1,0 +1,136 @@
+<Window x:Class="CleanTheme.Gallery.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="CleanTheme Gallery"
+        Height="760" Width="1100"
+        WindowStartupLocation="CenterScreen"
+        Style="{StaticResource CleanWindow}">
+
+    <DockPanel>
+        <!-- Header -->
+        <Border DockPanel.Dock="Top" Background="{StaticResource Surface}" BorderBrush="{StaticResource Border}"
+                BorderThickness="0,0,0,1" Padding="20,12">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="CleanTheme" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center" />
+                <TextBlock Text="Gallery" FontSize="18" Foreground="{StaticResource TextSubtle}" Margin="6,0,16,0" VerticalAlignment="Center" />
+                <Border Style="{StaticResource Pill}" Background="{StaticResource PositiveSoft}" TextElement.Foreground="{StaticResource Positive}">
+                    <TextBlock Text="Running" />
+                </Border>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <Grid Margin="20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="16" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="16" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="16" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Buttons -->
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource CardTitle}" Text="Buttons" />
+                        <WrapPanel Margin="0,12,0,0">
+                            <Button Content="Primary" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8" />
+                            <Button Content="Secondary" Margin="0,0,8,8" />
+                            <Button Content="Danger" Style="{StaticResource DangerButton}" Margin="0,0,8,8" />
+                            <Button Content="Ghost" Style="{StaticResource GhostButton}" Margin="0,0,8,8" />
+                            <Button Content="Disabled" IsEnabled="False" Margin="0,0,8,8" />
+                        </WrapPanel>
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="Segmented choice" />
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton Style="{StaticResource SegmentButton}" GroupName="Scale" Content="1×" IsChecked="True" />
+                            <RadioButton Style="{StaticResource SegmentButton}" GroupName="Scale" Content="2×" Margin="4,0,0,0" />
+                            <RadioButton Style="{StaticResource SegmentButton}" GroupName="Scale" Content="4×" Margin="4,0,0,0" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Inputs -->
+                <Border Grid.Column="2" Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource CardTitle}" Text="Inputs" />
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="Name" />
+                        <TextBox Text="ALPHA-1" />
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="Speed (kts)" />
+                        <TextBox Style="{StaticResource NumericTextBox}" Text="420" />
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="Profile" />
+                        <ComboBox SelectedIndex="0">
+                            <ComboBoxItem Content="Default" />
+                            <ComboBoxItem Content="Fast" />
+                            <ComboBoxItem Content="Quiet" />
+                        </ComboBox>
+                    </StackPanel>
+                </Border>
+
+                <!-- Metrics and status -->
+                <Border Grid.Row="2" Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource CardTitle}" Text="Metrics and status" />
+                        <UniformGrid Columns="3" Margin="0,12,0,0">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource MetricLabel}" Text="Units" />
+                                <TextBlock Style="{StaticResource MetricValue}" Text="42" />
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource MetricLabel}" Text="Tick" />
+                                <TextBlock Style="{StaticResource MetricValue}" Text="12.4 ms" />
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource MetricLabel}" Text="Uptime" />
+                                <TextBlock Style="{StaticResource MetricValue}" Text="01:12:09" />
+                            </StackPanel>
+                        </UniformGrid>
+                        <WrapPanel Margin="0,16,0,0">
+                            <Border Style="{StaticResource Pill}" Margin="0,0,6,0"><TextBlock Text="Neutral" /></Border>
+                            <Border Style="{StaticResource Pill}" Margin="0,0,6,0" Background="{StaticResource AccentSoft}" TextElement.Foreground="{StaticResource Accent}"><TextBlock Text="Info" /></Border>
+                            <Border Style="{StaticResource Pill}" Margin="0,0,6,0" Background="{StaticResource PositiveSoft}" TextElement.Foreground="{StaticResource Positive}"><TextBlock Text="OK" /></Border>
+                            <Border Style="{StaticResource Pill}" Margin="0,0,6,0" Background="{StaticResource WarningSoft}" TextElement.Foreground="{StaticResource Warning}"><TextBlock Text="Warning" /></Border>
+                            <Border Style="{StaticResource Pill}" Background="{StaticResource NegativeSoft}" TextElement.Foreground="{StaticResource Negative}"><TextBlock Text="Error" /></Border>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Log -->
+                <Border Grid.Row="2" Grid.Column="2" Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource CardTitle}" Text="Log" />
+                        <ListBox x:Name="Log" Style="{StaticResource LogList}" Height="110" Margin="0,12,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Table -->
+                <Border Grid.Row="4" Grid.ColumnSpan="3" Style="{StaticResource Card}" Padding="0">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource CardTitle}" Text="Table" Margin="16,16,16,12" />
+                        <DataGrid x:Name="Rows">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="NAME" Binding="{Binding Name}" Width="*" />
+                                <DataGridTextColumn Header="STATE" Binding="{Binding State}" Width="120" />
+                                <DataGridTextColumn Header="COUNT" Binding="{Binding Count}" Width="90"
+                                                    HeaderStyle="{StaticResource NumericHeader}" ElementStyle="{StaticResource NumericCell}" />
+                                <DataGridTextColumn Header="VALUE" Binding="{Binding Value, StringFormat=N2}" Width="110"
+                                                    HeaderStyle="{StaticResource NumericHeader}" ElementStyle="{StaticResource NumericCell}" />
+                                <DataGridTemplateColumn Width="90">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Style="{StaticResource RowButton}" Content="Open" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </ScrollViewer>
+    </DockPanel>
+</Window>
