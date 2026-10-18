@@ -41,6 +41,18 @@ internal static class Sta
         Dispatcher.PushFrame(frame);
     }
 
+    /// <summary>Runs the current dispatcher for at least <paramref name="duration"/> (timers, delayed bindings).</summary>
+    public static void DoEventsFor(TimeSpan duration)
+    {
+        var until = DateTime.UtcNow + duration;
+        while (DateTime.UtcNow < until)
+        {
+            DoEvents();
+            Thread.Sleep(10);
+        }
+        DoEvents();
+    }
+
     /// <summary>Gives an element a size and runs layout, so templates apply and item containers exist.</summary>
     public static void Layout(FrameworkElement element, double width = 400, double height = 300)
     {

@@ -11,8 +11,8 @@ namespace CleanTheme.Logging;
 
 /// <summary>
 /// Shows a <see cref="LogFeed"/>: monospace lines with the level and origin, virtualized, following new lines while it
-/// is scrolled to the bottom and holding still once the user scrolls up. A bar on top shows the line count and a filter
-/// popout (level, source, category, text) that edits the feed's filters.
+/// is scrolled to the bottom and holding still once the user scrolls up. A bar on top shows the line count, a search box
+/// (the feed's text filter) and a filter popout (level, source, category); an empty state shows when no line is visible.
 /// </summary>
 /// <remarks>
 /// Lines are selectable (click, Shift/Ctrl-click, drag, Ctrl+A). Ctrl+C or the context menu copies the selected lines,
@@ -23,6 +23,7 @@ namespace CleanTheme.Logging;
 [TemplatePart(Name = SourceBoxPart, Type = typeof(ComboBox))]
 [TemplatePart(Name = CategoryBoxPart, Type = typeof(ComboBox))]
 [TemplatePart(Name = ResetButtonPart, Type = typeof(ButtonBase))]
+[TemplatePart(Name = EmptyResetButtonPart, Type = typeof(ButtonBase))]
 public sealed class LogView : ListBox
 {
     /// <summary>Copies every visible line. Bound on each LogView; also offered in its context menu.</summary>
@@ -39,6 +40,7 @@ public sealed class LogView : ListBox
     private const string SourceBoxPart = "PART_SourceBox";
     private const string CategoryBoxPart = "PART_CategoryBox";
     private const string ResetButtonPart = "PART_ResetButton";
+    private const string EmptyResetButtonPart = "PART_EmptyResetButton";
 
     public static readonly DependencyProperty FeedProperty = DependencyProperty.Register(
         nameof(Feed), typeof(LogFeed), typeof(LogView), new FrameworkPropertyMetadata(null, OnFeedChanged));
@@ -57,6 +59,7 @@ public sealed class LogView : ListBox
     private ScrollViewer? _scrollViewer;
     private FrameworkElement? _filterBar;
     private ButtonBase? _resetButton;
+    private ButtonBase? _emptyResetButton;
     private bool _following = true;
 
     static LogView()
@@ -124,12 +127,17 @@ public sealed class LogView : ListBox
         {
             _resetButton.Click -= OnResetClick;
         }
+        if (_emptyResetButton != null)
+        {
+            _emptyResetButton.Click -= OnResetClick;
+        }
 
         base.OnApplyTemplate();
 
         _scrollViewer = GetTemplateChild(ScrollViewerPart) as ScrollViewer;
         _filterBar = GetTemplateChild("FilterBar") as FrameworkElement;
         _resetButton = GetTemplateChild(ResetButtonPart) as ButtonBase;
+        _emptyResetButton = GetTemplateChild(EmptyResetButtonPart) as ButtonBase;
         if (GetTemplateChild(FilterPopupPart) is Popup popup)
         {
             // Right-align the popout under the filter button.
@@ -145,6 +153,10 @@ public sealed class LogView : ListBox
         if (_resetButton != null)
         {
             _resetButton.Click += OnResetClick;
+        }
+        if (_emptyResetButton != null)
+        {
+            _emptyResetButton.Click += OnResetClick;
         }
         _sourceChoices.Attach(GetTemplateChild(SourceBoxPart) as ComboBox, Feed);
         _categoryChoices.Attach(GetTemplateChild(CategoryBoxPart) as ComboBox, Feed);

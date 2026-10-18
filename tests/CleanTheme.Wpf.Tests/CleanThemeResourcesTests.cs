@@ -20,7 +20,7 @@ public sealed class CleanThemeResourcesTests
         "ButtonBaseStyle", "PrimaryButton", "DangerButton", "GhostButton", "SegmentButton", "RowButton",
         "NumericTextBox", "NumericHeader", "NumericCell", "LogList",
         "ScrollBarThumb", "ScrollBarPageButton", "VerticalScrollBarTemplate", "HorizontalScrollBarTemplate",
-        "CleanContextMenu", "CleanMenuItem",
+        "CleanContextMenu", "CleanMenuItem", "DangerPrimaryButton", "NegativeHover", "NegativePressed",
     ];
 
     private static readonly Type[] ImplicitlyStyled =
@@ -28,6 +28,9 @@ public sealed class CleanThemeResourcesTests
         typeof(Button), typeof(TextBox), typeof(ComboBox), typeof(ComboBoxItem),
         typeof(DataGrid), typeof(DataGridColumnHeader), typeof(DataGridRow), typeof(DataGridCell),
         typeof(ScrollBar), typeof(ScrollViewer),
+        typeof(CheckBox), typeof(RadioButton), typeof(ToolTip), typeof(ListBox), typeof(ListBoxItem), typeof(Separator),
+        typeof(ProgressBar), typeof(Slider), typeof(TabControl), typeof(TabItem), typeof(Expander), typeof(TreeView),
+        typeof(TreeViewItem), typeof(Menu), typeof(MenuItem), typeof(ContextMenu), typeof(Calendar), typeof(DatePicker),
     ];
 
     [Fact]

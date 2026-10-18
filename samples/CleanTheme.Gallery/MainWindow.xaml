@@ -3,142 +3,265 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:clean="https://github.com/jerzky/CleanTheme"
         Title="CleanTheme Gallery"
-        Height="860" Width="1180"
+        Height="900" Width="1200"
         WindowStartupLocation="CenterScreen"
         Style="{StaticResource CleanWindow}">
 
-    <DockPanel>
-        <!-- Header -->
-        <Border DockPanel.Dock="Top" Background="{StaticResource Surface}" BorderBrush="{StaticResource Border}"
-                BorderThickness="0,0,0,1" Padding="20,12">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="CleanTheme" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center" />
-                <TextBlock Text="Gallery" FontSize="18" Foreground="{StaticResource TextSubtle}" Margin="6,0,16,0" VerticalAlignment="Center" />
-                <clean:StatusPill State="Positive" Content="Running" />
-            </StackPanel>
-        </Border>
+    <Grid>
+        <DockPanel>
+            <!-- Header: title, status, menu bar -->
+            <Border DockPanel.Dock="Top" Background="{StaticResource Surface}" BorderBrush="{StaticResource Border}"
+                    BorderThickness="0,0,0,1" Padding="20,8">
+                <DockPanel>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="CleanTheme" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        <TextBlock Text="Gallery" FontSize="18" Foreground="{StaticResource TextSubtle}" Margin="6,0,16,0" VerticalAlignment="Center" />
+                        <clean:StatusPill State="Positive" Content="Running" ToolTip="Hosted services are logging" />
+                    </StackPanel>
+                    <Menu HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <MenuItem Header="_File">
+                            <MenuItem Header="_New scenario" InputGestureText="Ctrl+N" Click="OnNewScenario" />
+                            <MenuItem Header="Open _recent">
+                                <MenuItem Header="baltic-cap.json" />
+                                <MenuItem Header="north-sea-patrol.json" />
+                            </MenuItem>
+                            <Separator />
+                            <MenuItem Header="E_xit" InputGestureText="Alt+F4" Click="OnExit" />
+                        </MenuItem>
+                        <MenuItem Header="_View">
+                            <MenuItem Header="Show line _origin" IsCheckable="True"
+                                      IsChecked="{Binding ShowOrigin, ElementName=Log, Mode=TwoWay}" />
+                            <MenuItem Header="Follow new _lines" IsCheckable="True"
+                                      IsChecked="{Binding AutoScroll, ElementName=Log, Mode=TwoWay}" />
+                        </MenuItem>
+                        <MenuItem Header="_Help">
+                            <MenuItem Header="_About" Click="OnAbout" />
+                        </MenuItem>
+                    </Menu>
+                </DockPanel>
+            </Border>
 
-        <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <Grid Margin="20">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="16" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="16" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="16" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="16" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <Grid Margin="20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="16" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="16" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="16" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="16" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                <!-- Buttons -->
-                <clean:Card Header="Buttons">
-                    <StackPanel>
-                        <WrapPanel>
-                            <Button Content="Primary" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8" />
-                            <Button Content="Secondary" Margin="0,0,8,8" />
-                            <Button Content="Danger" Style="{StaticResource DangerButton}" Margin="0,0,8,8" />
-                            <Button Content="Ghost" Style="{StaticResource GhostButton}" Margin="0,0,8,8" />
-                            <Button Content="Disabled" IsEnabled="False" Margin="0,0,8,8" />
-                        </WrapPanel>
-                        <TextBlock Style="{StaticResource FieldLabel}" Text="SegmentedControl" />
-                        <clean:SegmentedControl SelectedIndex="0">
-                            <clean:SegmentedItem Content="1×" />
-                            <clean:SegmentedItem Content="2×" />
-                            <clean:SegmentedItem Content="4×" />
-                            <clean:SegmentedItem Content="8×" />
-                        </clean:SegmentedControl>
-                        <TextBlock Style="{StaticResource FieldLabel}" Text="SegmentButton (RadioButtons)" />
-                        <StackPanel Orientation="Horizontal">
-                            <RadioButton Style="{StaticResource SegmentButton}" GroupName="Scale" Content="1×" IsChecked="True" />
-                            <RadioButton Style="{StaticResource SegmentButton}" GroupName="Scale" Content="2×" Margin="4,0,0,0" />
-                            <RadioButton Style="{StaticResource SegmentButton}" GroupName="Scale" Content="4×" Margin="4,0,0,0" />
+                    <!-- Buttons -->
+                    <clean:Card Header="Buttons">
+                        <StackPanel>
+                            <WrapPanel>
+                                <Button Content="Primary" Style="{StaticResource PrimaryButton}" Margin="0,0,8,8" ToolTip="PrimaryButton" />
+                                <Button Content="Secondary" Margin="0,0,8,8" ToolTip="The implicit Button style" />
+                                <Button Content="Danger" Style="{StaticResource DangerButton}" Margin="0,0,8,8" ToolTip="DangerButton" />
+                                <Button Content="Delete" Style="{StaticResource DangerPrimaryButton}" Margin="0,0,8,8" ToolTip="DangerPrimaryButton" />
+                                <Button Content="Ghost" Style="{StaticResource GhostButton}" Margin="0,0,8,8" ToolTip="GhostButton" />
+                                <Button Content="Disabled" IsEnabled="False" Margin="0,0,8,8" />
+                            </WrapPanel>
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="SegmentedControl" />
+                            <clean:SegmentedControl SelectedIndex="0">
+                                <clean:SegmentedItem Content="1×" />
+                                <clean:SegmentedItem Content="2×" />
+                                <clean:SegmentedItem Content="4×" />
+                                <clean:SegmentedItem Content="8×" />
+                            </clean:SegmentedControl>
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="SegmentButton (RadioButtons)" />
+                            <StackPanel Orientation="Horizontal">
+                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="Scale" Content="1×" IsChecked="True" />
+                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="Scale" Content="2×" Margin="4,0,0,0" />
+                                <RadioButton Style="{StaticResource SegmentButton}" GroupName="Scale" Content="4×" Margin="4,0,0,0" />
+                            </StackPanel>
                         </StackPanel>
-                    </StackPanel>
-                </clean:Card>
+                    </clean:Card>
 
-                <!-- Inputs -->
-                <clean:Card Grid.Column="2" Header="Inputs">
-                    <StackPanel>
-                        <TextBlock Style="{StaticResource FieldLabel}" Text="Name" Margin="0,0,0,4" />
-                        <TextBox Text="ALPHA-1" />
-                        <TextBlock Style="{StaticResource FieldLabel}" Text="Speed (kts)" />
-                        <TextBox Style="{StaticResource NumericTextBox}" Text="420" />
-                        <TextBlock Style="{StaticResource FieldLabel}" Text="Profile" />
-                        <ComboBox SelectedIndex="0">
-                            <ComboBoxItem Content="Default" />
-                            <ComboBoxItem Content="Fast" />
-                            <ComboBoxItem Content="Quiet" />
-                        </ComboBox>
-                    </StackPanel>
-                </clean:Card>
+                    <!-- Inputs -->
+                    <clean:Card Grid.Column="2" Header="Inputs">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="12" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="Name" Margin="0,0,0,4" />
+                                <TextBox Text="ALPHA-1" />
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="Profile" />
+                                <ComboBox SelectedIndex="0">
+                                    <ComboBoxItem Content="Default" />
+                                    <ComboBoxItem Content="Fast" />
+                                    <ComboBoxItem Content="Quiet" />
+                                </ComboBox>
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="SearchBox" />
+                                <clean:SearchBox Placeholder="Search units" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="Speed (kts), NumericUpDown" Margin="0,0,0,4" />
+                                <clean:NumericUpDown Value="420" Minimum="0" Maximum="900" Increment="10" />
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="Altitude (ft ×1000), 1 decimal" />
+                                <clean:NumericUpDown Value="25.5" Minimum="0" Maximum="60" Increment="0.5" DecimalPlaces="1" />
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="Start date" />
+                                <DatePicker x:Name="StartDate" />
+                            </StackPanel>
+                        </Grid>
+                    </clean:Card>
 
-                <!-- Metrics and status -->
-                <clean:Card Grid.Row="2" Header="Metrics and status">
-                    <StackPanel>
-                        <UniformGrid Columns="3">
-                            <clean:MetricTile Label="Units" Value="42" />
-                            <clean:MetricTile Label="Tick" Value="12.4" Unit="ms" />
-                            <clean:MetricTile Label="Uptime" Value="01:12:09" />
-                        </UniformGrid>
-                        <WrapPanel Margin="0,16,0,0">
-                            <clean:StatusPill Content="Neutral" Margin="0,0,6,0" />
-                            <clean:StatusPill State="Info" Content="Info" Margin="0,0,6,0" />
-                            <clean:StatusPill State="Positive" Content="OK" Margin="0,0,6,0" />
-                            <clean:StatusPill State="Warning" Content="Warning" Margin="0,0,6,0" />
-                            <clean:StatusPill State="Negative" Content="Error" />
-                        </WrapPanel>
-                    </StackPanel>
-                </clean:Card>
-
-                <!-- Scrolling -->
-                <clean:Card Grid.Row="2" Grid.Column="2" Header="Scrolling">
-                    <ListBox x:Name="LongList" Height="130" BorderBrush="{StaticResource Border}"
-                             ScrollViewer.HorizontalScrollBarVisibility="Auto" />
-                </clean:Card>
-
-                <!-- Log -->
-                <clean:Card Grid.Row="4" Grid.ColumnSpan="3" Header="LogView (try the Filter popout)">
-                    <clean:Card.Actions>
-                        <StackPanel Orientation="Horizontal">
-                            <Button Content="Log an error" Style="{StaticResource GhostButton}" Click="OnLogError" />
-                            <Button Content="Clear" Style="{StaticResource GhostButton}" Click="OnClearLog" />
+                    <!-- Selection -->
+                    <clean:Card Grid.Row="2" Header="Selection and progress">
+                        <StackPanel>
+                            <WrapPanel>
+                                <CheckBox Content="Checked" IsChecked="True" Margin="0,0,16,8" />
+                                <CheckBox Content="Unchecked" Margin="0,0,16,8" />
+                                <CheckBox Content="Indeterminate" IsThreeState="True" IsChecked="{x:Null}" Margin="0,0,16,8" />
+                                <CheckBox Content="Disabled" IsEnabled="False" Margin="0,0,16,8" />
+                            </WrapPanel>
+                            <WrapPanel Margin="0,4,0,0">
+                                <RadioButton Content="Blue" GroupName="Team" IsChecked="True" Margin="0,0,16,8" />
+                                <RadioButton Content="Red" GroupName="Team" Margin="0,0,16,8" />
+                                <RadioButton Content="Neutral" GroupName="Team" Margin="0,0,16,8" />
+                            </WrapPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                <clean:ToggleSwitch Content="Auto-scroll" IsChecked="True" Margin="0,0,24,0" />
+                                <clean:ToggleSwitch Content="Paused" />
+                            </StackPanel>
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Slider drives the progress bar" />
+                            <Slider x:Name="Amount" Minimum="0" Maximum="100" Value="35" />
+                            <ProgressBar Value="{Binding Value, ElementName=Amount}" Margin="0,10,0,0" />
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Indeterminate" />
+                            <ProgressBar IsIndeterminate="True" />
                         </StackPanel>
-                    </clean:Card.Actions>
-                    <clean:LogView x:Name="Log" Height="220" />
-                </clean:Card>
+                    </clean:Card>
 
-                <!-- Table -->
-                <clean:Card Grid.Row="6" Grid.ColumnSpan="3" Header="Table" Padding="0,16,0,0">
-                    <DataGrid x:Name="Rows">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="NAME" Binding="{Binding Name}" Width="*" />
-                            <DataGridTemplateColumn Header="STATE" Width="120">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <clean:StatusPill State="{Binding State}" Content="{Binding State}" />
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <DataGridTextColumn Header="COUNT" Binding="{Binding Count}" Width="90"
-                                                HeaderStyle="{StaticResource NumericHeader}" ElementStyle="{StaticResource NumericCell}" />
-                            <DataGridTextColumn Header="VALUE" Binding="{Binding Value, StringFormat=N2}" Width="110"
-                                                HeaderStyle="{StaticResource NumericHeader}" ElementStyle="{StaticResource NumericCell}" />
-                            <DataGridTemplateColumn Width="90">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Button Style="{StaticResource RowButton}" Content="Open" />
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </clean:Card>
-            </Grid>
-        </ScrollViewer>
-    </DockPanel>
+                    <!-- Metrics and status -->
+                    <clean:Card Grid.Row="2" Grid.Column="2" Header="Metrics and status">
+                        <StackPanel>
+                            <UniformGrid Columns="3">
+                                <clean:MetricTile Label="Units" Value="42" />
+                                <clean:MetricTile Label="Tick" Value="12.4" Unit="ms" />
+                                <clean:MetricTile Label="Uptime" Value="01:12:09" />
+                            </UniformGrid>
+                            <WrapPanel Margin="0,16,0,0">
+                                <clean:StatusPill Content="Neutral" Margin="0,0,6,0" />
+                                <clean:StatusPill State="Info" Content="Info" Margin="0,0,6,0" />
+                                <clean:StatusPill State="Positive" Content="OK" Margin="0,0,6,0" />
+                                <clean:StatusPill State="Warning" Content="Warning" Margin="0,0,6,0" />
+                                <clean:StatusPill State="Negative" Content="Error" />
+                            </WrapPanel>
+                            <Separator Margin="0,16" />
+                            <clean:EmptyState Title="No nodes running" Description="Start a scenario or add a unit to see it here."
+                                              Icon="M 2,6 H 22 V 18 H 2 Z M 6,22 H 18 M 12,18 V 22">
+                                <Button Content="Add unit" Style="{StaticResource PrimaryButton}" />
+                            </clean:EmptyState>
+                        </StackPanel>
+                    </clean:Card>
+
+                    <!-- Structure -->
+                    <clean:Card Grid.Row="4" Header="Structure">
+                        <TabControl Height="230">
+                            <TabItem Header="Tree">
+                                <TreeView>
+                                    <TreeViewItem Header="Blue" IsExpanded="True">
+                                        <TreeViewItem Header="ALPHA-1 (UAV)" IsSelected="True" />
+                                        <TreeViewItem Header="BRAVO-2 (AWACS)" />
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="Red" IsExpanded="True">
+                                        <TreeViewItem Header="CHARLIE-3 (IADS)">
+                                            <TreeViewItem Header="Radar" />
+                                            <TreeViewItem Header="Launcher" />
+                                        </TreeViewItem>
+                                    </TreeViewItem>
+                                </TreeView>
+                            </TabItem>
+                            <TabItem Header="Expanders">
+                                <StackPanel>
+                                    <Expander Header="Connection" IsExpanded="True">
+                                        <TextBlock Text="UDP 127.0.0.1:9050, 3 clients" Foreground="{StaticResource TextMuted}" />
+                                    </Expander>
+                                    <Expander Header="Advanced" Margin="0,6,0,0">
+                                        <CheckBox Content="Verbose snapshots" />
+                                    </Expander>
+                                </StackPanel>
+                            </TabItem>
+                            <TabItem Header="List">
+                                <ListBox x:Name="LongList" SelectionMode="Extended" />
+                            </TabItem>
+                            <TabItem Header="Disabled" IsEnabled="False" />
+                        </TabControl>
+                    </clean:Card>
+
+                    <!-- Feedback -->
+                    <clean:Card Grid.Row="4" Grid.Column="2" Header="Feedback">
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Toasts (bottom-right)" Margin="0,0,0,6" />
+                            <WrapPanel>
+                                <Button Content="Info" Tag="Info" Click="OnShowToast" Margin="0,0,8,8" />
+                                <Button Content="Success" Tag="Positive" Click="OnShowToast" Margin="0,0,8,8" />
+                                <Button Content="Warning" Tag="Warning" Click="OnShowToast" Margin="0,0,8,8" />
+                                <Button Content="Error" Tag="Negative" Click="OnShowToast" Margin="0,0,8,8" />
+                            </WrapPanel>
+                            <TextBlock Style="{StaticResource FieldLabel}" Text="Dialogs" Margin="0,8,0,6" />
+                            <WrapPanel>
+                                <Button Content="Message" Click="OnMessage" Margin="0,0,8,8" />
+                                <Button Content="Confirm delete" Click="OnConfirmDelete" Margin="0,0,8,8" />
+                                <Button Content="Prompt for name" Click="OnPrompt" Margin="0,0,8,8" />
+                            </WrapPanel>
+                        </StackPanel>
+                    </clean:Card>
+
+                    <!-- Log -->
+                    <clean:Card Grid.Row="6" Grid.ColumnSpan="3" Header="LogView">
+                        <clean:Card.Actions>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Log an error" Style="{StaticResource GhostButton}" Click="OnLogError" />
+                                <Button Content="Clear" Style="{StaticResource GhostButton}" Click="OnClearLog" />
+                            </StackPanel>
+                        </clean:Card.Actions>
+                        <clean:LogView x:Name="Log" Height="240" />
+                    </clean:Card>
+
+                    <!-- Table -->
+                    <clean:Card Grid.Row="8" Grid.ColumnSpan="3" Header="Table" Padding="0,16,0,0">
+                        <DataGrid x:Name="Rows">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="NAME" Binding="{Binding Name}" Width="*" />
+                                <DataGridTemplateColumn Header="STATE" Width="120">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <clean:StatusPill State="{Binding State}" Content="{Binding State}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn Header="COUNT" Binding="{Binding Count}" Width="90"
+                                                    HeaderStyle="{StaticResource NumericHeader}" ElementStyle="{StaticResource NumericCell}" />
+                                <DataGridTextColumn Header="VALUE" Binding="{Binding Value, StringFormat=N2}" Width="110"
+                                                    HeaderStyle="{StaticResource NumericHeader}" ElementStyle="{StaticResource NumericCell}" />
+                                <DataGridTemplateColumn Width="90">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Style="{StaticResource RowButton}" Content="Open" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </clean:Card>
+                </Grid>
+            </ScrollViewer>
+        </DockPanel>
+
+        <!-- Over everything; passes clicks through except on the toasts. -->
+        <clean:ToastHost x:Name="Toasts" />
+    </Grid>
 </Window>

@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Controls;
 using CleanTheme.Logging;
 using CleanTheme.Wpf.Controls;
 using Microsoft.Extensions.Logging;
@@ -25,6 +26,7 @@ public partial class MainWindow : Window
         LongList.ItemsSource = Enumerable.Range(1, 60)
             .Select(i => $"Item {i:00}: a line long enough to need the horizontal scroll bar as well as the vertical one")
             .ToArray();
+        StartDate.SelectedDate = DateTime.Today;
 
         Log.Feed = _feed;
         LogWindowOpened(_logger);
@@ -43,6 +45,45 @@ public partial class MainWindow : Window
     }
 
     private void OnClearLog(object sender, RoutedEventArgs e) => _feed.Clear();
+
+    private void OnShowToast(object sender, RoutedEventArgs e)
+    {
+        var state = Enum.Parse<StatusState>((string)((Button)sender).Tag);
+        var message = state switch
+        {
+            StatusState.Positive => "Scenario saved as baltic-cap.json",
+            StatusState.Warning => "BRAVO-2 is low on fuel",
+            StatusState.Negative => "CHARLIE-3 exited with code 1",
+            _ => "3 units spawned",
+        };
+        Toasts.Show(message, state);
+    }
+
+    private void OnMessage(object sender, RoutedEventArgs e) =>
+        CleanMessageBox.Show(this, "The scenario was saved to the Scenarios folder.", "Scenario", "Saved");
+
+    private void OnConfirmDelete(object sender, RoutedEventArgs e)
+    {
+        var confirmed = CleanMessageBox.Confirm(this, "This removes the file from disk. Running units are not affected.",
+            "Delete scenario", "Delete", heading: "Delete baltic-cap.json?", isDanger: true);
+        Toasts.Show(confirmed ? "Scenario deleted" : "Kept the scenario", confirmed ? StatusState.Positive : StatusState.Neutral);
+    }
+
+    private void OnPrompt(object sender, RoutedEventArgs e)
+    {
+        var name = CleanMessageBox.Prompt(this, "Save scenario", "Name for a scenario of the 3 running units", "New scenario", "Save");
+        if (name != null)
+        {
+            Toasts.Show($"Saved \"{name}\"", StatusState.Positive);
+        }
+    }
+
+    private void OnNewScenario(object sender, RoutedEventArgs e) => Toasts.Show("New scenario (just a sample)");
+
+    private void OnAbout(object sender, RoutedEventArgs e) =>
+        CleanMessageBox.Show(this, "Every CleanTheme style and control on one page.", "About", "CleanTheme Gallery");
+
+    private void OnExit(object sender, RoutedEventArgs e) => Close();
 
     [LoggerMessage(Level = LogLevel.Information, Message = "Gallery window opened")]
     private static partial void LogWindowOpened(ILogger logger);

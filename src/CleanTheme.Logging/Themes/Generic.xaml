@@ -156,6 +156,9 @@
                                     <ToggleButton x:Name="PART_FilterButton" DockPanel.Dock="Right" Style="{StaticResource LogFilterButton}"
                                                   IsChecked="{Binding IsOpen, ElementName=PART_FilterPopup, Mode=TwoWay}"
                                                   ToolTip="Filter lines" AutomationProperties.Name="Filter" />
+                                    <controls:SearchBox x:Name="PART_SearchBox" DockPanel.Dock="Right" Width="220" Height="24" FontSize="12"
+                                                        Margin="0,0,6,0" Placeholder="Search messages" AutomationProperties.Name="Search messages"
+                                                        Text="{Binding Feed.TextFilter, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
                                     <!-- "340 lines", or "120 of 340 lines" while filtered. -->
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
                                                 TextElement.Foreground="{StaticResource TextSubtle}">
@@ -192,10 +195,6 @@
                                                 <ComboBox x:Name="PART_CategoryBox" Style="{StaticResource {x:Type ComboBox}}"
                                                           ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}" />
 
-                                                <TextBlock Style="{StaticResource FieldLabel}" Text="Message contains" />
-                                                <TextBox Style="{StaticResource {x:Type TextBox}}"
-                                                         Text="{Binding Feed.TextFilter, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
-
                                                 <Button x:Name="PART_ResetButton" Content="Reset filters" Style="{StaticResource GhostButton}"
                                                         HorizontalAlignment="Right" Margin="0,10,-8,0" />
                                             </StackPanel>
@@ -204,11 +203,19 @@
                                 </DockPanel>
                             </Border>
 
-                            <ScrollViewer x:Name="PART_ScrollViewer" Style="{StaticResource {x:Type ScrollViewer}}"
-                                          Padding="{TemplateBinding Padding}" CanContentScroll="True"
-                                          HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Focusable="False">
-                                <ItemsPresenter />
-                            </ScrollViewer>
+                            <Grid>
+                                <ScrollViewer x:Name="PART_ScrollViewer" Style="{StaticResource {x:Type ScrollViewer}}"
+                                              Padding="{TemplateBinding Padding}" CanContentScroll="True"
+                                              HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Focusable="False">
+                                    <ItemsPresenter />
+                                </ScrollViewer>
+                                <!-- Shown when no line is visible: "nothing yet", or "nothing matches" with a reset. -->
+                                <controls:EmptyState x:Name="Empty" Visibility="Collapsed" Title="No log lines yet" Padding="8"
+                                                     TextElement.FontFamily="{StaticResource UiFont}">
+                                    <Button x:Name="PART_EmptyResetButton" Content="Reset filters" Style="{StaticResource GhostButton}"
+                                            Visibility="Collapsed" />
+                                </controls:EmptyState>
+                            </Grid>
                         </DockPanel>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -219,6 +226,17 @@
                         <Trigger SourceName="PART_FilterPopup" Property="IsOpen" Value="True">
                             <Setter TargetName="PART_FilterButton" Property="IsHitTestVisible" Value="False" />
                         </Trigger>
+                        <Trigger Property="HasItems" Value="False">
+                            <Setter TargetName="Empty" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding HasItems, RelativeSource={RelativeSource Self}}" Value="False" />
+                                <Condition Binding="{Binding Feed.IsFiltered, RelativeSource={RelativeSource Self}}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="Empty" Property="Title" Value="No lines match the filters" />
+                            <Setter TargetName="PART_EmptyResetButton" Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
                         <DataTrigger Binding="{Binding Feed.IsFiltered, RelativeSource={RelativeSource Self}}" Value="True">
                             <Setter TargetName="PART_FilterButton" Property="Tag" Value="Active" />
                             <Setter TargetName="OfTotal" Property="Visibility" Value="Visible" />

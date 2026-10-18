@@ -178,4 +178,351 @@
         </Setter>
     </Style>
 
+    <!-- A text box with no chrome, for use inside composite controls. -->
+    <Style x:Key="BareTextBox" TargetType="TextBox">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{StaticResource Text}" />
+        <Setter Property="CaretBrush" Value="{StaticResource Text}" />
+        <Setter Property="SelectionBrush" Value="{StaticResource Accent}" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <ScrollViewer x:Name="PART_ContentHost" Background="Transparent" Focusable="False" VerticalAlignment="Center"
+                                  HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" Padding="{TemplateBinding Padding}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Small borderless icon button (clear, close, spin). -->
+    <Style x:Key="IconButton" TargetType="ButtonBase">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Foreground" Value="{StaticResource TextMuted}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ButtonBase">
+                    <Border x:Name="Chrome" Background="Transparent" CornerRadius="3">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{StaticResource Hover}" />
+                            <Setter Property="Foreground" Value="{StaticResource Text}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{StaticResource Pressed}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:SearchBox">
+        <Setter Property="Foreground" Value="{StaticResource Text}" />
+        <Setter Property="CaretBrush" Value="{StaticResource Text}" />
+        <Setter Property="SelectionBrush" Value="{StaticResource Accent}" />
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Background" Value="{StaticResource Surface}" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderStrong}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:SearchBox">
+                    <Border x:Name="Chrome" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="4" SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Path Data="M 4.5,0.5 A 4,4 0 1 1 4.49,0.5 Z M 7.5,7.5 L 11,11" Stroke="{StaticResource TextSubtle}" StrokeThickness="1.4"
+                                  Margin="9,0,6,0" VerticalAlignment="Center" />
+                            <ScrollViewer x:Name="PART_ContentHost" Grid.Column="1" Focusable="False" VerticalAlignment="Center"
+                                          HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" />
+                            <TextBlock x:Name="Placeholder" Grid.Column="1" Text="{TemplateBinding Placeholder}" Margin="2,0,0,0"
+                                       VerticalAlignment="Center" Foreground="{StaticResource TextSubtle}" IsHitTestVisible="False"
+                                       Visibility="Collapsed" TextTrimming="CharacterEllipsis" />
+                            <Button x:Name="PART_ClearButton" Grid.Column="2" Style="{StaticResource IconButton}" Width="20" Height="20"
+                                    Margin="0,0,4,0" ToolTip="Clear (Esc)">
+                                <Path Data="M 0,0 L 8,8 M 8,0 L 0,8" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                      StrokeThickness="1.4" />
+                            </Button>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Text" Value="">
+                            <Setter TargetName="Placeholder" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_ClearButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Text" Value="{x:Null}">
+                            <Setter TargetName="Placeholder" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_ClearButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{StaticResource Accent}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:ToggleSwitch">
+        <Setter Property="Foreground" Value="{StaticResource Text}" />
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="10,0,0,0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ToggleSwitch">
+                    <Grid Background="Transparent" SnapsToDevicePixels="True">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border x:Name="Track" Width="34" Height="18" CornerRadius="9" Background="{StaticResource BorderStrong}"
+                                BorderBrush="Transparent" BorderThickness="1" VerticalAlignment="Center">
+                            <Ellipse x:Name="Knob" Width="12" Height="12" Fill="White" HorizontalAlignment="Left" Margin="2,0" />
+                        </Border>
+                        <ContentPresenter x:Name="Label" Grid.Column="1" Margin="{TemplateBinding Padding}" VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasContent" Value="False">
+                            <Setter TargetName="Label" Property="Margin" Value="0" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Track" Property="Background" Value="{StaticResource TextSubtle}" />
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Track" Property="Background" Value="{StaticResource Accent}" />
+                            <Setter TargetName="Knob" Property="HorizontalAlignment" Value="Right" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsChecked" Value="True" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Track" Property="Background" Value="{StaticResource AccentHover}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Track" Property="BorderBrush" Value="{StaticResource AccentPressed}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:EmptyState">
+        <Setter Property="Foreground" Value="{StaticResource Text}" />
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="16" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:EmptyState">
+                    <StackPanel Margin="{TemplateBinding Padding}" MaxWidth="360">
+                        <Path x:Name="IconPath" Data="{TemplateBinding Icon}" Stroke="{StaticResource TextSubtle}" StrokeThickness="1.5"
+                              Stretch="Uniform" Width="32" Height="32" Margin="0,0,0,10" HorizontalAlignment="Center" />
+                        <TextBlock x:Name="TitleText" Text="{TemplateBinding Title}" FontSize="14" FontWeight="SemiBold"
+                                   HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+                        <TextBlock x:Name="DescriptionText" Text="{TemplateBinding Description}" Foreground="{StaticResource TextMuted}"
+                                   Margin="0,4,0,0" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" />
+                        <ContentPresenter x:Name="Action" Margin="0,12,0,0" HorizontalAlignment="Center" />
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Icon" Value="{x:Null}">
+                            <Setter TargetName="IconPath" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Title" Value="{x:Null}">
+                            <Setter TargetName="TitleText" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Description" Value="{x:Null}">
+                            <Setter TargetName="DescriptionText" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="HasContent" Value="False">
+                            <Setter TargetName="Action" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:NumericUpDown">
+        <Setter Property="Foreground" Value="{StaticResource Text}" />
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:NumericUpDown">
+                    <Border x:Name="Chrome" Background="{StaticResource Surface}" BorderBrush="{StaticResource BorderStrong}"
+                            BorderThickness="1" CornerRadius="4" SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="20" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="PART_TextBox" Style="{StaticResource BareTextBox}" Padding="6,0,4,0" TextAlignment="Right"
+                                     Typography.NumeralAlignment="Tabular" />
+                            <Grid Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <RepeatButton x:Name="PART_IncreaseButton" Style="{StaticResource IconButton}" Margin="0,2,2,0" ToolTip="Increase">
+                                    <Path Data="M 0,4 L 3.5,0 L 7,4" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RepeatButton}}"
+                                          StrokeThickness="1.3" />
+                                </RepeatButton>
+                                <RepeatButton x:Name="PART_DecreaseButton" Grid.Row="1" Style="{StaticResource IconButton}" Margin="0,0,2,2"
+                                              ToolTip="Decrease">
+                                    <Path Data="M 0,0 L 3.5,4 L 7,0" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RepeatButton}}"
+                                          StrokeThickness="1.3" />
+                                </RepeatButton>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{StaticResource Accent}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Toasts: white cards with a colored stripe, stacked bottom-right. The host passes clicks through elsewhere. -->
+    <DataTemplate x:Key="ToastTemplate" DataType="{x:Type controls:ToastMessage}">
+        <Border Background="{StaticResource Surface}" BorderBrush="{StaticResource BorderStrong}" BorderThickness="1" CornerRadius="6"
+                Margin="0,8,0,0" SnapsToDevicePixels="True">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="12" ShadowDepth="2" Direction="270" Opacity="0.14" />
+            </Border.Effect>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="4" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Border x:Name="Stripe" CornerRadius="5,0,0,5" Background="{StaticResource Accent}" />
+                <TextBlock Grid.Column="1" Text="{Binding Message}" TextWrapping="Wrap" Margin="12,10,8,10"
+                           Foreground="{StaticResource Text}" VerticalAlignment="Center" />
+                <Button Grid.Column="2" Style="{StaticResource IconButton}" Width="22" Height="22" Margin="0,6,6,0" VerticalAlignment="Top"
+                        Command="{x:Static controls:ToastHost.DismissCommand}" CommandParameter="{Binding}" ToolTip="Close">
+                    <Path Data="M 0,0 L 8,8 M 8,0 L 0,8" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                          StrokeThickness="1.4" />
+                </Button>
+            </Grid>
+        </Border>
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding State}" Value="Neutral">
+                <Setter TargetName="Stripe" Property="Background" Value="{StaticResource BorderStrong}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding State}" Value="Positive">
+                <Setter TargetName="Stripe" Property="Background" Value="{StaticResource Positive}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding State}" Value="Warning">
+                <Setter TargetName="Stripe" Property="Background" Value="{StaticResource Warning}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding State}" Value="Negative">
+                <Setter TargetName="Stripe" Property="Background" Value="{StaticResource Negative}" />
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <Style TargetType="controls:ToastHost">
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ToastHost">
+                    <ItemsControl x:Name="Stack" ItemsSource="{Binding Toasts, RelativeSource={RelativeSource TemplatedParent}}"
+                                  ItemTemplate="{StaticResource ToastTemplate}" Focusable="False"
+                                  HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="340" Margin="16" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Dialogs: body on the surface, buttons right-aligned in a sunken footer. -->
+    <Style TargetType="controls:CleanDialog">
+        <Setter Property="Background" Value="{StaticResource Surface}" />
+        <Setter Property="Foreground" Value="{StaticResource Text}" />
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="SizeToContent" Value="WidthAndHeight" />
+        <Setter Property="MinWidth" Value="380" />
+        <Setter Property="MaxWidth" Value="560" />
+        <Setter Property="ResizeMode" Value="NoResize" />
+        <Setter Property="ShowInTaskbar" Value="False" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:CleanDialog">
+                    <Border Background="{TemplateBinding Background}">
+                        <AdornerDecorator>
+                            <DockPanel>
+                                <Border DockPanel.Dock="Bottom" Background="{StaticResource SurfaceSunken}" BorderBrush="{StaticResource Divider}"
+                                        BorderThickness="0,1,0,0" Padding="16,12">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button x:Name="PART_SecondaryButton" Content="{TemplateBinding SecondaryButtonText}" IsCancel="True"
+                                                MinWidth="84" Margin="0,0,8,0" />
+                                        <Button x:Name="PART_PrimaryButton" Content="{TemplateBinding PrimaryButtonText}" IsDefault="True"
+                                                MinWidth="84" Style="{StaticResource PrimaryButton}" />
+                                    </StackPanel>
+                                </Border>
+                                <StackPanel Margin="20,18,20,20">
+                                    <TextBlock x:Name="HeadingText" Text="{TemplateBinding Heading}" FontSize="15" FontWeight="SemiBold"
+                                               Margin="0,0,0,8" TextWrapping="Wrap" />
+                                    <ContentPresenter />
+                                </StackPanel>
+                            </DockPanel>
+                        </AdornerDecorator>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="SecondaryButtonText" Value="{x:Null}">
+                            <Setter TargetName="PART_SecondaryButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Heading" Value="{x:Null}">
+                            <Setter TargetName="HeadingText" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsDanger" Value="True">
+                            <Setter TargetName="PART_PrimaryButton" Property="Style" Value="{StaticResource DangerPrimaryButton}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

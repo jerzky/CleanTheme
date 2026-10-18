@@ -234,5 +234,51 @@ public sealed partial class LoggerProviderAndViewTests
         Assert.NotSame(view.ContextMenu, other.ContextMenu);
     });
 
+    [Fact]
+    public void LogView_search_box_edits_the_text_filter_both_ways() => Sta.Run(() =>
+    {
+        var feed = LogFeed.CreateForCurrentThread();
+        feed.Add(new LogEntry(DateTime.UtcNow, LogLevel.Information, null, "Tick took 9 ms"));
+        feed.Add(new LogEntry(DateTime.UtcNow, LogLevel.Information, null, "Client connected"));
+        var view = new LogView { Feed = feed };
+        Sta.Layout(view);
+        var search = (CleanTheme.Wpf.Controls.SearchBox)view.Template.FindName("PART_SearchBox", view);
+
+        search.Text = "tick";
+        Sta.DoEventsFor(TimeSpan.FromMilliseconds(350)); // The binding waits 200 ms after typing.
+        Assert.Equal("tick", feed.TextFilter);
+        Assert.Single(feed.Visible);
+
+        feed.ResetFilters();
+        Assert.Equal("", search.Text);
+    });
+
+    [Fact]
+    public void LogView_empty_state_says_why_nothing_shows_and_resets_filters() => Sta.Run(() =>
+    {
+        var feed = LogFeed.CreateForCurrentThread();
+        var view = new LogView { Feed = feed };
+        Sta.Layout(view);
+        var empty = (CleanTheme.Wpf.Controls.EmptyState)view.Template.FindName("Empty", view);
+        var reset = (ButtonBase)view.Template.FindName("PART_EmptyResetButton", view);
+
+        Assert.Equal(System.Windows.Visibility.Visible, empty.Visibility);
+        Assert.Equal("No log lines yet", empty.Title);
+        Assert.Equal(System.Windows.Visibility.Collapsed, reset.Visibility);
+
+        feed.Add(new LogEntry(DateTime.UtcNow, LogLevel.Information, null, "hello"));
+        Sta.Layout(view);
+        Assert.Equal(System.Windows.Visibility.Collapsed, empty.Visibility);
+
+        feed.TextFilter = "nothing like this";
+        Sta.Layout(view);
+        Assert.Equal(System.Windows.Visibility.Visible, empty.Visibility);
+        Assert.Equal("No lines match the filters", empty.Title);
+        Assert.Equal(System.Windows.Visibility.Visible, reset.Visibility);
+
+        reset.RaiseEvent(new System.Windows.RoutedEventArgs(ButtonBase.ClickEvent));
+        Assert.False(feed.IsFiltered);
+    });
+
     private static IEnumerable<string> Labels(ComboBox box) => box.Items.Cast<ComboBoxItem>().Select(item => (string)item.Content);
 }

@@ -7,7 +7,7 @@ Originally the Strato Launcher theme.
 
 | Package | What |
 |---|---|
-| `CleanTheme.Wpf` | The theme (palette, styles for stock controls, scroll bars) and a few controls: `Card`, `StatusPill`, `MetricTile`, `SegmentedControl` |
+| `CleanTheme.Wpf` | The theme (palette and styles for the stock WPF controls) and controls: `Card`, `StatusPill`, `MetricTile`, `SegmentedControl`, `SearchBox`, `ToggleSwitch`, `NumericUpDown`, `EmptyState`, `ToastHost`, `CleanDialog` / `CleanMessageBox` |
 | `CleanTheme.Logging` | In-app log: an `ILoggerProvider` feeding a bounded, filterable `LogFeed`, and a `LogView` to show it |
 
 ## Install
@@ -60,9 +60,39 @@ The `https://github.com/jerzky/CleanTheme` XML namespace covers both packages.
 <clean:MetricTile Label="Tick" Value="{Binding TickMs}" Unit="ms" />
 
 <clean:SegmentedControl ItemsSource="{Binding TimeScales}" SelectedItem="{Binding TimeScale}" />
+
+<clean:SearchBox Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" Placeholder="Search units" />
+
+<clean:ToggleSwitch Content="Auto-scroll" IsChecked="{Binding AutoScroll}" />
+
+<clean:NumericUpDown Value="{Binding SpeedKts}" Minimum="0" Maximum="900" Increment="10" DecimalPlaces="0" />
+
+<clean:EmptyState Title="No nodes running" Description="Start a scenario to see units here." Icon="M 2,6 H 22 V 18 H 2 Z">
+    <Button Content="Add unit" Style="{StaticResource PrimaryButton}" />
+</clean:EmptyState>
 ```
 
-`SegmentedControl` is a single-selection `ListBox`; declare literal items as `clean:SegmentedItem`.
+- `SegmentedControl` is a single-selection `ListBox`; declare literal items as `clean:SegmentedItem`.
+- `SearchBox` is a `TextBox` with a magnifier, placeholder and clear button; Escape clears it.
+- `NumericUpDown` clamps `Value` to `Minimum`..`Maximum`, rounds to `DecimalPlaces`, and steps by `Increment` with its
+  buttons, the arrow keys or the mouse wheel. Typed text commits on Enter or focus loss; invalid text reverts.
+
+**Toasts.** Put a `ToastHost` over the window content (the last child of the root grid; it passes clicks through) and
+call `Show` from any thread:
+
+```csharp
+toasts.Show("Scenario saved", StatusState.Positive);                         // 4 s
+toasts.Show("CHARLIE-3 exited", StatusState.Negative, TimeSpan.Zero);         // until closed
+```
+
+**Dialogs.** `CleanDialog` is a themed window with a heading, the content as body, and primary/secondary buttons
+(Enter/Escape); `ShowModal()` returns which one closed it. `CleanMessageBox` has the common cases:
+
+```csharp
+CleanMessageBox.Show(owner, "The scenario was saved.", "Scenario");
+bool delete = CleanMessageBox.Confirm(owner, "This removes the file.", "Delete scenario", "Delete", isDanger: true);
+string? name = CleanMessageBox.Prompt(owner, "Save scenario", "Name", "New scenario", "Save");   // null when cancelled
+```
 
 The controls carry their own default styles (with the palette), so they look right even before the theme is merged.
 
@@ -110,8 +140,10 @@ feed.Post(new LogEntry(DateTime.UtcNow, LogLevel.Information, Source: "UAV-1", M
 - `LogView` shows time, level, origin (the source, else the short category such as `NodeSupervisor`; hide with
   `ShowOrigin="False"`) and message, colors the level, virtualizes, follows new lines while scrolled to the bottom, and
   holds still once you scroll up. Its top bar shows the line count ("120 of 340 lines" while filtered) and a **Filter**
-  popout with level, source, category and message-text filters; the button turns navy while a filter is on. Hide the
+  popout with level, source and category filters; the button turns navy while a filter is on. Hide the
   bar with `ShowFilterBar="False"`.
+- The top bar also has a search box (the feed's `TextFilter`). When no line is visible, the view says so, and offers
+  "Reset filters" when filters are the reason.
 - `LogView` is a `ListBox`: select lines with click, Shift/Ctrl-click, drag or Ctrl+A, and copy them with Ctrl+C or the
   right-click menu (Copy, Copy all lines, Select all). Copies are plain text in display order, one `LogEntry.Text` per
   line (time, level, origin, message, stack trace).
@@ -133,7 +165,13 @@ unit inside a `Source` scope.
 | Inputs | implicit `TextBox`, `ComboBox`, `ComboBoxItem`; `NumericTextBox` |
 | Tables | implicit `DataGrid`, `DataGridColumnHeader`, `DataGridRow`, `DataGridCell`; `NumericHeader`, `NumericCell` |
 | Scrolling | implicit `ScrollBar` (thin, rounded thumb with a minimum length, no arrows) and `ScrollViewer` |
-| Menus | `CleanContextMenu` (opt-in, sets `CleanMenuItem` on its items; plain command items, no submenus) |
+| Choices | implicit `CheckBox` (incl. three-state), `RadioButton`, `Slider`, `ProgressBar` (incl. indeterminate) |
+| Lists and trees | implicit `ListBox` / `ListBoxItem`, `TreeView` / `TreeViewItem`, `Separator` |
+| Layout | implicit `TabControl` / `TabItem` (tabs on top), `Expander` |
+| Menus | implicit `Menu`, `MenuItem` (menu bars, submenus, check marks, gestures) and `ContextMenu`; also keyed as `CleanContextMenu` / `CleanMenuItem` |
+| Dates | implicit `DatePicker` and `Calendar` |
+| Tool tips | implicit `ToolTip` (dark, rounded) |
+| Buttons (more) | `DangerPrimaryButton` (solid red, for confirming destructive actions) |
 | Log | `LogList` (monospace `ListBox`) |
 
 Resource keys are public API: renaming or removing one is a breaking change.
