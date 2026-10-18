@@ -8,17 +8,23 @@
         <ResourceDictionary Source="/CleanTheme.Wpf;component/Themes/CleanTheme.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <!-- One line: time, level tag, message. Warnings and errors color the tag and the message. -->
+    <BooleanToVisibilityConverter x:Key="LogBooleanToVisibility" />
+
+    <!-- One line: time, level tag, origin (source or short category), message. Warnings and errors color the tag and the message. -->
     <DataTemplate x:Key="LogEntryTemplate" DataType="{x:Type logging:LogEntry}">
         <Grid>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <TextBlock Text="{Binding TimestampUtc, StringFormat=HH:mm:ss.fff}" Foreground="{StaticResource TextSubtle}" Margin="0,0,12,0" />
             <TextBlock x:Name="Tag" Grid.Column="1" Text="{Binding LevelTag}" Foreground="{StaticResource TextSubtle}" Margin="0,0,12,0" />
-            <TextBlock x:Name="Message" Grid.Column="2" Text="{Binding Message}" TextWrapping="NoWrap" />
+            <TextBlock Grid.Column="2" Text="{Binding Origin}" ToolTip="{Binding Category}" Width="110" Margin="0,0,12,0"
+                       TextTrimming="CharacterEllipsis" Foreground="{StaticResource TextMuted}"
+                       Visibility="{Binding ShowOrigin, RelativeSource={RelativeSource AncestorType=logging:LogView}, Converter={StaticResource LogBooleanToVisibility}}" />
+            <TextBlock x:Name="Message" Grid.Column="3" Text="{Binding Message}" TextWrapping="NoWrap" />
         </Grid>
         <DataTemplate.Triggers>
             <DataTrigger Binding="{Binding Level}" Value="Information">
@@ -145,6 +151,10 @@
 
                                                 <TextBlock Style="{StaticResource FieldLabel}" Text="Source" />
                                                 <ComboBox x:Name="PART_SourceBox" Style="{StaticResource {x:Type ComboBox}}"
+                                                          ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}" />
+
+                                                <TextBlock Style="{StaticResource FieldLabel}" Text="Category" />
+                                                <ComboBox x:Name="PART_CategoryBox" Style="{StaticResource {x:Type ComboBox}}"
                                                           ItemContainerStyle="{StaticResource {x:Type ComboBoxItem}}" />
 
                                                 <TextBlock Style="{StaticResource FieldLabel}" Text="Message contains" />

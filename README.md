@@ -68,26 +68,53 @@ The controls carry their own default styles (with the palette), so they look rig
 
 ## Log
 
-```csharp
-// In [STAThread] Main, while building the host: the feed belongs to the UI thread's dispatcher.
-builder.Logging.AddLogFeed();
+The log is an `ILoggerProvider`, so anything that logs through `ILogger` shows up in it. Register it in an
+`[STAThread] Main` while building the host (the feed belongs to the UI thread's dispatcher), then resolve the
+`LogFeed` singleton for the view:
 
-// Anywhere, any thread:
-logger.LogWarning("Tick took {Ms} ms", 18);
-feed.Post(new LogEntry(DateTime.UtcNow, LogLevel.Information, Source: "UAV-1", Message: "Process started"));
+```csharp
+var builder = Host.CreateApplicationBuilder(args);
+builder.Logging.AddLogFeed();
+builder.Logging.AddFilter<LogFeedLoggerProvider>(null, LogLevel.Information); // or "Logging:LogFeed" in appsettings
 ```
 
 ```xml
 <clean:LogView Feed="{Binding Log}" />
 ```
 
-- `LogFeed` keeps the newest `Capacity` lines (default 2000). `SourceFilter`, `MinimumLevel` and `TextFilter` hide
-  lines without dropping them; `Sources` lists the sources seen; `ResetFilters()` clears all three. It raises
-  `PropertyChanged`, so filters can be bound. `Post` is thread-safe and batches onto the dispatcher; everything else is
-  UI-thread only.
-- `LogView` colors the level, virtualizes, follows new lines while scrolled to the bottom, and holds still once you
-  scroll up. Its top bar shows the line count ("120 of 340 lines" while filtered) and a **Filter** popout with level,
-  source and message-text filters; the button turns navy while a filter is on. Hide the bar with `ShowFilterBar="False"`.
+**Sources.** A `Source` value in a logging scope becomes the line's source, so the popout can narrow to it. The
+innermost scope wins, and scopes are shared with the other providers:
+
+```csharp
+private static readonly Func<ILogger, string, IDisposable?> UnitScope = LoggerMessage.DefineScope<string>("{Source}");
+
+using (UnitScope(logger, callsign))
+{
+    LogWaypointReached(logger, waypoint); // Source = callsign
+}
+// or: logger.BeginScope(new Dictionary<string, object> { ["Source"] = callsign })
+```
+
+Lines that don't come from `ILogger` (child process output, for example) can be posted directly, from any thread:
+
+```csharp
+feed.Post(new LogEntry(DateTime.UtcNow, LogLevel.Information, Source: "UAV-1", Message: "Process started"));
+```
+
+- Each `ILogger` line keeps its category, level, rendered message and exception (appended to the message). Event ids
+  and structured state are not kept.
+- `LogFeed` keeps the newest `Capacity` lines (default 2000). `SourceFilter`, `CategoryFilter`, `MinimumLevel` and
+  `TextFilter` hide lines without dropping them; `Sources` and `Categories` list what has been seen; `ResetFilters()`
+  clears them all. It raises `PropertyChanged`, so filters can be bound. `Post` is thread-safe and batches onto the
+  dispatcher; everything else is UI-thread only.
+- `LogView` shows time, level, origin (the source, else the short category such as `NodeSupervisor`; hide with
+  `ShowOrigin="False"`) and message, colors the level, virtualizes, follows new lines while scrolled to the bottom, and
+  holds still once you scroll up. Its top bar shows the line count ("120 of 340 lines" while filtered) and a **Filter**
+  popout with level, source, category and message-text filters; the button turns navy while a filter is on. Hide the
+  bar with `ShowFilterBar="False"`.
+
+The gallery sample is set up this way: a Generic Host whose hosted services log through `ILogger`, one of them per
+unit inside a `Source` scope.
 
 ## What's in the theme
 

@@ -185,12 +185,48 @@ public sealed class LogFeedTests
     });
 
     [Fact]
+    public void Category_filter_and_Categories_follow_the_lines() => Sta.Run(() =>
+    {
+        var feed = LogFeed.CreateForCurrentThread();
+        feed.Add(Line("posted"));
+        feed.Add(Line("server") with { Category = "App.Server" });
+        feed.Add(Line("nodes") with { Category = "App.Nodes" });
+
+        Assert.Equal(["App.Server", "App.Nodes"], feed.Categories);
+
+        feed.CategoryFilter = "App.Nodes";
+        Assert.True(feed.IsFiltered);
+        Assert.Equal(["nodes"], feed.Visible.Select(e => e.Message));
+
+        feed.Clear();
+        Assert.Empty(feed.Categories);
+    });
+
+    [Theory]
+    [InlineData("Strato.App.Launcher.Services.NodeSupervisor", "NodeSupervisor")]
+    [InlineData("Program", "Program")]
+    [InlineData("App.Cache<App.Models.Unit>", "Cache")]
+    [InlineData(null, null)]
+    public void ShortenCategory_drops_namespace_and_generic_arguments(string? category, string? expected) =>
+        Assert.Equal(expected, LogEntry.ShortenCategory(category));
+
+    [Fact]
+    public void Origin_prefers_the_source_over_the_short_category()
+    {
+        var entry = new LogEntry(DateTime.UtcNow, LogLevel.Information, null, "m") { Category = "App.Server" };
+
+        Assert.Equal("Server", entry.Origin);
+        Assert.Equal("UAV-1", (entry with { Source = "UAV-1" }).Origin);
+    }
+
+    [Fact]
     public void LevelTag_and_Text_format_the_line()
     {
         var entry = new LogEntry(new DateTime(2026, 10, 18, 9, 5, 7, 42, DateTimeKind.Utc), LogLevel.Warning, null, "Slow tick");
 
         Assert.Equal("WRN", entry.LevelTag);
         Assert.Equal("09:05:07.042  WRN  Slow tick", entry.Text);
+        Assert.Equal("09:05:07.042  WRN  Server  Slow tick", (entry with { Category = "App.Server" }).Text);
     }
 
     private static LogEntry Line(string message, LogLevel level = LogLevel.Information, string? source = null) =>

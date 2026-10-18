@@ -11,6 +11,12 @@ public sealed record LogEntry(DateTime TimestampUtc, LogLevel Level, string? Sou
     /// <summary>The <see cref="ILogger"/> category the line was written to, if any.</summary>
     public string? Category { get; init; }
 
+    /// <summary>The category without its namespace (and generic arguments), e.g. <c>NodeSupervisor</c>.</summary>
+    public string? ShortCategory => ShortenCategory(Category);
+
+    /// <summary>Where the line came from, as shown on it: the <see cref="Source"/>, else the <see cref="ShortCategory"/>.</summary>
+    public string? Origin => Source ?? ShortCategory;
+
     /// <summary>Three-letter level tag shown in front of the message.</summary>
     public string LevelTag => Level switch
     {
@@ -23,6 +29,20 @@ public sealed record LogEntry(DateTime TimestampUtc, LogLevel Level, string? Sou
         _ => "   ",
     };
 
-    /// <summary>The whole line as plain text (UTC time, level, message), e.g. for copying.</summary>
-    public string Text => $"{TimestampUtc:HH:mm:ss.fff}  {LevelTag}  {Message}";
+    /// <summary>The whole line as plain text (UTC time, level, origin, message), e.g. for copying.</summary>
+    public string Text => Origin is null
+        ? $"{TimestampUtc:HH:mm:ss.fff}  {LevelTag}  {Message}"
+        : $"{TimestampUtc:HH:mm:ss.fff}  {LevelTag}  {Origin}  {Message}";
+
+    /// <summary>The category without its namespace (and generic arguments).</summary>
+    public static string? ShortenCategory(string? category)
+    {
+        if (string.IsNullOrEmpty(category))
+        {
+            return category;
+        }
+        var generic = category.IndexOf('<', StringComparison.Ordinal);
+        var name = generic >= 0 ? category[..generic] : category;
+        return name[(name.LastIndexOf('.') + 1)..];
+    }
 }

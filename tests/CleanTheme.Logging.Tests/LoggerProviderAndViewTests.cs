@@ -8,8 +8,13 @@ namespace CleanTheme.Logging.Tests;
 
 public sealed partial class LoggerProviderAndViewTests
 {
+    private static readonly Func<ILogger, string, IDisposable?> SourceScope = LoggerMessage.DefineScope<string>("{Source}");
+
     [LoggerMessage(Level = LogLevel.Warning, Message = "Tick took {Ms} ms")]
     private static partial void LogSlowTick(ILogger logger, Exception exception, int ms);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "{Text}")]
+    private static partial void LogText(ILogger logger, string text);
 
     [Fact]
     public void ILogger_output_lands_in_the_registered_feed() => Sta.Run(() =>
@@ -67,11 +72,11 @@ public sealed partial class LoggerProviderAndViewTests
         Sta.Layout(view);
         var sourceBox = (ComboBox)view.Template.FindName("PART_SourceBox", view);
 
-        Assert.Equal([LogView.AllSourcesLabel, "A"], sourceBox.Items.Cast<string>());
+        Assert.Equal([LogView.AllSourcesLabel, "A"], Labels(sourceBox));
         Assert.Equal(0, sourceBox.SelectedIndex);
 
         feed.Add(new LogEntry(DateTime.UtcNow, LogLevel.Information, "B", "b"));
-        Assert.Equal([LogView.AllSourcesLabel, "A", "B"], sourceBox.Items.Cast<string>());
+        Assert.Equal([LogView.AllSourcesLabel, "A", "B"], Labels(sourceBox));
 
         sourceBox.SelectedIndex = 2;
         Assert.Equal("B", feed.SourceFilter);
@@ -114,4 +119,76 @@ public sealed partial class LoggerProviderAndViewTests
         var bar = (System.Windows.FrameworkElement)view.Template.FindName("FilterBar", view);
         Assert.Equal(System.Windows.Visibility.Collapsed, bar.Visibility);
     });
+
+    [Fact]
+    public void A_Source_scope_sets_the_line_source_and_the_innermost_wins() => Sta.Run(() =>
+    {
+        var services = new ServiceCollection().AddLogging(logging => logging.AddLogFeed());
+        using var provider = services.BuildServiceProvider();
+        var feed = provider.GetRequiredService<LogFeed>();
+        var logger = provider.GetRequiredService<ILogger<LoggerProviderAndViewTests>>();
+
+        LogText(logger, "outside");
+        using (SourceScope(logger, "UAV-1"))
+        {
+            LogText(logger, "template scope");
+            using (logger.BeginScope(new Dictionary<string, object> { ["Source"] = "AWACS-1", ["Other"] = 1 }))
+            {
+                LogText(logger, "dictionary scope");
+            }
+            using (logger.BeginScope(new Dictionary<string, object> { ["Unrelated"] = 2 }))
+            {
+                LogText(logger, "unrelated scope");
+            }
+        }
+        Sta.DoEvents();
+
+        Assert.Equal(
+            [("outside", null), ("template scope", "UAV-1"), ("dictionary scope", "AWACS-1"), ("unrelated scope", "UAV-1")],
+            feed.Visible.Select(e => (e.Message, e.Source)));
+        Assert.Equal(["UAV-1", "AWACS-1"], feed.Sources);
+    });
+
+    [Fact]
+    public void Scopes_are_shared_with_the_factory_scope_provider() => Sta.Run(() =>
+    {
+        var services = new ServiceCollection().AddLogging(logging => logging.AddLogFeed());
+        using var provider = services.BuildServiceProvider();
+        var feed = provider.GetRequiredService<LogFeed>();
+        var factory = provider.GetRequiredService<ILoggerFactory>();
+        var outer = factory.CreateLogger("Outer");
+        var inner = factory.CreateLogger("Inner");
+
+        // A scope opened on one category's logger applies to another's, as with the console provider.
+        using (SourceScope(outer, "UAV-2"))
+        {
+            LogText(inner, "hello");
+        }
+        Sta.DoEvents();
+
+        Assert.Equal("UAV-2", Assert.Single(feed.Visible).Source);
+    });
+
+    [Fact]
+    public void Filter_popout_category_box_shows_short_names_and_filters_by_full_category() => Sta.Run(() =>
+    {
+        var feed = LogFeed.CreateForCurrentThread();
+        feed.Add(new LogEntry(DateTime.UtcNow, LogLevel.Information, null, "a") { Category = "App.Services.NodeSupervisor" });
+        feed.Add(new LogEntry(DateTime.UtcNow, LogLevel.Information, null, "b") { Category = "App.Server" });
+        var view = new LogView { Feed = feed };
+        Sta.Layout(view);
+        var categoryBox = (ComboBox)view.Template.FindName("PART_CategoryBox", view);
+
+        Assert.Equal([LogView.AllCategoriesLabel, "NodeSupervisor", "Server"], Labels(categoryBox));
+        Assert.Equal("App.Services.NodeSupervisor", ((ComboBoxItem)categoryBox.Items[1]).ToolTip);
+
+        categoryBox.SelectedIndex = 1;
+        Assert.Equal("App.Services.NodeSupervisor", feed.CategoryFilter);
+        Assert.Equal(["a"], feed.Visible.Select(e => e.Message));
+
+        feed.ResetFilters();
+        Assert.Equal(0, categoryBox.SelectedIndex);
+    });
+
+    private static IEnumerable<string> Labels(ComboBox box) => box.Items.Cast<ComboBoxItem>().Select(item => (string)item.Content);
 }

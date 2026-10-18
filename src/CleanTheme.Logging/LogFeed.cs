@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 namespace CleanTheme.Logging;
 
 /// <summary>
-/// Bounded in-app log with source, level and text filters. <see cref="Visible"/> is what a <see cref="LogView"/> shows.
+/// Bounded in-app log with source, category, level and text filters. <see cref="Visible"/> is what a <see cref="LogView"/> shows.
 /// </summary>
 /// <remarks>
 /// <see cref="Post"/> is safe from any thread: entries queue up and are added on the feed's dispatcher in batches.
@@ -22,9 +22,12 @@ public sealed class LogFeed : INotifyPropertyChanged
     private readonly ObservableCollection<LogEntry> _visible = [];
     private readonly ObservableCollection<string> _sources = [];
     private readonly HashSet<string> _knownSources = new(StringComparer.Ordinal);
+    private readonly ObservableCollection<string> _categories = [];
+    private readonly HashSet<string> _knownCategories = new(StringComparer.Ordinal);
     private readonly ConcurrentQueue<LogEntry> _pending = new();
     private int _drainScheduled;
     private string? _sourceFilter;
+    private string? _categoryFilter;
     private LogLevel _minimumLevel = LogLevel.Trace;
     private string? _textFilter;
 
@@ -38,6 +41,7 @@ public sealed class LogFeed : INotifyPropertyChanged
         Capacity = capacity;
         Visible = new ReadOnlyObservableCollection<LogEntry>(_visible);
         Sources = new ReadOnlyObservableCollection<string>(_sources);
+        Categories = new ReadOnlyObservableCollection<string>(_categories);
     }
 
     /// <summary>Raised on the dispatcher thread when a filter, <see cref="TotalCount"/> or <see cref="IsFiltered"/> changes.</summary>
@@ -52,6 +56,9 @@ public sealed class LogFeed : INotifyPropertyChanged
     /// <summary>Every non-null <see cref="LogEntry.Source"/> seen since the last <see cref="Clear"/>, in first-seen order.</summary>
     public ReadOnlyObservableCollection<string> Sources { get; }
 
+    /// <summary>Every non-null <see cref="LogEntry.Category"/> seen since the last <see cref="Clear"/>, in first-seen order.</summary>
+    public ReadOnlyObservableCollection<string> Categories { get; }
+
     /// <summary>Lines kept before the oldest are dropped.</summary>
     public int Capacity { get; }
 
@@ -59,13 +66,20 @@ public sealed class LogFeed : INotifyPropertyChanged
     public int TotalCount => _all.Count;
 
     /// <summary>Whether any filter hides lines.</summary>
-    public bool IsFiltered => _sourceFilter != null || _minimumLevel > LogLevel.Trace || !string.IsNullOrEmpty(_textFilter);
+    public bool IsFiltered => _sourceFilter != null || _categoryFilter != null || _minimumLevel > LogLevel.Trace || !string.IsNullOrEmpty(_textFilter);
 
     /// <summary>Only lines with this <see cref="LogEntry.Source"/> are visible; null shows every source.</summary>
     public string? SourceFilter
     {
         get => _sourceFilter;
         set => SetFilter(ref _sourceFilter, value);
+    }
+
+    /// <summary>Only lines with this <see cref="LogEntry.Category"/> are visible; null shows every category.</summary>
+    public string? CategoryFilter
+    {
+        get => _categoryFilter;
+        set => SetFilter(ref _categoryFilter, value);
     }
 
     /// <summary>Lines below this level are hidden (still kept).</summary>
@@ -91,10 +105,12 @@ public sealed class LogFeed : INotifyPropertyChanged
             return;
         }
         _sourceFilter = null;
+        _categoryFilter = null;
         _minimumLevel = LogLevel.Trace;
         _textFilter = null;
         Refilter();
         OnPropertyChanged(nameof(SourceFilter));
+        OnPropertyChanged(nameof(CategoryFilter));
         OnPropertyChanged(nameof(MinimumLevel));
         OnPropertyChanged(nameof(TextFilter));
         OnPropertyChanged(nameof(IsFiltered));
@@ -120,7 +136,7 @@ public sealed class LogFeed : INotifyPropertyChanged
         OnPropertyChanged(nameof(TotalCount));
     }
 
-    /// <summary>Removes every line and source, including queued lines. Filters stay.</summary>
+    /// <summary>Removes every line, source and category, including queued lines. Filters stay.</summary>
     public void Clear()
     {
         _dispatcher.VerifyAccess();
@@ -129,6 +145,8 @@ public sealed class LogFeed : INotifyPropertyChanged
         _visible.Clear();
         _sources.Clear();
         _knownSources.Clear();
+        _categories.Clear();
+        _knownCategories.Clear();
         OnPropertyChanged(nameof(TotalCount));
     }
 
@@ -147,6 +165,10 @@ public sealed class LogFeed : INotifyPropertyChanged
         if (entry.Source != null && _knownSources.Add(entry.Source))
         {
             _sources.Add(entry.Source);
+        }
+        if (entry.Category != null && _knownCategories.Add(entry.Category))
+        {
+            _categories.Add(entry.Category);
         }
         if (Matches(entry))
         {
@@ -202,6 +224,7 @@ public sealed class LogFeed : INotifyPropertyChanged
     private bool Matches(LogEntry entry) =>
         entry.Level >= _minimumLevel
         && (_sourceFilter == null || entry.Source == _sourceFilter)
+        && (_categoryFilter == null || entry.Category == _categoryFilter)
         && (string.IsNullOrEmpty(_textFilter) || entry.Message.Contains(_textFilter, StringComparison.OrdinalIgnoreCase));
 
     private void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

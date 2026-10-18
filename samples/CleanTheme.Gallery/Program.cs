@@ -1,12 +1,31 @@
+using CleanTheme.Gallery.Services;
+using CleanTheme.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+
 namespace CleanTheme.Gallery;
 
+/// <summary>Entry point and composition root: a Generic Host whose services log through ILogger into the gallery's LogView.</summary>
 public static class Program
 {
     [STAThread]
-    public static void Main()
+    public static void Main(string[] args)
     {
-        var app = new App();
+        var builder = Host.CreateApplicationBuilder(args);
+
+        // The in-app log. Built here because the feed belongs to this (STA, UI) thread's dispatcher.
+        // Debug and up, so the gallery shows every level; a real app would usually start at Information.
+        builder.Logging.AddLogFeed();
+        builder.Logging.AddFilter<LogFeedLoggerProvider>(null, LogLevel.Debug);
+
+        builder.Services.AddHostedService<SimulatedServer>();
+        builder.Services.AddHostedService<SimulatedFleet>();
+        builder.Services.AddSingleton<MainWindow>();
+
+        using var host = builder.Build();
+        var app = new App(host);
         app.InitializeComponent();
-        app.Run(new MainWindow());
+        app.Run();
     }
 }

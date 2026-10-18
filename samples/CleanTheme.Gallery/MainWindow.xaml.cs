@@ -1,5 +1,4 @@
 using System.Windows;
-using System.Windows.Threading;
 using CleanTheme.Logging;
 using CleanTheme.Wpf.Controls;
 using Microsoft.Extensions.Logging;
@@ -8,25 +7,15 @@ namespace CleanTheme.Gallery;
 
 public partial class MainWindow : Window
 {
-    private static readonly string[] SampleMessages =
-    [
-        "Tick 18.4 ms",
-        "Client connected from 127.0.0.1:50211",
-        "Spawned ALPHA-1 (UAV)",
-        "Mission plan sent to BLUE operators",
-        "Snapshot published: 42 entities",
-    ];
+    private readonly LogFeed _feed;
+    private readonly ILogger<MainWindow> _logger;
 
-    // Null is the host itself; the others stand in for child processes.
-    private static readonly string?[] SampleSources = [null, "ALPHA-1", null, "BRAVO-2", "CHARLIE-3", null];
-
-    private readonly LogFeed _feed = LogFeed.CreateForCurrentThread();
-    private readonly DispatcherTimer _ticker = new() { Interval = TimeSpan.FromMilliseconds(700) };
-    private int _tick;
-
-    public MainWindow()
+    public MainWindow(LogFeed feed, ILogger<MainWindow> logger)
     {
+        _feed = feed;
+        _logger = logger;
         InitializeComponent();
+
         Rows.ItemsSource = new[]
         {
             new SampleRow("ALPHA-1", StatusState.Positive, 12, 412.5),
@@ -38,28 +27,28 @@ public partial class MainWindow : Window
             .ToArray();
 
         Log.Feed = _feed;
-        _ticker.Tick += (_, _) => WriteSampleLine();
-        _ticker.Start();
-        Closed += (_, _) => _ticker.Stop();
+        LogWindowOpened(_logger);
     }
 
-    private void WriteSampleLine()
+    private void OnLogError(object sender, RoutedEventArgs e)
     {
-        var level = (_tick % 7) switch
+        try
         {
-            0 => LogLevel.Debug,
-            5 => LogLevel.Warning,
-            _ => LogLevel.Information,
-        };
-        // Post works from any thread; the timer happens to run on the UI thread.
-        _feed.Post(new LogEntry(DateTime.UtcNow, level, SampleSources[_tick % SampleSources.Length], SampleMessages[_tick % SampleMessages.Length]));
-        _tick++;
+            throw new InvalidOperationException("Process exited with code 1");
+        }
+        catch (InvalidOperationException ex)
+        {
+            LogNodeFailed(_logger, ex, "BRAVO-2");
+        }
     }
-
-    private void OnLogError(object sender, RoutedEventArgs e) =>
-        _feed.Post(new LogEntry(DateTime.UtcNow, LogLevel.Error, "BRAVO-2", "Node BRAVO-2 exited with code 1"));
 
     private void OnClearLog(object sender, RoutedEventArgs e) => _feed.Clear();
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Gallery window opened")]
+    private static partial void LogWindowOpened(ILogger logger);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Node {Callsign} failed")]
+    private static partial void LogNodeFailed(ILogger logger, Exception exception, string callsign);
 
     private sealed record SampleRow(string Name, StatusState State, int Count, double Value);
 }
