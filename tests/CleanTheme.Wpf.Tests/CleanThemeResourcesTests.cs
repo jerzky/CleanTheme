@@ -19,19 +19,15 @@ public sealed class CleanThemeResourcesTests
         "CleanWindow", "Card", "Pill",
         "ButtonBaseStyle", "PrimaryButton", "DangerButton", "GhostButton", "SegmentButton", "RowButton",
         "NumericTextBox", "NumericHeader", "NumericCell", "LogList",
+        "ScrollBarThumb", "ScrollBarPageButton", "VerticalScrollBarTemplate", "HorizontalScrollBarTemplate",
     ];
 
     private static readonly Type[] ImplicitlyStyled =
     [
         typeof(Button), typeof(TextBox), typeof(ComboBox), typeof(ComboBoxItem),
         typeof(DataGrid), typeof(DataGridColumnHeader), typeof(DataGridRow), typeof(DataGridCell),
+        typeof(ScrollBar), typeof(ScrollViewer),
     ];
-
-    static CleanThemeResourcesTests()
-    {
-        // Application's static constructor registers the pack:// scheme; no Application instance is needed.
-        _ = Application.Current;
-    }
 
     [Fact]
     public void Theme_defines_every_public_key() => Sta.Run(() =>

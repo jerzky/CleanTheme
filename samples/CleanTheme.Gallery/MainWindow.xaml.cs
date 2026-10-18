@@ -1,25 +1,71 @@
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Threading;
+using CleanTheme.Logging;
+using CleanTheme.Wpf.Controls;
+using Microsoft.Extensions.Logging;
 
 namespace CleanTheme.Gallery;
 
 public partial class MainWindow : Window
 {
+    private static readonly string[] SampleMessages =
+    [
+        "Tick 18.4 ms",
+        "Client connected from 127.0.0.1:50211",
+        "Spawned ALPHA-1 (UAV)",
+        "Mission plan sent to BLUE operators",
+        "Snapshot published: 42 entities",
+    ];
+
+    private readonly LogFeed _feed = LogFeed.CreateForCurrentThread();
+    private readonly DispatcherTimer _ticker = new() { Interval = TimeSpan.FromMilliseconds(700) };
+    private int _tick;
+
     public MainWindow()
     {
         InitializeComponent();
         Rows.ItemsSource = new[]
         {
-            new SampleRow("ALPHA-1", "Running", 12, 412.5),
-            new SampleRow("BRAVO-2", "Stopped", 3, 0),
-            new SampleRow("CHARLIE-3", "Running", 27, 1288.25),
+            new SampleRow("ALPHA-1", StatusState.Positive, 12, 412.5),
+            new SampleRow("BRAVO-2", StatusState.Warning, 3, 0),
+            new SampleRow("CHARLIE-3", StatusState.Negative, 27, 1288.25),
         };
-        Log.ItemsSource = new[]
-        {
-            "12:00:01.204 INF Host started",
-            "12:00:01.388 INF Listening on 127.0.0.1:9050",
-            "12:00:02.015 WRN Slow tick: 18.4 ms",
-        };
+        LongList.ItemsSource = Enumerable.Range(1, 60)
+            .Select(i => $"Item {i:00}: a line long enough to need the horizontal scroll bar as well as the vertical one")
+            .ToArray();
+
+        Log.Feed = _feed;
+        _ticker.Tick += (_, _) => WriteSampleLine();
+        _ticker.Start();
+        Closed += (_, _) => _ticker.Stop();
     }
 
-    private sealed record SampleRow(string Name, string State, int Count, double Value);
+    private void WriteSampleLine()
+    {
+        var level = (_tick % 7) switch
+        {
+            0 => LogLevel.Debug,
+            5 => LogLevel.Warning,
+            _ => LogLevel.Information,
+        };
+        // Post works from any thread; the timer happens to run on the UI thread.
+        _feed.Post(new LogEntry(DateTime.UtcNow, level, null, SampleMessages[_tick % SampleMessages.Length]));
+        _tick++;
+    }
+
+    private void OnLogError(object sender, RoutedEventArgs e) =>
+        _feed.Post(new LogEntry(DateTime.UtcNow, LogLevel.Error, null, "Node BRAVO-2 exited with code 1"));
+
+    private void OnClearLog(object sender, RoutedEventArgs e) => _feed.Clear();
+
+    private void OnLevelFilterChanged(object sender, SelectionChangedEventArgs e) =>
+        _feed.MinimumLevel = ((SegmentedControl)sender).SelectedIndex switch
+        {
+            1 => LogLevel.Information,
+            2 => LogLevel.Warning,
+            _ => LogLevel.Trace,
+        };
+
+    private sealed record SampleRow(string Name, StatusState State, int Count, double Value);
 }

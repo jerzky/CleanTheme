@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <!-- Every style of the theme on one page, for eyeballing changes. -->
+  <!-- Every style and control of both packages on one page, for eyeballing changes. -->
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\CleanTheme.Wpf\CleanTheme.Wpf.csproj" />
+    <ProjectReference Include="..\..\src\CleanTheme.Logging\CleanTheme.Logging.csproj" />
   </ItemGroup>
 
   <!-- Program.Main is the entry point, so App.xaml must not generate one. -->

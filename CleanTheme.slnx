@@ -1,11 +1,13 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/CleanTheme.Logging/CleanTheme.Logging.csproj" />
     <Project Path="src/CleanTheme.Wpf/CleanTheme.Wpf.csproj" />
   </Folder>
   <Folder Name="/samples/">
     <Project Path="samples/CleanTheme.Gallery/CleanTheme.Gallery.csproj" />
   </Folder>
   <Folder Name="/tests/">
+    <Project Path="tests/CleanTheme.Logging.Tests/CleanTheme.Logging.Tests.csproj" />
     <Project Path="tests/CleanTheme.Wpf.Tests/CleanTheme.Wpf.Tests.csproj" />
   </Folder>
 </Solution>

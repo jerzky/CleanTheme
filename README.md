@@ -5,20 +5,26 @@ Templates stay minimal: controls are restyled with setters wherever the stock te
 
 Originally the Strato Launcher theme.
 
+| Package | What |
+|---|---|
+| `CleanTheme.Wpf` | The theme (palette, styles for stock controls, scroll bars) and a few controls: `Card`, `StatusPill`, `MetricTile`, `SegmentedControl` |
+| `CleanTheme.Logging` | In-app log: an `ILoggerProvider` feeding a bounded, filterable `LogFeed`, and a `LogView` to show it |
+
 ## Install
 
-The package is published to GitHub Packages (`https://nuget.pkg.github.com/jerzky/index.json`), not nuget.org.
+The packages are published to GitHub Packages (`https://nuget.pkg.github.com/jerzky/index.json`), not nuget.org.
 
 ```xml
-<PackageReference Include="CleanTheme.Wpf" Version="0.1.0" />
+<PackageReference Include="CleanTheme.Wpf" Version="0.2.0" />
+<PackageReference Include="CleanTheme.Logging" Version="0.2.0" />
 ```
 
-## Use
+## Use the theme
 
 Merge the theme into your application resources:
 
 ```xml
-<Application xmlns:clean="clr-namespace:CleanTheme.Wpf;assembly=CleanTheme.Wpf" ...>
+<Application xmlns:clean="https://github.com/jerzky/CleanTheme" ...>
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -37,7 +43,50 @@ Give windows the base look (implicit styles don't reach `Window` subclasses):
 <Window ... Style="{StaticResource CleanWindow}">
 ```
 
-## What's in it
+The `https://github.com/jerzky/CleanTheme` XML namespace covers both packages.
+
+## Controls
+
+```xml
+<clean:Card Header="Nodes">
+    <clean:Card.Actions>
+        <Button Content="Clear" Style="{StaticResource GhostButton}" />
+    </clean:Card.Actions>
+    ...
+</clean:Card>
+
+<clean:StatusPill State="Positive" Content="Server running" />   <!-- Neutral, Info, Positive, Warning, Negative -->
+
+<clean:MetricTile Label="Tick" Value="{Binding TickMs}" Unit="ms" />
+
+<clean:SegmentedControl ItemsSource="{Binding TimeScales}" SelectedItem="{Binding TimeScale}" />
+```
+
+`SegmentedControl` is a single-selection `ListBox`; declare literal items as `clean:SegmentedItem`.
+
+The controls carry their own default styles (with the palette), so they look right even before the theme is merged.
+
+## Log
+
+```csharp
+// In [STAThread] Main, while building the host: the feed belongs to the UI thread's dispatcher.
+builder.Logging.AddLogFeed();
+
+// Anywhere, any thread:
+logger.LogWarning("Tick took {Ms} ms", 18);
+feed.Post(new LogEntry(DateTime.UtcNow, LogLevel.Information, Source: "UAV-1", Message: "Process started"));
+```
+
+```xml
+<clean:LogView Feed="{Binding Log}" />
+```
+
+- `LogFeed` keeps the newest `Capacity` lines (default 2000). `SourceFilter` and `MinimumLevel` hide lines without
+  dropping them. `Post` is thread-safe and batches onto the dispatcher; everything else is UI-thread only.
+- `LogView` colors the level, virtualizes, follows new lines while scrolled to the bottom, and holds still once you
+  scroll up.
+
+## What's in the theme
 
 | Kind | Keys |
 |---|---|
@@ -46,10 +95,11 @@ Give windows the base look (implicit styles don't reach `Window` subclasses):
 | Accent | `Accent`, `AccentHover`, `AccentPressed`, `AccentSoft` |
 | Status | `Positive(Soft)`, `Warning(Soft)`, `Negative(Soft)`, `NegativeBorder`, `NeutralSoft` |
 | Text styles | `CardTitle`, `FieldLabel`, `MetricLabel`, `MetricValue` |
-| Containers | `CleanWindow`, `Card`, `Pill` (set `Background` / `TextElement.Foreground` per state) |
+| Containers | `CleanWindow`, `Card`, `Pill` (style keys for plain `Border`s; the controls above are the richer option) |
 | Buttons | implicit `Button`, `PrimaryButton`, `DangerButton`, `GhostButton`, `RowButton`, `SegmentButton` (for `ToggleButton` / `RadioButton`, highlights on `IsChecked`) |
 | Inputs | implicit `TextBox`, `ComboBox`, `ComboBoxItem`; `NumericTextBox` |
 | Tables | implicit `DataGrid`, `DataGridColumnHeader`, `DataGridRow`, `DataGridCell`; `NumericHeader`, `NumericCell` |
+| Scrolling | implicit `ScrollBar` (thin, rounded thumb with a minimum length, no arrows) and `ScrollViewer` |
 | Log | `LogList` (monospace `ListBox`) |
 
 Resource keys are public API: renaming or removing one is a breaking change.
@@ -62,9 +112,9 @@ dotnet test CleanTheme.slnx
 dotnet run --project samples/CleanTheme.Gallery
 ```
 
-The gallery shows every style on one page.
+The gallery shows every style and control on one page, with a live log.
 
 ## Release
 
-Versions come from git tags through MinVer. Pushing a tag such as `v0.1.0` runs `publish.yml`, which builds, tests,
-packs and pushes `CleanTheme.Wpf` to GitHub Packages.
+Versions come from git tags through MinVer. Pushing a tag such as `v0.2.0` runs `publish.yml`, which builds, tests,
+packs and pushes both packages to GitHub Packages.
