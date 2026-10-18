@@ -1,4 +1,5 @@
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using CleanTheme.Wpf.Tests;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -55,5 +56,62 @@ public sealed partial class LoggerProviderAndViewTests
 
         view.Feed = null;
         Assert.Null(view.ItemsSource);
+    });
+
+    [Fact]
+    public void Filter_popout_source_box_lists_sources_and_edits_the_feed_filter() => Sta.Run(() =>
+    {
+        var feed = LogFeed.CreateForCurrentThread();
+        feed.Add(new LogEntry(DateTime.UtcNow, LogLevel.Information, "A", "a"));
+        var view = new LogView { Feed = feed };
+        Sta.Layout(view);
+        var sourceBox = (ComboBox)view.Template.FindName("PART_SourceBox", view);
+
+        Assert.Equal([LogView.AllSourcesLabel, "A"], sourceBox.Items.Cast<string>());
+        Assert.Equal(0, sourceBox.SelectedIndex);
+
+        feed.Add(new LogEntry(DateTime.UtcNow, LogLevel.Information, "B", "b"));
+        Assert.Equal([LogView.AllSourcesLabel, "A", "B"], sourceBox.Items.Cast<string>());
+
+        sourceBox.SelectedIndex = 2;
+        Assert.Equal("B", feed.SourceFilter);
+
+        feed.SourceFilter = "A";
+        Assert.Equal(1, sourceBox.SelectedIndex);
+
+        feed.SourceFilter = null;
+        Assert.Equal(0, sourceBox.SelectedIndex);
+    });
+
+    [Fact]
+    public void Filter_popout_level_choice_and_reset_button_drive_the_feed() => Sta.Run(() =>
+    {
+        var feed = LogFeed.CreateForCurrentThread();
+        var view = new LogView { Feed = feed };
+        Sta.Layout(view);
+        var levels = (Selector)view.Template.FindName("LevelChoices", view);
+        var reset = (ButtonBase)view.Template.FindName("PART_ResetButton", view);
+
+        levels.SelectedIndex = 2;
+        Assert.Equal(LogLevel.Warning, feed.MinimumLevel);
+
+        feed.MinimumLevel = LogLevel.Error;
+        Assert.Equal(LogLevel.Error, levels.SelectedValue);
+
+        feed.TextFilter = "x";
+        reset.RaiseEvent(new System.Windows.RoutedEventArgs(ButtonBase.ClickEvent));
+
+        Assert.False(feed.IsFiltered);
+        Assert.Equal(LogLevel.Trace, levels.SelectedValue);
+    });
+
+    [Fact]
+    public void Filter_bar_can_be_hidden() => Sta.Run(() =>
+    {
+        var view = new LogView { Feed = LogFeed.CreateForCurrentThread(), ShowFilterBar = false };
+        Sta.Layout(view);
+
+        var bar = (System.Windows.FrameworkElement)view.Template.FindName("FilterBar", view);
+        Assert.Equal(System.Windows.Visibility.Collapsed, bar.Visibility);
     });
 }

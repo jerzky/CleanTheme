@@ -403,13 +403,13 @@
                                                 CanContentScroll="{TemplateBinding CanContentScroll}"
                                                 CanHorizontallyScroll="False" CanVerticallyScroll="False"
                                                 Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
-                        <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Column="1" Cursor="Arrow"
+                        <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Column="1" Cursor="Arrow" Style="{StaticResource {x:Type ScrollBar}}"
                                    AutomationProperties.AutomationId="VerticalScrollBar"
                                    Minimum="0" Maximum="{TemplateBinding ScrollableHeight}"
                                    ViewportSize="{TemplateBinding ViewportHeight}"
                                    Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
                                    Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" />
-                        <ScrollBar x:Name="PART_HorizontalScrollBar" Grid.Row="1" Orientation="Horizontal" Cursor="Arrow"
+                        <ScrollBar x:Name="PART_HorizontalScrollBar" Grid.Row="1" Orientation="Horizontal" Cursor="Arrow" Style="{StaticResource {x:Type ScrollBar}}"
                                    AutomationProperties.AutomationId="HorizontalScrollBar"
                                    Minimum="0" Maximum="{TemplateBinding ScrollableWidth}"
                                    ViewportSize="{TemplateBinding ViewportWidth}"

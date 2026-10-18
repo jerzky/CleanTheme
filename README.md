@@ -15,8 +15,8 @@ Originally the Strato Launcher theme.
 The packages are published to GitHub Packages (`https://nuget.pkg.github.com/jerzky/index.json`), not nuget.org.
 
 ```xml
-<PackageReference Include="CleanTheme.Wpf" Version="0.2.0" />
-<PackageReference Include="CleanTheme.Logging" Version="0.2.0" />
+<PackageReference Include="CleanTheme.Wpf" Version="0.3.0" />
+<PackageReference Include="CleanTheme.Logging" Version="0.3.0" />
 ```
 
 ## Use the theme
@@ -81,10 +81,13 @@ feed.Post(new LogEntry(DateTime.UtcNow, LogLevel.Information, Source: "UAV-1", M
 <clean:LogView Feed="{Binding Log}" />
 ```
 
-- `LogFeed` keeps the newest `Capacity` lines (default 2000). `SourceFilter` and `MinimumLevel` hide lines without
-  dropping them. `Post` is thread-safe and batches onto the dispatcher; everything else is UI-thread only.
+- `LogFeed` keeps the newest `Capacity` lines (default 2000). `SourceFilter`, `MinimumLevel` and `TextFilter` hide
+  lines without dropping them; `Sources` lists the sources seen; `ResetFilters()` clears all three. It raises
+  `PropertyChanged`, so filters can be bound. `Post` is thread-safe and batches onto the dispatcher; everything else is
+  UI-thread only.
 - `LogView` colors the level, virtualizes, follows new lines while scrolled to the bottom, and holds still once you
-  scroll up.
+  scroll up. Its top bar shows the line count ("120 of 340 lines" while filtered) and a **Filter** popout with level,
+  source and message-text filters; the button turns navy while a filter is on. Hide the bar with `ShowFilterBar="False"`.
 
 ## What's in the theme
 
@@ -116,5 +119,5 @@ The gallery shows every style and control on one page, with a live log.
 
 ## Release
 
-Versions come from git tags through MinVer. Pushing a tag such as `v0.2.0` runs `publish.yml`, which builds, tests,
+Versions come from git tags through MinVer. Pushing a tag such as `v0.3.0` runs `publish.yml`, which builds, tests,
 packs and pushes both packages to GitHub Packages.

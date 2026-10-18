@@ -102,20 +102,14 @@
                 </clean:Card>
 
                 <!-- Log -->
-                <clean:Card Grid.Row="4" Grid.ColumnSpan="3" Header="LogView">
+                <clean:Card Grid.Row="4" Grid.ColumnSpan="3" Header="LogView (try the Filter popout)">
                     <clean:Card.Actions>
                         <StackPanel Orientation="Horizontal">
-                            <clean:SegmentedControl x:Name="LevelFilter" SelectedIndex="0" Margin="0,0,8,0"
-                                                    SelectionChanged="OnLevelFilterChanged">
-                                <clean:SegmentedItem Content="All" />
-                                <clean:SegmentedItem Content="Info+" />
-                                <clean:SegmentedItem Content="Warnings+" />
-                            </clean:SegmentedControl>
                             <Button Content="Log an error" Style="{StaticResource GhostButton}" Click="OnLogError" />
                             <Button Content="Clear" Style="{StaticResource GhostButton}" Click="OnClearLog" />
                         </StackPanel>
                     </clean:Card.Actions>
-                    <clean:LogView x:Name="Log" Height="180" />
+                    <clean:LogView x:Name="Log" Height="220" />
                 </clean:Card>
 
                 <!-- Table -->

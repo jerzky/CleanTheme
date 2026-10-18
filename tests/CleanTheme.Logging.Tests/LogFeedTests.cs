@@ -109,6 +109,82 @@ public sealed class LogFeedTests
     });
 
     [Fact]
+    public void Text_filter_matches_messages_case_insensitively() => Sta.Run(() =>
+    {
+        var feed = LogFeed.CreateForCurrentThread();
+        feed.Add(Line("Tick took 18 ms"));
+        feed.Add(Line("Client connected"));
+
+        feed.TextFilter = "TICK";
+        Assert.Equal(["Tick took 18 ms"], feed.Visible.Select(e => e.Message));
+
+        feed.TextFilter = "";
+        Assert.Equal(2, feed.Visible.Count);
+    });
+
+    [Fact]
+    public void Sources_lists_each_source_once_in_first_seen_order_and_Clear_resets_it() => Sta.Run(() =>
+    {
+        var feed = LogFeed.CreateForCurrentThread();
+        feed.Add(Line("x", source: "B"));
+        feed.Add(Line("x"));
+        feed.Add(Line("x", source: "A"));
+        feed.Add(Line("x", source: "B"));
+
+        Assert.Equal(["B", "A"], feed.Sources);
+
+        feed.SourceFilter = "A";
+        feed.Clear();
+        Assert.Empty(feed.Sources);
+        Assert.Equal("A", feed.SourceFilter); // Filters survive a clear.
+    });
+
+    [Fact]
+    public void Filter_changes_notify_and_ResetFilters_clears_them_all() => Sta.Run(() =>
+    {
+        var feed = LogFeed.CreateForCurrentThread();
+        feed.Add(Line("debug", LogLevel.Debug, "A"));
+        feed.Add(Line("warn", LogLevel.Warning, "B"));
+        var changed = new List<string?>();
+        feed.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
+
+        feed.MinimumLevel = LogLevel.Warning;
+        Assert.True(feed.IsFiltered);
+        Assert.Equal([nameof(LogFeed.MinimumLevel), nameof(LogFeed.IsFiltered)], changed);
+
+        feed.SourceFilter = "B";
+        feed.TextFilter = "wa";
+        changed.Clear();
+        feed.ResetFilters();
+
+        Assert.False(feed.IsFiltered);
+        Assert.Null(feed.SourceFilter);
+        Assert.Null(feed.TextFilter);
+        Assert.Equal(LogLevel.Trace, feed.MinimumLevel);
+        Assert.Equal(2, feed.Visible.Count);
+        Assert.Contains(nameof(LogFeed.IsFiltered), changed);
+    });
+
+    [Fact]
+    public void TotalCount_counts_hidden_lines_and_notifies_once_per_drained_batch() => Sta.Run(() =>
+    {
+        var feed = LogFeed.CreateForCurrentThread();
+        feed.MinimumLevel = LogLevel.Error;
+        var notifications = 0;
+        feed.PropertyChanged += (_, e) => notifications += e.PropertyName == nameof(LogFeed.TotalCount) ? 1 : 0;
+
+        for (var i = 0; i < 10; i++)
+        {
+            feed.Post(Line("hidden"));
+        }
+        Sta.DoEvents();
+
+        Assert.Equal(10, feed.TotalCount);
+        Assert.Empty(feed.Visible);
+        Assert.Equal(1, notifications);
+    });
+
+    [Fact]
     public void LevelTag_and_Text_format_the_line()
     {
         var entry = new LogEntry(new DateTime(2026, 10, 18, 9, 5, 7, 42, DateTimeKind.Utc), LogLevel.Warning, null, "Slow tick");
