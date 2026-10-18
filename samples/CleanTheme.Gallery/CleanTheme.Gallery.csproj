@@ -4,6 +4,8 @@
        Generic Host, hosted services logging through ILogger into the LogView. -->
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
+    <!-- One target, so `dotnet run` needs no -f. -->
+    <TargetFrameworks>net10.0-windows</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

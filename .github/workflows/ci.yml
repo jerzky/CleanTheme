@@ -30,7 +30,11 @@ jobs:
 
       - uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: 10.0.x
+          # 8 and 9 runtimes for the tests; the 10 SDK builds all three targets.
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
 
       - name: Build
         run: dotnet build CleanTheme.slnx --configuration Release
