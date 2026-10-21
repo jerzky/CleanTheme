@@ -8,7 +8,7 @@ Originally the Strato Launcher theme.
 
 | Package | What |
 |---|---|
-| `CleanTheme.Wpf` | The theme (palette and styles for the stock WPF controls) and controls: `Card`, `StatusPill`, `MetricTile`, `SegmentedControl`, `SearchBox`, `ToggleSwitch`, `NumericUpDown`, `EmptyState`, `ToastHost`, `CleanDialog` / `CleanMessageBox`, `HamburgerMenu` |
+| `CleanTheme.Wpf` | The theme (palette and styles for the stock WPF controls) and controls: `Card`, `StatusPill`, `MetricTile`, `SegmentedControl`, `SearchBox`, `ToggleSwitch`, `NumericUpDown`, `EmptyState`, `ToastHost`, `CleanDialog` / `CleanMessageBox`, `HamburgerMenu`, `SearchableSettingsView` |
 | `CleanTheme.Logging` | In-app log: an `ILoggerProvider` feeding a bounded, filterable `LogFeed`, and a `LogView` to show it |
 
 ## Install
@@ -134,6 +134,36 @@ string? name = CleanMessageBox.Prompt(owner, "Save scenario", "Name", "New scena
         </clean:HamburgerProfileButton>
     </clean:HamburgerMenu.Footer>
 </clean:HamburgerMenu>
+```
+
+**SearchableSettingsView.** A modern settings interface with category tabs, sections, two-column setting rows, and instant live search filtering with `Ctrl+K`:
+
+```xml
+<clean:SearchableSettingsView Title="Settings" Description="Manage your team and preferences here.">
+    <clean:SettingsCategory Header="My details">
+        <clean:SettingsGroup Header="Personal info" Description="Update your personal details here.">
+            <clean:SettingsGroup.Actions>
+                <Button Content="Save" Style="{StaticResource PrimaryButton}" />
+            </clean:SettingsGroup.Actions>
+
+            <clean:SettingRow Header="Name" IsRequired="True">
+                <TextBox Text="Jens G" />
+            </clean:SettingRow>
+
+            <clean:SettingRow Header="Email address" IsRequired="True" Description="Used for alerts.">
+                <TextBox Text="jens@example.com" />
+            </clean:SettingRow>
+
+            <clean:SettingRow Header="Two-factor authentication">
+                <clean:ToggleSwitch IsChecked="True" Content="Enabled" />
+            </clean:SettingRow>
+        </clean:SettingsGroup>
+    </clean:SettingsCategory>
+
+    <clean:SettingsCategory Header="Notifications" Badge="2">
+        ...
+    </clean:SettingsCategory>
+</clean:SearchableSettingsView>
 ```
 
 The controls carry their own default styles; their colors come from the merged theme.

@@ -853,4 +853,256 @@
         </Setter>
     </Style>
 
+    <!-- Searchable Settings Controls -->
+
+    <!-- Two-column setting row: label on left, control on right -->
+    <Style TargetType="controls:SettingRow">
+        <Setter Property="Foreground" Value="{DynamicResource Text}" />
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="0,14" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Divider}" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:SettingRow">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{TemplateBinding HeaderWidth}" />
+                                <ColumnDefinition Width="24" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Left Column: Header + Asterisk + Description -->
+                            <StackPanel Grid.Column="0" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Margin="0,0,12,0">
+                                <StackPanel Orientation="Horizontal">
+                                    <ContentPresenter Content="{TemplateBinding Header}"
+                                                      ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                                      ContentStringFormat="{TemplateBinding HeaderStringFormat}"
+                                                      RecognizesAccessKey="True"
+                                                      TextElement.FontWeight="Medium"
+                                                      TextElement.FontSize="13"
+                                                      TextElement.Foreground="{TemplateBinding Foreground}" />
+                                    <TextBlock x:Name="RequiredIndicator" Text=" *" Foreground="{DynamicResource Accent}"
+                                               FontWeight="Bold" Visibility="Collapsed" />
+                                </StackPanel>
+                                <TextBlock x:Name="DescriptionText" Text="{TemplateBinding Description}"
+                                           FontSize="12" Foreground="{DynamicResource TextMuted}"
+                                           TextWrapping="Wrap" Margin="0,4,0,0" />
+                            </StackPanel>
+
+                            <!-- Right Column: Interactive Editor Control -->
+                            <ContentPresenter Grid.Column="2"
+                                              Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsRequired" Value="True">
+                            <Setter TargetName="RequiredIndicator" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="Description" Value="{x:Null}">
+                            <Setter TargetName="DescriptionText" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsMatch" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Settings section grouping SettingRows -->
+    <Style TargetType="controls:SettingsGroup">
+        <Setter Property="Foreground" Value="{DynamicResource Text}" />
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Margin" Value="0,0,0,28" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:SettingsGroup">
+                    <StackPanel Margin="{TemplateBinding Margin}">
+                        <!-- Section Header + Description + Actions -->
+                        <Border BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1" Padding="0,0,0,12" Margin="0,0,0,4">
+                            <DockPanel LastChildFill="True">
+                                <ContentPresenter DockPanel.Dock="Right"
+                                                  Content="{TemplateBinding Actions}"
+                                                  ContentTemplate="{TemplateBinding ActionsTemplate}"
+                                                  VerticalAlignment="Center" />
+                                <StackPanel VerticalAlignment="Center">
+                                    <ContentPresenter Content="{TemplateBinding Header}"
+                                                      ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                                      TextElement.FontSize="16"
+                                                      TextElement.FontWeight="SemiBold"
+                                                      TextElement.Foreground="{TemplateBinding Foreground}" />
+                                    <TextBlock x:Name="GroupDesc" Text="{TemplateBinding Description}"
+                                               FontSize="12.5" Foreground="{DynamicResource TextMuted}"
+                                               Margin="0,3,0,0" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </DockPanel>
+                        </Border>
+
+                        <!-- Items host for SettingRow elements -->
+                        <ItemsPresenter />
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Description" Value="{x:Null}">
+                            <Setter TargetName="GroupDesc" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsMatch" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Settings category tab -->
+    <Style TargetType="controls:SettingsCategory">
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:SettingsCategory">
+                    <Border x:Name="TabChrome" Background="Transparent" BorderBrush="Transparent"
+                            BorderThickness="0,0,0,2" Padding="{TemplateBinding Padding}" Margin="0,0,6,0" SnapsToDevicePixels="True">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <ContentPresenter Content="{TemplateBinding Header}"
+                                              RecognizesAccessKey="True"
+                                              TextElement.FontSize="{TemplateBinding FontSize}"
+                                              TextElement.FontWeight="Medium" />
+                            <Border x:Name="BadgeBorder" Background="{DynamicResource NeutralSoft}"
+                                    CornerRadius="8" Padding="6,1" Margin="6,0,0,0" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Badge, RelativeSource={RelativeSource TemplatedParent}}"
+                                           FontSize="11" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextMuted}" />
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Badge" Value="{x:Null}">
+                            <Setter TargetName="BadgeBorder" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource Text}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="TabChrome" Property="BorderBrush" Value="{DynamicResource Accent}" />
+                            <Setter Property="Foreground" Value="{DynamicResource Accent}" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                        </Trigger>
+                        <Trigger Property="IsMatch" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- SearchableSettingsView shell -->
+    <Style TargetType="controls:SearchableSettingsView">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource Text}" />
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:SearchableSettingsView">
+                    <Grid Background="{TemplateBinding Background}">
+                        <DockPanel LastChildFill="True">
+                            <!-- Top Header: Title + Subtitle on left, Search box on right -->
+                            <Border DockPanel.Dock="Top" Margin="0,0,0,16">
+                                <DockPanel LastChildFill="True">
+                                    <!-- Search box with Ctrl+K shortcut -->
+                                    <controls:SearchBox x:Name="PART_SearchBox"
+                                                        DockPanel.Dock="Right"
+                                                        Width="240"
+                                                        Placeholder="{TemplateBinding SearchPlaceholder}"
+                                                        Text="{Binding SearchText, RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}" />
+
+                                    <!-- Page Title and Description -->
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="{TemplateBinding Title}"
+                                                   FontSize="22" FontWeight="Bold"
+                                                   Foreground="{TemplateBinding Foreground}" />
+                                        <TextBlock x:Name="PART_Description"
+                                                   Text="{TemplateBinding Description}"
+                                                   FontSize="13" Foreground="{DynamicResource TextMuted}"
+                                                   Margin="0,3,0,0" />
+                                    </StackPanel>
+                                </DockPanel>
+                            </Border>
+
+                            <!-- Horizontal Category Tab Strip -->
+                            <Border x:Name="TabStripBorder" DockPanel.Dock="Top"
+                                    BorderBrush="{DynamicResource Divider}" BorderThickness="0,0,0,1"
+                                    Margin="0,0,0,20">
+                                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Focusable="False">
+                                    <ItemsPresenter />
+                                </ScrollViewer>
+                            </Border>
+
+                            <!-- Main content area -->
+                            <Grid>
+                                <!-- Category View -->
+                                <ScrollViewer x:Name="CategoryContent"
+                                              Focusable="False"
+                                              VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                              HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}">
+                                    <ItemsControl ItemsSource="{Binding SelectedItem.Items, RelativeSource={RelativeSource TemplatedParent}}" Focusable="False" />
+                                </ScrollViewer>
+
+                                <!-- Empty State when search has 0 matches -->
+                                <controls:EmptyState x:Name="NoMatchesState"
+                                                     Visibility="Collapsed"
+                                                     Title="No settings found"
+                                                     Description="No settings match your search term. Try another keyword."
+                                                     Icon="M 11,4 A 7,7 0 1 0 11,18 A 7,7 0 1 0 11,4 Z M 16,16 L 21,21"
+                                                     VerticalAlignment="Center" HorizontalAlignment="Center" />
+                            </Grid>
+                        </DockPanel>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Description" Value="{x:Null}">
+                            <Setter TargetName="PART_Description" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="HasMatches" Value="False">
+                            <Setter TargetName="TabStripBorder" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="CategoryContent" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="NoMatchesState" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

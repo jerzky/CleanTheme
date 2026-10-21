@@ -37,6 +37,7 @@
             <clean:HamburgerMenuItem Icon="M 4,4 H 10 V 10 H 4 Z M 14,4 H 20 V 10 H 14 Z M 4,14 H 10 V 20 H 4 Z M 14,14 H 20 V 20 H 14 Z" Text="Fleet Units" Badge="3" />
             <clean:HamburgerMenuItem Icon="M 4,6 H 20 M 4,12 H 20 M 4,18 H 14" Text="Activity Logs" />
             <clean:HamburgerMenuItem Icon="M 2,4 H 22 V 16 H 6 L 2,20 Z" Text="Feedback &amp; Dialogs" />
+            <clean:HamburgerMenuItem Icon="M 19.14,12.94 C 19.18,12.63 19.2,12.32 19.2,12 C 19.2,11.68 19.18,11.37 19.14,11.06 L 21.16,9.48 C 21.34,9.34 21.39,9.08 21.28,8.88 L 19.36,5.56 C 19.24,5.36 19,5.28 18.79,5.36 L 16.42,6.32 C 15.93,5.94 15.39,5.63 14.81,5.39 L 14.45,2.87 C 14.41,2.64 14.21,2.47 13.98,2.47 L 10.02,2.47 C 9.79,2.47 9.59,2.64 9.55,2.87 L 9.19,5.39 C 8.61,5.63 8.07,5.94 7.58,6.32 L 5.21,5.36 C 5,5.28 4.76,5.36 4.64,5.56 L 2.72,8.88 C 2.61,9.08 2.66,9.34 2.84,9.48 L 4.86,11.06 C 4.82,11.37 4.8,11.68 4.8,12 C 4.8,12.32 4.82,12.63 4.86,12.94 L 2.84,14.52 C 2.66,14.66 2.61,14.92 2.72,15.12 L 4.64,18.44 C 4.76,18.64 5,18.72 5.21,18.64 L 7.58,17.68 C 8.07,18.06 8.61,18.37 9.19,18.61 L 9.55,21.13 C 9.59,21.36 9.79,21.53 10.02,21.53 L 13.98,21.53 C 14.21,21.53 14.41,21.36 14.45,21.13 L 14.81,18.61 C 15.39,18.37 15.93,18.06 16.42,17.68 L 18.79,18.64 C 19,18.72 19.24,18.64 19.36,18.44 L 21.28,15.12 C 21.39,14.92 21.34,14.66 21.16,14.52 L 19.14,12.94 Z M 12,15.5 C 10.07,15.5 8.5,13.93 8.5,12 C 8.5,10.07 10.07,8.5 12,8.5 C 13.93,8.5 15.5,10.07 15.5,12 C 15.5,13.93 13.93,15.5 12,15.5 Z" Text="Settings" />
 
             <!-- Bottom User Profile Button with Drop-up Menu -->
             <clean:HamburgerMenu.Footer>
@@ -45,7 +46,7 @@
                                               TrailingToolTip="Report an issue">
                     <clean:HamburgerProfileButton.ContextMenu>
                         <ContextMenu Placement="Top">
-                            <MenuItem Header="Settings" InputGestureText="Ctrl+," />
+                            <MenuItem Header="Settings" InputGestureText="Ctrl+," Click="OnOpenSettings" />
                             <MenuItem Header="Usage" />
                             <MenuItem Header="Language" />
                             <MenuItem Header="Get help" />
@@ -348,6 +349,146 @@
                                     </clean:Card>
                                 </Grid>
                             </ScrollViewer>
+                        </TabItem>
+
+                        <!-- Page 4: Settings (Searchable Settings View) -->
+                        <TabItem>
+                            <Grid Margin="28,20,28,24">
+                                <clean:SearchableSettingsView Title="Settings" Description="Manage your team and preferences here.">
+                                    <!-- Tab 1: My details -->
+                                    <clean:SettingsCategory Header="My details">
+                                        <!-- Group: Personal info -->
+                                        <clean:SettingsGroup Header="Personal info" Description="Update your photo and personal details here.">
+                                            <clean:SettingsGroup.Actions>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Button Content="Cancel" Style="{StaticResource GhostButton}" Margin="0,0,8,0" />
+                                                    <Button Content="Save" Style="{StaticResource PrimaryButton}" />
+                                                </StackPanel>
+                                            </clean:SettingsGroup.Actions>
+
+                                            <clean:SettingRow Header="Name" IsRequired="True">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="12" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBox Grid.Column="0" Text="Jens" />
+                                                    <TextBox Grid.Column="2" Text="G" />
+                                                </Grid>
+                                            </clean:SettingRow>
+
+                                            <clean:SettingRow Header="Email address" IsRequired="True" Description="Used for account notifications and security alerts.">
+                                                <TextBox Text="jens@example.com" />
+                                            </clean:SettingRow>
+
+                                            <clean:SettingRow Header="Your photo" Description="This will be displayed on your profile.">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Border Width="48" Height="48" CornerRadius="24" Background="{DynamicResource NeutralSoft}" Margin="0,0,16,0">
+                                                        <TextBlock Text="J" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource Text}"
+                                                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <Border BorderBrush="{DynamicResource Border}" BorderThickness="1"
+                                                            CornerRadius="6" Background="{DynamicResource Surface}" Padding="20,10" VerticalAlignment="Center">
+                                                        <StackPanel HorizontalAlignment="Center">
+                                                            <TextBlock Text="Click to upload or drag and drop" FontWeight="SemiBold" FontSize="12" Foreground="{DynamicResource Text}" />
+                                                            <TextBlock Text="SVG, PNG, JPG or GIF (max. 800×400px)" FontSize="11" Foreground="{DynamicResource TextMuted}" Margin="0,2,0,0" />
+                                                        </StackPanel>
+                                                    </Border>
+                                                </StackPanel>
+                                            </clean:SettingRow>
+
+                                            <clean:SettingRow Header="Role">
+                                                <TextBox Text="Product Designer" />
+                                            </clean:SettingRow>
+
+                                            <clean:SettingRow Header="Country">
+                                                <ComboBox SelectedIndex="0">
+                                                    <ComboBoxItem Content="Australia" />
+                                                    <ComboBoxItem Content="Germany" />
+                                                    <ComboBoxItem Content="United States" />
+                                                    <ComboBoxItem Content="United Kingdom" />
+                                                </ComboBox>
+                                            </clean:SettingRow>
+
+                                            <clean:SettingRow Header="Timezone">
+                                                <ComboBox SelectedIndex="0">
+                                                    <ComboBoxItem Content="Pacific Standard Time (PST) UTC-08:00" />
+                                                    <ComboBoxItem Content="Central European Time (CET) UTC+01:00" />
+                                                    <ComboBoxItem Content="Coordinated Universal Time (UTC) UTC+00:00" />
+                                                </ComboBox>
+                                            </clean:SettingRow>
+
+                                            <clean:SettingRow Header="Bio" Description="Write a short introduction.">
+                                                <TextBox Height="64" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                                                         Text="I'm a software engineer passionate about clean UI design and high-performance desktop apps." />
+                                            </clean:SettingRow>
+                                        </clean:SettingsGroup>
+                                    </clean:SettingsCategory>
+
+                                    <!-- Tab 2: Profile -->
+                                    <clean:SettingsCategory Header="Profile">
+                                        <clean:SettingsGroup Header="Public Profile" Description="Manage how your identity is visible to collaborators.">
+                                            <clean:SettingRow Header="Display Name">
+                                                <TextBox Text="jens" />
+                                            </clean:SettingRow>
+                                            <clean:SettingRow Header="Headline">
+                                                <TextBox Text="Desktop Systems &amp; UX" />
+                                            </clean:SettingRow>
+                                            <clean:SettingRow Header="Website" Description="Personal website or GitHub link.">
+                                                <TextBox Text="https://github.com/jerzky/CleanTheme" />
+                                            </clean:SettingRow>
+                                        </clean:SettingsGroup>
+                                    </clean:SettingsCategory>
+
+                                    <!-- Tab 3: Password -->
+                                    <clean:SettingsCategory Header="Password">
+                                        <clean:SettingsGroup Header="Security Settings" Description="Manage your password and authentication methods.">
+                                            <clean:SettingRow Header="Current Password">
+                                                <PasswordBox Password="password123" />
+                                            </clean:SettingRow>
+                                            <clean:SettingRow Header="New Password">
+                                                <PasswordBox Password="password123" />
+                                            </clean:SettingRow>
+                                            <clean:SettingRow Header="Two-factor authentication" Description="Add an extra layer of security to your account.">
+                                                <clean:ToggleSwitch IsChecked="True" Content="Enabled" />
+                                            </clean:SettingRow>
+                                        </clean:SettingsGroup>
+                                    </clean:SettingsCategory>
+
+                                    <!-- Tab 4: Notifications (Badge 2) -->
+                                    <clean:SettingsCategory Header="Notifications" Badge="2">
+                                        <clean:SettingsGroup Header="Alert Preferences" Description="Choose what updates you want to receive.">
+                                            <clean:SettingRow Header="Email Notifications" Description="Receive emails about critical system warnings and updates.">
+                                                <clean:ToggleSwitch IsChecked="True" />
+                                            </clean:SettingRow>
+                                            <clean:SettingRow Header="Desktop Push Alerts" Description="Show floating toast notifications for incoming logs.">
+                                                <clean:ToggleSwitch IsChecked="True" />
+                                            </clean:SettingRow>
+                                            <clean:SettingRow Header="Weekly Digest" Description="A weekly summary of fleet analytics and crash reports.">
+                                                <clean:ToggleSwitch IsChecked="False" />
+                                            </clean:SettingRow>
+                                        </clean:SettingsGroup>
+                                    </clean:SettingsCategory>
+
+                                    <!-- Tab 5: API -->
+                                    <clean:SettingsCategory Header="API">
+                                        <clean:SettingsGroup Header="Developer Access" Description="Manage API keys and webhook connections.">
+                                            <clean:SettingRow Header="Production Key" Description="Do not share this key with anyone.">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="8" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBox Grid.Column="0" Text="ct_live_948f983a4b9281c7f42e" IsReadOnly="True" />
+                                                    <Button Grid.Column="2" Content="Copy" Style="{StaticResource GhostButton}" />
+                                                </Grid>
+                                            </clean:SettingRow>
+                                        </clean:SettingsGroup>
+                                    </clean:SettingsCategory>
+                                </clean:SearchableSettingsView>
+                            </Grid>
                         </TabItem>
                     </TabControl>
                 </DockPanel>
