@@ -8,7 +8,7 @@ Originally the Strato Launcher theme.
 
 | Package | What |
 |---|---|
-| `CleanTheme.Wpf` | The theme (palette and styles for the stock WPF controls) and controls: `Card`, `StatusPill`, `MetricTile`, `SegmentedControl`, `SearchBox`, `ToggleSwitch`, `NumericUpDown`, `EmptyState`, `ToastHost`, `CleanDialog` / `CleanMessageBox` |
+| `CleanTheme.Wpf` | The theme (palette and styles for the stock WPF controls) and controls: `Card`, `StatusPill`, `MetricTile`, `SegmentedControl`, `SearchBox`, `ToggleSwitch`, `NumericUpDown`, `EmptyState`, `ToastHost`, `CleanDialog` / `CleanMessageBox`, `HamburgerMenu` |
 | `CleanTheme.Logging` | In-app log: an `ILoggerProvider` feeding a bounded, filterable `LogFeed`, and a `LogView` to show it |
 
 ## Install
@@ -112,6 +112,28 @@ toasts.Show("CHARLIE-3 exited", StatusState.Negative, TimeSpan.Zero);         //
 CleanMessageBox.Show(owner, "The scenario was saved.", "Scenario");
 bool delete = CleanMessageBox.Confirm(owner, "This removes the file.", "Delete scenario", "Delete", isDanger: true);
 string? name = CleanMessageBox.Prompt(owner, "Save scenario", "Name", "New scenario", "Save");   // null when cancelled
+```
+
+**HamburgerMenu.** A collapsible navigation rail and expandable drawer with header (logo), footer (profile button / drop-up menu), and content host:
+
+```xml
+<clean:HamburgerMenu SelectedIndex="0" IsPaneOpen="True">
+    <clean:HamburgerMenu.Header>
+        <Image Source="logo.png" Height="36" />
+    </clean:HamburgerMenu.Header>
+    <clean:HamburgerMenuItem Icon="M 3,12 L 12,3 L 21,12 V 20 H 3 Z" Text="Overview" />
+    <clean:HamburgerMenuItem Icon="..." Text="Fleet" Badge="14" />
+    <clean:HamburgerMenu.Footer>
+        <clean:HamburgerProfileButton DisplayName="jens" Subtitle="Pro" Avatar="J">
+            <clean:HamburgerProfileButton.ContextMenu>
+                <ContextMenu Placement="Top">
+                    <MenuItem Header="Settings" InputGestureText="Ctrl+," />
+                    <MenuItem Header="Log out" />
+                </ContextMenu>
+            </clean:HamburgerProfileButton.ContextMenu>
+        </clean:HamburgerProfileButton>
+    </clean:HamburgerMenu.Footer>
+</clean:HamburgerMenu>
 ```
 
 The controls carry their own default styles; their colors come from the merged theme.

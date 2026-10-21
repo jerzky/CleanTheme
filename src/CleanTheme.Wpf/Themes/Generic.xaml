@@ -527,4 +527,330 @@
         </Setter>
     </Style>
 
+    <!-- Hamburger menu and navigation items -->
+    <Style TargetType="controls:HamburgerMenuItem">
+        <Setter Property="Height" Value="36" />
+        <Setter Property="Foreground" Value="{DynamicResource Text}" />
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:HamburgerMenuItem">
+                    <Border x:Name="Chrome" Background="Transparent" CornerRadius="4" Margin="4,1" SnapsToDevicePixels="True">
+                        <Grid>
+                            <!-- Selection indicator bar on the left edge -->
+                            <Border x:Name="SelectionBar" Width="3" CornerRadius="1.5"
+                                    Background="{DynamicResource Accent}"
+                                    HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                                    Margin="2,5" Visibility="Collapsed" />
+
+                            <Grid Margin="6,0,8,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="32" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Icon -->
+                                <Grid Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="20" Height="20">
+                                    <Path x:Name="IconPath" Data="{TemplateBinding Icon}"
+                                          Stroke="{TemplateBinding Foreground}" StrokeThickness="1.5"
+                                          StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                          Width="16" Height="16" Stretch="Uniform"
+                                          HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <ContentPresenter x:Name="IconPresenter" Content="{TemplateBinding IconElement}"
+                                                      HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Grid>
+
+                                <!-- Text label / Content -->
+                                <Grid Grid.Column="1" x:Name="TextContainer" VerticalAlignment="Center" Margin="6,0,4,0">
+                                    <TextBlock x:Name="TextLabel" Text="{TemplateBinding Text}" TextTrimming="CharacterEllipsis"
+                                               Foreground="{TemplateBinding Foreground}" FontSize="{TemplateBinding FontSize}" />
+                                    <ContentPresenter x:Name="ContentPresenter"
+                                                      Content="{TemplateBinding Content}"
+                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                      ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                                      VerticalAlignment="Center" />
+                                </Grid>
+
+                                <!-- Badge (pill) -->
+                                <Border Grid.Column="2" x:Name="BadgeContainer"
+                                        Background="{DynamicResource NeutralSoft}"
+                                        CornerRadius="8" Padding="6,1" VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Badge, RelativeSource={RelativeSource TemplatedParent}}"
+                                               FontSize="11" FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextMuted}" />
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Icon" Value="{x:Null}">
+                            <Setter TargetName="IconPath" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IconElement" Value="{x:Null}">
+                            <Setter TargetName="IconPresenter" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Text" Value="{x:Null}">
+                            <Setter TargetName="TextLabel" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Content" Value="{x:Null}">
+                            <Setter TargetName="ContentPresenter" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Badge" Value="{x:Null}">
+                            <Setter TargetName="BadgeContainer" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Hover}" />
+                            <Setter Property="Foreground" Value="{DynamicResource Text}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Accent}" />
+                            <Setter TargetName="Chrome" Property="BorderThickness" Value="1" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource AccentSoft}" />
+                            <Setter TargetName="SelectionBar" Property="Visibility" Value="Visible" />
+                            <Setter Property="Foreground" Value="{DynamicResource Accent}" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                        </Trigger>
+                        <DataTrigger Binding="{Binding IsPaneOpen, RelativeSource={RelativeSource AncestorType=controls:HamburgerMenu}}" Value="False">
+                            <Setter TargetName="TextContainer" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="BadgeContainer" Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Compact footer profile button with drop-up menu -->
+    <Style TargetType="controls:HamburgerProfileButton">
+        <Setter Property="Height" Value="36" />
+        <Setter Property="Foreground" Value="{DynamicResource Text}" />
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontSize" Value="12.5" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="AvatarBackground" Value="{DynamicResource AccentSoft}" />
+        <Setter Property="AvatarForeground" Value="{DynamicResource Accent}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:HamburgerProfileButton">
+                    <Border x:Name="Chrome" Background="Transparent" CornerRadius="4" Padding="6,4" SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Circular Avatar Badge (22x22) -->
+                            <Border x:Name="AvatarBadge" Width="22" Height="22" CornerRadius="11"
+                                    Background="{TemplateBinding AvatarBackground}"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <TextBlock Text="{Binding Avatar, RelativeSource={RelativeSource TemplatedParent}}"
+                                           Foreground="{TemplateBinding AvatarForeground}"
+                                           FontSize="11" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+
+                            <!-- Display Name + Subtitle + Chevron -->
+                            <StackPanel x:Name="NamePanel" Grid.Column="1" Orientation="Horizontal"
+                                        VerticalAlignment="Center" Margin="8,0,4,0">
+                                <TextBlock Text="{TemplateBinding DisplayName}" FontWeight="Medium"
+                                           Foreground="{TemplateBinding Foreground}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock x:Name="SubtitleText" Text="{TemplateBinding Subtitle}"
+                                           Foreground="{DynamicResource TextSubtle}" Margin="4,0,5,0" />
+                                <Path Data="M 0,0 L 3.5,3.5 L 7,0" Stroke="{DynamicResource TextSubtle}"
+                                      StrokeThickness="1.2" VerticalAlignment="Center" Margin="0,1,0,0" />
+                            </StackPanel>
+
+                            <!-- Trailing action button (e.g. bug report / feedback) -->
+                            <Button x:Name="PART_TrailingButton" Grid.Column="2"
+                                    Style="{StaticResource GhostButton}"
+                                    Width="24" Height="24" Padding="4"
+                                    Command="{TemplateBinding TrailingCommand}"
+                                    ToolTip="{TemplateBinding TrailingToolTip}"
+                                    Focusable="False"
+                                    VerticalAlignment="Center">
+                                <Path Data="{TemplateBinding TrailingIcon}"
+                                      Stroke="{DynamicResource TextSubtle}" StrokeThickness="1.3"
+                                      Width="14" Height="14" Stretch="Uniform"
+                                      HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Button>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Subtitle" Value="{x:Null}">
+                            <Setter TargetName="SubtitleText" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="TrailingIcon" Value="{x:Null}">
+                            <Setter TargetName="PART_TrailingButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Hover}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Pressed}" />
+                        </Trigger>
+                        <DataTrigger Binding="{Binding IsPaneOpen, RelativeSource={RelativeSource AncestorType=controls:HamburgerMenu}}" Value="False">
+                            <Setter TargetName="NamePanel" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_TrailingButton" Property="Visibility" Value="Collapsed" />
+                            <Setter Property="Width" Value="36" />
+                            <Setter Property="Padding" Value="0" />
+                        </DataTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Hamburger menu shell -->
+    <Style TargetType="controls:HamburgerMenu">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="PaneBackground" Value="{DynamicResource Surface}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Border}" />
+        <Setter Property="BorderThickness" Value="0,0,1,0" />
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:HamburgerMenu">
+                    <Grid Background="{TemplateBinding Background}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Left Navigation Pane -->
+                        <Border x:Name="PART_Pane"
+                                Grid.Column="0"
+                                Background="{TemplateBinding PaneBackground}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Width="{TemplateBinding CompactPaneWidth}"
+                                SnapsToDevicePixels="True">
+                            <DockPanel LastChildFill="True">
+                                <!-- Header area (Logo + Hamburger button) -->
+                                <StackPanel DockPanel.Dock="Top" x:Name="HeaderPanel">
+                                    <!-- When pane is open: Header row with Logo and Hamburger button -->
+                                    <Grid x:Name="OpenHeaderRow" Margin="10,12,8,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <ContentPresenter x:Name="PART_HeaderPresenter"
+                                                          Grid.Column="0"
+                                                          Content="{TemplateBinding Header}"
+                                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                                          VerticalAlignment="Center" />
+                                        <Button x:Name="PART_HamburgerButton"
+                                                Grid.Column="1"
+                                                Style="{StaticResource GhostButton}"
+                                                Width="32" Height="32" Padding="6"
+                                                ToolTip="{TemplateBinding HamburgerToolTip}"
+                                                Focusable="False"
+                                                VerticalAlignment="Center">
+                                            <Path Data="M 3,6 H 21 M 3,12 H 21 M 3,18 H 21"
+                                                  Stroke="{DynamicResource Text}" StrokeThickness="1.5"
+                                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                                  Width="15" Height="13" Stretch="Uniform"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Button>
+                                    </Grid>
+
+                                    <!-- When pane is closed: Compact header icon (if any) and centered hamburger button -->
+                                    <StackPanel x:Name="CompactHeaderRow" Margin="0,10,0,8" HorizontalAlignment="Center" Visibility="Collapsed">
+                                        <ContentPresenter x:Name="PART_CompactHeaderPresenter"
+                                                          Content="{TemplateBinding CompactHeader}"
+                                                          ContentTemplate="{TemplateBinding CompactHeaderTemplate}"
+                                                          HorizontalAlignment="Center" Margin="0,0,0,8" />
+                                        <Button x:Name="PART_CompactHamburgerButton"
+                                                Style="{StaticResource GhostButton}"
+                                                Width="32" Height="32" Padding="6"
+                                                ToolTip="{TemplateBinding HamburgerToolTip}"
+                                                Focusable="False"
+                                                HorizontalAlignment="Center">
+                                            <Path Data="M 3,6 H 21 M 3,12 H 21 M 3,18 H 21"
+                                                  Stroke="{DynamicResource Text}" StrokeThickness="1.5"
+                                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                                  Width="15" Height="13" Stretch="Uniform"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Button>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <!-- Footer area (Profile button / settings / dropup menu) -->
+                                <Border x:Name="FooterBorder" DockPanel.Dock="Bottom"
+                                        BorderBrush="{DynamicResource Divider}" BorderThickness="0,1,0,0"
+                                        Padding="6,8" SnapsToDevicePixels="True">
+                                    <ContentPresenter Content="{TemplateBinding Footer}"
+                                                      ContentTemplate="{TemplateBinding FooterTemplate}" />
+                                </Border>
+
+                                <!-- Navigation items -->
+                                <ScrollViewer Focusable="False"
+                                              VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                              HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                              Padding="4,4">
+                                    <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </ScrollViewer>
+                            </DockPanel>
+                        </Border>
+
+                        <!-- Content area -->
+                        <ContentPresenter Grid.Column="1"
+                                          x:Name="PART_ContentPresenter"
+                                          Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <!-- When IsPaneOpen is true -->
+                        <Trigger Property="IsPaneOpen" Value="True">
+                            <Setter TargetName="PART_Pane" Property="Width" Value="{Binding OpenPaneWidth, RelativeSource={RelativeSource TemplatedParent}}" />
+                            <Setter TargetName="OpenHeaderRow" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="CompactHeaderRow" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <!-- When IsPaneOpen is false -->
+                        <Trigger Property="IsPaneOpen" Value="False">
+                            <Setter TargetName="PART_Pane" Property="Width" Value="{Binding CompactPaneWidth, RelativeSource={RelativeSource TemplatedParent}}" />
+                            <Setter TargetName="OpenHeaderRow" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="CompactHeaderRow" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <!-- Hamburger button visibility -->
+                        <Trigger Property="IsHamburgerVisible" Value="False">
+                            <Setter TargetName="PART_HamburgerButton" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_CompactHamburgerButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="CompactHeader" Value="{x:Null}">
+                            <Setter TargetName="PART_CompactHeaderPresenter" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Footer" Value="{x:Null}">
+                            <Setter TargetName="FooterBorder" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Content" Value="{x:Null}">
+                            <Setter TargetName="PART_ContentPresenter" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>
