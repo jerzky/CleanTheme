@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <TargetFrameworks>net7.0-windows;net8.0-windows;net9.0-windows;net10.0-windows</TargetFrameworks>
     <Description>A neutral, dense WPF theme with live light and dark modes: one accent for primary actions, green/amber/red only for status.</Description>
     <!-- LibraryImport (WindowTheme's DWM call) generates unsafe marshalling code. -->
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
