@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
@@ -312,4 +313,27 @@ public class HamburgerMenu : ListBox
     protected override DependencyObject GetContainerForItemOverride() => new HamburgerMenuItem();
 
     protected override bool IsItemItsOwnContainerOverride(object item) => item is HamburgerMenuItem;
+
+    protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+    {
+        base.PrepareContainerForItemOverride(element, item);
+        if (element is HamburgerMenuItem menuItem)
+        {
+            var binding = new Binding(nameof(IsPaneOpen))
+            {
+                Source = this,
+                Mode = BindingMode.OneWay
+            };
+            menuItem.SetBinding(HamburgerMenuItem.IsPaneOpenProperty, binding);
+        }
+    }
+
+    protected override void ClearContainerForItemOverride(DependencyObject element, object item)
+    {
+        base.ClearContainerForItemOverride(element, item);
+        if (element is HamburgerMenuItem menuItem)
+        {
+            BindingOperations.ClearBinding(menuItem, HamburgerMenuItem.IsPaneOpenProperty);
+        }
+    }
 }

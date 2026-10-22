@@ -547,15 +547,15 @@
                                     HorizontalAlignment="Left" VerticalAlignment="Stretch"
                                     Margin="2,5" Visibility="Collapsed" />
 
-                            <Grid Margin="6,0,8,0">
+                            <Grid x:Name="InnerGrid" Margin="6,0,8,0">
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="32" />
+                                    <ColumnDefinition x:Name="IconColumn" Width="32" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Icon -->
-                                <Grid Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="20" Height="20">
+                                <Grid x:Name="IconContainer" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="20" Height="20">
                                     <Path x:Name="IconPath" Data="{TemplateBinding Icon}"
                                           Stroke="{TemplateBinding Foreground}" StrokeThickness="1.5"
                                           StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
@@ -617,9 +617,23 @@
                             <Setter Property="Foreground" Value="{DynamicResource Accent}" />
                             <Setter Property="FontWeight" Value="SemiBold" />
                         </Trigger>
+                        <Trigger Property="IsPaneOpen" Value="False">
+                            <Setter TargetName="TextContainer" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="BadgeContainer" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="InnerGrid" Property="Margin" Value="0" />
+                            <Setter TargetName="Chrome" Property="Margin" Value="0,1" />
+                            <Setter TargetName="IconColumn" Property="Width" Value="*" />
+                            <Setter TargetName="IconContainer" Property="HorizontalAlignment" Value="Center" />
+                            <Setter Property="ToolTip" Value="{Binding Text, RelativeSource={RelativeSource Self}}" />
+                        </Trigger>
                         <DataTrigger Binding="{Binding IsPaneOpen, RelativeSource={RelativeSource AncestorType=controls:HamburgerMenu}}" Value="False">
                             <Setter TargetName="TextContainer" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="BadgeContainer" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="InnerGrid" Property="Margin" Value="0" />
+                            <Setter TargetName="Chrome" Property="Margin" Value="0,1" />
+                            <Setter TargetName="IconColumn" Property="Width" Value="*" />
+                            <Setter TargetName="IconContainer" Property="HorizontalAlignment" Value="Center" />
+                            <Setter Property="ToolTip" Value="{Binding Text, RelativeSource={RelativeSource Self}}" />
                         </DataTrigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="0.45" />

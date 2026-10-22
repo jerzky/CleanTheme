@@ -119,6 +119,40 @@ public sealed class HamburgerMenuTests
     });
 
     [Fact]
+    public void HamburgerMenuItem_collapses_text_and_centers_icon_when_pane_is_closed() => Sta.Run(() =>
+    {
+        var menu = new HamburgerMenu { IsPaneOpen = false };
+        var item = new HamburgerMenuItem
+        {
+            Icon = Geometry.Parse("M 3,12 L 12,3 L 21,12 V 20 H 3 Z"),
+            Text = "Overview & Controls",
+            Badge = 3
+        };
+        menu.Items.Add(item);
+        Sta.Layout(menu);
+
+        Assert.False(item.IsPaneOpen);
+
+        var textContainer = (Grid?)item.Template.FindName("TextContainer", item);
+        var badgeContainer = (Border?)item.Template.FindName("BadgeContainer", item);
+        var iconContainer = (Grid?)item.Template.FindName("IconContainer", item);
+        Assert.NotNull(textContainer);
+        Assert.NotNull(badgeContainer);
+        Assert.NotNull(iconContainer);
+
+        Assert.Equal(Visibility.Collapsed, textContainer.Visibility);
+        Assert.Equal(Visibility.Collapsed, badgeContainer.Visibility);
+        Assert.Equal("Overview & Controls", item.ToolTip);
+
+        // Toggle open
+        menu.IsPaneOpen = true;
+        Sta.Layout(menu);
+        Assert.True(item.IsPaneOpen);
+        Assert.Equal(Visibility.Visible, textContainer.Visibility);
+        Assert.Equal(Visibility.Visible, badgeContainer.Visibility);
+    });
+
+    [Fact]
     public void HamburgerMenu_button_toggles_pane_in_template() => Sta.Run(() =>
     {
         var menu = new HamburgerMenu { IsPaneOpen = false };

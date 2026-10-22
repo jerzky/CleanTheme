@@ -27,6 +27,10 @@ public class HamburgerMenuItem : ListBoxItem, ICommandSource
         nameof(Badge), typeof(object), typeof(HamburgerMenuItem),
         new FrameworkPropertyMetadata(null));
 
+    public static readonly DependencyProperty IsPaneOpenProperty = DependencyProperty.Register(
+        nameof(IsPaneOpen), typeof(bool), typeof(HamburgerMenuItem),
+        new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
+
     public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
         nameof(Command), typeof(ICommand), typeof(HamburgerMenuItem),
         new PropertyMetadata(null, OnCommandChanged));
@@ -70,6 +74,13 @@ public class HamburgerMenuItem : ListBoxItem, ICommandSource
     {
         get => GetValue(BadgeProperty);
         set => SetValue(BadgeProperty, value);
+    }
+
+    /// <summary>Whether the hosting navigation drawer is currently open/expanded.</summary>
+    public bool IsPaneOpen
+    {
+        get => (bool)GetValue(IsPaneOpenProperty);
+        set => SetValue(IsPaneOpenProperty, value);
     }
 
     /// <summary>Command executed when this item is selected.</summary>

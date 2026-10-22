@@ -102,6 +102,7 @@ internal static class ScreenshotGenerator
             for (int i = 0; i < 15; i++) SaveFrame();
 
             // Phase 2: Animate closing (12 frames = 0.4s)
+            window.NavRail.IsPaneOpen = false;
             int closeSteps = 12;
             for (int i = 1; i <= closeSteps; i++)
             {
@@ -110,10 +111,6 @@ internal static class ScreenshotGenerator
                 double w = openWidth - (openWidth - compactWidth) * progress;
                 pane.BeginAnimation(FrameworkElement.WidthProperty, null);
                 pane.Width = w;
-                if (i == closeSteps)
-                {
-                    window.NavRail.IsPaneOpen = false;
-                }
                 PumpEvents();
                 SaveFrame();
             }
@@ -146,7 +143,7 @@ internal static class ScreenshotGenerator
             for (int i = 0; i < 15; i++) SaveFrame();
 
             // Convert to high-quality optimized GIF using ffmpeg
-            string ffmpegArgs = $"-y -framerate 30 -i \"{Path.Combine(tempDir, "frame_%04d.png")}\" -vf \"scale=960:-1:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=128:stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=3\" -loop 0 \"{outputGifPath}\"";
+            string ffmpegArgs = $"-y -framerate 30 -i \"{Path.Combine(tempDir, "frame_%04d.png")}\" -vf \"scale=1000:-1:flags=lanczos,split[s0][s1];[s0]palettegen=max_colors=256:stats_mode=diff[p];[s1][p]paletteuse=dither=bayer:bayer_scale=1\" -loop 0 \"{outputGifPath}\"";
             var process = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
             {
                 FileName = "ffmpeg",
