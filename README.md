@@ -17,7 +17,7 @@ Originally the Strato Launcher theme.
 
 | Package | What |
 |---|---|
-| `CleanTheme.Wpf` | The theme (palette and styles for the stock WPF controls) and controls: `Card`, `StatusPill`, `MetricTile`, `SegmentedControl`, `SearchBox`, `ToggleSwitch`, `NumericUpDown`, `EmptyState`, `ToastHost`, `CleanDialog` / `CleanMessageBox`, `HamburgerMenu`, `SearchableSettingsView` |
+| `CleanTheme.Wpf` | The theme (palette, Untitled UI focus rings, and styles for the stock WPF controls) and controls: `Card`, `StatusPill`, `Avatar`, `AvatarGroup`, `InlineAlert`, `BreadcrumbBar`, `PaginationBar`, `MetricTile`, `SegmentedControl`, `SearchBox`, `ToggleSwitch`, `NumericUpDown`, `EmptyState`, `ToastHost`, `CleanDialog` / `CleanMessageBox`, `HamburgerMenu`, `SearchableSettingsView` |
 | `CleanTheme.Logging` | In-app log: an `ILoggerProvider` feeding a bounded, filterable `LogFeed`, and a `LogView` to show it |
 
 ## Install
@@ -84,7 +84,8 @@ are for text, lines and tints.
     ...
 </clean:Card>
 
-<clean:StatusPill State="Positive" Content="Server running" />   <!-- Neutral, Info, Positive, Warning, Negative -->
+<clean:StatusPill State="Positive" Content="Active" ShowDot="True" />   <!-- Neutral, Info, Positive, Warning, Negative -->
+<clean:StatusPill State="Info" Content="Filter" IsClosable="True" />    <!-- Dismissible badge with close button -->
 
 <clean:MetricTile Label="Tick" Value="{Binding TickMs}" Unit="ms" />
 
@@ -185,6 +186,38 @@ The menu animates open and close transitions smoothly by default (200 ms cubic e
 <p align="center">
   <img src="docs/images/settings-search.gif" alt="Searchable Settings View Live Filter" width="90%" />
 </p>
+
+**Avatars & Groups.** Circular presence avatars and overlapping stacks with automatic `+N` overflow:
+
+```xml
+<clean:Avatar Initials="JG" AvatarSize="36" Status="Online" /> <!-- Online, Busy, Away, Offline -->
+
+<clean:AvatarGroup MaxDisplay="3" AvatarSize="34">
+    <clean:Avatar Initials="A" />
+    <clean:Avatar Initials="B" />
+    <clean:Avatar Initials="C" />
+    <clean:Avatar Initials="D" />
+</clean:AvatarGroup>
+```
+
+**InlineAlert.** Semantic inline banner cards with geometric icons, action buttons, and dismiss transitions:
+
+```xml
+<clean:InlineAlert State="Positive" Title="Update applied" Message="All node runners updated to v2.4." />
+<clean:InlineAlert State="Warning" Title="High latency" ActionText="Inspect trace" IsDismissible="True" />
+```
+
+**BreadcrumbBar & PaginationBar.** Hierarchy navigation and table pagination controls:
+
+```xml
+<clean:BreadcrumbBar>
+    <clean:BreadcrumbItem Header="Home" />
+    <clean:BreadcrumbItem Header="Fleet Management" />
+    <clean:BreadcrumbItem Header="Unit Config" />
+</clean:BreadcrumbBar>
+
+<clean:PaginationBar TotalPages="8" CurrentPage="1" PageSize="10" TotalItems="78" />
+```
 
 The controls carry their own default styles; their colors come from the merged theme.
 
