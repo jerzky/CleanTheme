@@ -136,13 +136,28 @@ public sealed class HamburgerMenuTests
         var textContainer = (Grid?)item.Template.FindName("TextContainer", item);
         var badgeContainer = (Border?)item.Template.FindName("BadgeContainer", item);
         var iconContainer = (Grid?)item.Template.FindName("IconContainer", item);
+        var selectionBar = (Border?)item.Template.FindName("SelectionBar", item);
         Assert.NotNull(textContainer);
         Assert.NotNull(badgeContainer);
         Assert.NotNull(iconContainer);
+        Assert.NotNull(selectionBar);
 
         Assert.Equal(Visibility.Collapsed, textContainer.Visibility);
         Assert.Equal(Visibility.Collapsed, badgeContainer.Visibility);
         Assert.Equal("Overview & Controls", item.ToolTip);
+        Assert.Equal(40.0, item.ActualWidth);
+
+        // Verify iconContainer is centered in the 48px rail:
+        // Verify iconContainer is centered in the compact pane (47px interior, center = 23.5):
+        var iconPt = iconContainer.TransformToAncestor(menu).Transform(new Point(0, 0));
+        double iconCenter = iconPt.X + iconContainer.ActualWidth / 2.0;
+        Assert.InRange(iconCenter, 23.0, 24.5);
+
+        // When item is selected, verify selection bar has clearance and doesn't overlap icon
+        item.IsSelected = true;
+        Sta.Layout(menu);
+        var barPt = selectionBar.TransformToAncestor(menu).Transform(new Point(0, 0));
+        Assert.True(barPt.X + selectionBar.ActualWidth < iconPt.X, "Selection bar must not overlap icon");
 
         // Toggle open
         menu.IsPaneOpen = true;

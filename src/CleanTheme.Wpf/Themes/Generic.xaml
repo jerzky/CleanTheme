@@ -530,6 +530,8 @@
     <!-- Hamburger menu and navigation items -->
     <Style TargetType="controls:HamburgerMenuItem">
         <Setter Property="Height" Value="36" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="Foreground" Value="{DynamicResource Text}" />
         <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
         <Setter Property="FontSize" Value="13" />
@@ -618,20 +620,24 @@
                             <Setter Property="FontWeight" Value="SemiBold" />
                         </Trigger>
                         <Trigger Property="IsPaneOpen" Value="False">
+                            <Setter Property="Width" Value="40" />
+                            <Setter Property="HorizontalAlignment" Value="Center" />
                             <Setter TargetName="TextContainer" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="BadgeContainer" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="InnerGrid" Property="Margin" Value="0" />
                             <Setter TargetName="Chrome" Property="Margin" Value="0,1" />
-                            <Setter TargetName="IconColumn" Property="Width" Value="*" />
+                            <Setter TargetName="IconContainer" Property="Grid.ColumnSpan" Value="3" />
                             <Setter TargetName="IconContainer" Property="HorizontalAlignment" Value="Center" />
                             <Setter Property="ToolTip" Value="{Binding Text, RelativeSource={RelativeSource Self}}" />
                         </Trigger>
                         <DataTrigger Binding="{Binding IsPaneOpen, RelativeSource={RelativeSource AncestorType=controls:HamburgerMenu}}" Value="False">
+                            <Setter Property="Width" Value="40" />
+                            <Setter Property="HorizontalAlignment" Value="Center" />
                             <Setter TargetName="TextContainer" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="BadgeContainer" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="InnerGrid" Property="Margin" Value="0" />
                             <Setter TargetName="Chrome" Property="Margin" Value="0,1" />
-                            <Setter TargetName="IconColumn" Property="Width" Value="*" />
+                            <Setter TargetName="IconContainer" Property="Grid.ColumnSpan" Value="3" />
                             <Setter TargetName="IconContainer" Property="HorizontalAlignment" Value="Center" />
                             <Setter Property="ToolTip" Value="{Binding Text, RelativeSource={RelativeSource Self}}" />
                         </DataTrigger>
@@ -734,6 +740,7 @@
     <!-- Hamburger menu shell -->
     <Style TargetType="controls:HamburgerMenu">
         <Setter Property="Background" Value="Transparent" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="PaneBackground" Value="{DynamicResource Surface}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Border}" />
         <Setter Property="BorderThickness" Value="0,0,1,0" />
