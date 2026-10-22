@@ -1,9 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -12,11 +7,6 @@ namespace CleanTheme.Wpf.Controls;
 /// <summary>Displays an overlapping group of <see cref="Avatar"/> controls with an optional +N overflow indicator.</summary>
 public class AvatarGroup : ItemsControl
 {
-    private static readonly DependencyPropertyKey VisibleItemsPropertyKey = DependencyProperty.RegisterReadOnly(
-        nameof(VisibleItems), typeof(IList), typeof(AvatarGroup), new FrameworkPropertyMetadata(null));
-
-    public static readonly DependencyProperty VisibleItemsProperty = VisibleItemsPropertyKey.DependencyProperty;
-
     private static readonly DependencyPropertyKey OverflowCountPropertyKey = DependencyProperty.RegisterReadOnly(
         nameof(OverflowCount), typeof(int), typeof(AvatarGroup), new FrameworkPropertyMetadata(0));
 
@@ -29,7 +19,7 @@ public class AvatarGroup : ItemsControl
 
     public static readonly DependencyProperty MaxDisplayProperty = DependencyProperty.Register(
         nameof(MaxDisplay), typeof(int), typeof(AvatarGroup),
-        new FrameworkPropertyMetadata(4, (d, _) => ((AvatarGroup)d).UpdateVisibleItems()));
+        new FrameworkPropertyMetadata(4, (d, _) => ((AvatarGroup)d).UpdateContainers()));
 
     public static readonly DependencyProperty AvatarSizeProperty = DependencyProperty.Register(
         nameof(AvatarSize), typeof(double), typeof(AvatarGroup),
@@ -43,14 +33,6 @@ public class AvatarGroup : ItemsControl
     {
         DefaultStyleKeyProperty.OverrideMetadata(typeof(AvatarGroup), new FrameworkPropertyMetadata(typeof(AvatarGroup)));
     }
-
-    public AvatarGroup()
-    {
-        SetValue(VisibleItemsPropertyKey, new ObservableCollection<object>());
-        ((INotifyCollectionChanged)Items).CollectionChanged += OnItemsCollectionChanged;
-    }
-
-    public IList VisibleItems => (IList)GetValue(VisibleItemsProperty);
 
     public int OverflowCount => (int)GetValue(OverflowCountProperty);
 
@@ -74,65 +56,51 @@ public class AvatarGroup : ItemsControl
         set => SetValue(OverlapProperty, value);
     }
 
-    protected override void OnItemsSourceChanged(IEnumerable oldValue, IEnumerable newValue)
+    protected override bool IsItemItsOwnContainerOverride(object item) => item is Avatar;
+
+    protected override DependencyObject GetContainerForItemOverride() => new Avatar();
+
+    protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
     {
-        base.OnItemsSourceChanged(oldValue, newValue);
-        if (oldValue is INotifyCollectionChanged oldNotify)
+        base.PrepareContainerForItemOverride(element, item);
+        if (element is Avatar avatar && item is not Avatar)
         {
-            oldNotify.CollectionChanged -= OnItemsSourceCollectionChanged;
+            avatar.Initials = item?.ToString() ?? string.Empty;
         }
-        if (newValue is INotifyCollectionChanged newNotify)
+
+        if (element is FrameworkElement fe)
         {
-            newNotify.CollectionChanged += OnItemsSourceCollectionChanged;
+            if (element is Avatar av)
+            {
+                av.AvatarSize = AvatarSize;
+            }
         }
-        UpdateVisibleItems();
+
+        UpdateContainers();
     }
 
-    private void OnItemsSourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) => UpdateVisibleItems();
-
-    private void OnItemsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) => UpdateVisibleItems();
-
-    private void UpdateVisibleItems()
+    protected override void OnItemsChanged(System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
-        var targetList = (ObservableCollection<object>)VisibleItems;
-        targetList.Clear();
+        base.OnItemsChanged(e);
+        UpdateContainers();
+    }
 
-        var sourceList = new List<object>();
-        if (ItemsSource != null)
-        {
-            foreach (var item in ItemsSource)
-            {
-                sourceList.Add(item);
-            }
-        }
-        else
-        {
-            foreach (var item in Items)
-            {
-                sourceList.Add(item);
-            }
-        }
-
+    public void UpdateContainers()
+    {
+        int count = Items.Count;
         int max = Math.Max(1, MaxDisplay);
-        int total = sourceList.Count;
 
-        if (total <= max)
+        for (int i = 0; i < count; i++)
         {
-            foreach (var item in sourceList)
+            if (ItemContainerGenerator.ContainerFromIndex(i) is FrameworkElement container)
             {
-                targetList.Add(item);
+                container.Visibility = i < max ? Visibility.Visible : Visibility.Collapsed;
+                container.Margin = (i == 0) ? new Thickness(0) : new Thickness(Overlap, 0, 0, 0);
             }
-            SetValue(OverflowCountPropertyKey, 0);
-            SetValue(HasOverflowPropertyKey, false);
         }
-        else
-        {
-            for (int i = 0; i < max; i++)
-            {
-                targetList.Add(sourceList[i]);
-            }
-            SetValue(OverflowCountPropertyKey, total - max);
-            SetValue(HasOverflowPropertyKey, true);
-        }
+
+        int overflow = Math.Max(0, count - max);
+        SetValue(OverflowCountPropertyKey, overflow);
+        SetValue(HasOverflowPropertyKey, overflow > 0);
     }
 }

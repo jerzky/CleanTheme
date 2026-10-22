@@ -17,7 +17,7 @@ internal static class ScreenshotGenerator
         Directory.CreateDirectory(outputDir);
 
         window.Width = 1200;
-        window.Height = 820;
+        window.Height = 900;
         window.Show();
         PumpEvents();
 
@@ -174,7 +174,7 @@ internal static class ScreenshotGenerator
         Dispatcher.PushFrame(frame);
     }
 
-    private static void Capture(MainWindow window, string filePath, int width = 1200, int height = 820)
+    private static void Capture(MainWindow window, string filePath, int width = 1200, int height = 900)
     {
         window.Measure(new Size(width, height));
         window.Arrange(new Rect(0, 0, width, height));

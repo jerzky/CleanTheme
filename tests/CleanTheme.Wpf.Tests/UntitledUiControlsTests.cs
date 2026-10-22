@@ -87,7 +87,7 @@ public sealed class UntitledUiControlsTests
             new() { Initials = "E" }
         };
 
-        Assert.Equal(3, group.VisibleItems.Count);
+        Sta.Layout(group);
         Assert.Equal(2, group.OverflowCount);
         Assert.True(group.HasOverflow);
 

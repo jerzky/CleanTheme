@@ -1225,22 +1225,18 @@
     <!-- AvatarGroup: overlapping group of avatars with +N overflow -->
     <Style TargetType="controls:AvatarGroup">
         <Setter Property="Focusable" Value="False" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:AvatarGroup">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <ItemsControl ItemsSource="{TemplateBinding VisibleItems}" Focusable="False">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <ContentPresenter Content="{Binding}" Margin="-8,0,0,0" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+                        <ItemsPresenter />
                         <Border x:Name="OverflowPill" Width="{TemplateBinding AvatarSize}" Height="{TemplateBinding AvatarSize}"
                                 CornerRadius="999" Background="{DynamicResource NeutralSoft}"
                                 BorderBrush="{DynamicResource Surface}" BorderThickness="2"
