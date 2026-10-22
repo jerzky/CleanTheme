@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 
 namespace CleanTheme.Wpf.Controls;
 
@@ -17,11 +18,23 @@ public class HamburgerMenu : ListBox
 
     public static readonly DependencyProperty CompactPaneWidthProperty = DependencyProperty.Register(
         nameof(CompactPaneWidth), typeof(double), typeof(HamburgerMenu),
-        new FrameworkPropertyMetadata(48.0));
+        new FrameworkPropertyMetadata(48.0, OnPaneWidthChanged));
 
     public static readonly DependencyProperty OpenPaneWidthProperty = DependencyProperty.Register(
         nameof(OpenPaneWidth), typeof(double), typeof(HamburgerMenu),
-        new FrameworkPropertyMetadata(240.0));
+        new FrameworkPropertyMetadata(240.0, OnPaneWidthChanged));
+
+    public static readonly DependencyProperty IsPaneAnimatedProperty = DependencyProperty.Register(
+        nameof(IsPaneAnimated), typeof(bool), typeof(HamburgerMenu),
+        new FrameworkPropertyMetadata(true));
+
+    public static readonly DependencyProperty AnimationDurationProperty = DependencyProperty.Register(
+        nameof(AnimationDuration), typeof(TimeSpan), typeof(HamburgerMenu),
+        new FrameworkPropertyMetadata(TimeSpan.FromMilliseconds(200)));
+
+    public static readonly DependencyProperty AnimationEasingProperty = DependencyProperty.Register(
+        nameof(AnimationEasing), typeof(IEasingFunction), typeof(HamburgerMenu),
+        new FrameworkPropertyMetadata(new CubicEase { EasingMode = EasingMode.EaseOut }));
 
     public static readonly DependencyProperty PaneBackgroundProperty = DependencyProperty.Register(
         nameof(PaneBackground), typeof(Brush), typeof(HamburgerMenu),
@@ -114,6 +127,27 @@ public class HamburgerMenu : ListBox
         set => SetValue(OpenPaneWidthProperty, value);
     }
 
+    /// <summary>Whether opening and closing transitions are animated (default true).</summary>
+    public bool IsPaneAnimated
+    {
+        get => (bool)GetValue(IsPaneAnimatedProperty);
+        set => SetValue(IsPaneAnimatedProperty, value);
+    }
+
+    /// <summary>Duration of the pane open/close transition (default 200 ms).</summary>
+    public TimeSpan AnimationDuration
+    {
+        get => (TimeSpan)GetValue(AnimationDurationProperty);
+        set => SetValue(AnimationDurationProperty, value);
+    }
+
+    /// <summary>Easing function used for the open/close animation (default CubicEase EaseOut).</summary>
+    public IEasingFunction? AnimationEasing
+    {
+        get => (IEasingFunction?)GetValue(AnimationEasingProperty);
+        set => SetValue(AnimationEasingProperty, value);
+    }
+
     /// <summary>Background brush for the navigation pane (defaults to Surface).</summary>
     public Brush? PaneBackground
     {
@@ -191,9 +225,17 @@ public class HamburgerMenu : ListBox
         set => SetValue(HamburgerToolTipProperty, value);
     }
 
+    private FrameworkElement? _pane;
+
     public override void OnApplyTemplate()
     {
         base.OnApplyTemplate();
+
+        _pane = GetTemplateChild("PART_Pane") as FrameworkElement;
+        if (_pane is not null)
+        {
+            _pane.Width = IsPaneOpen ? OpenPaneWidth : CompactPaneWidth;
+        }
 
         if (GetTemplateChild("PART_HamburgerButton") is ButtonBase hamburgerButton)
         {
@@ -218,8 +260,53 @@ public class HamburgerMenu : ListBox
         if (d is HamburgerMenu menu)
         {
             bool isOpen = (bool)e.NewValue;
+            menu.UpdatePaneWidth(isOpen, animate: menu.IsLoaded && menu.IsPaneAnimated);
             menu.RaiseEvent(new RoutedEventArgs(isOpen ? PaneOpenedEvent : PaneClosedEvent, menu));
         }
+    }
+
+    private static void OnPaneWidthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is HamburgerMenu menu && menu._pane is not null)
+        {
+            menu.UpdatePaneWidth(menu.IsPaneOpen, animate: false);
+        }
+    }
+
+    private void UpdatePaneWidth(bool isOpen, bool animate)
+    {
+        if (_pane is null) return;
+
+        double targetWidth = isOpen ? OpenPaneWidth : CompactPaneWidth;
+
+        if (!animate || AnimationDuration <= TimeSpan.Zero)
+        {
+            _pane.BeginAnimation(WidthProperty, null);
+            _pane.Width = targetWidth;
+            return;
+        }
+
+        double startWidth = _pane.ActualWidth > 0 ? _pane.ActualWidth : _pane.Width;
+        if (double.IsNaN(startWidth) || startWidth <= 0)
+        {
+            startWidth = isOpen ? CompactPaneWidth : OpenPaneWidth;
+        }
+
+        var animation = new DoubleAnimation
+        {
+            From = startWidth,
+            To = targetWidth,
+            Duration = AnimationDuration,
+            EasingFunction = AnimationEasing
+        };
+
+        animation.Completed += (s, e) =>
+        {
+            _pane.BeginAnimation(WidthProperty, null);
+            _pane.Width = targetWidth;
+        };
+
+        _pane.BeginAnimation(WidthProperty, animation);
     }
 
     protected override DependencyObject GetContainerForItemOverride() => new HamburgerMenuItem();

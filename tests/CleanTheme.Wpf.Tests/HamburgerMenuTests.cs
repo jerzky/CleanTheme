@@ -18,6 +18,33 @@ public sealed class HamburgerMenuTests
         Assert.Equal(240.0, menu.OpenPaneWidth);
         Assert.True(menu.IsHamburgerVisible);
         Assert.Equal(SelectionMode.Single, menu.SelectionMode);
+        Assert.True(menu.IsPaneAnimated);
+        Assert.Equal(TimeSpan.FromMilliseconds(200), menu.AnimationDuration);
+        Assert.NotNull(menu.AnimationEasing);
+    });
+
+    [Fact]
+    public void HamburgerMenu_pane_width_updates_with_and_without_animation() => Sta.Run(() =>
+    {
+        var menu = new HamburgerMenu { IsPaneOpen = false, IsPaneAnimated = false };
+        Sta.Layout(menu);
+
+        var pane = (Border?)menu.Template.FindName("PART_Pane", menu);
+        Assert.NotNull(pane);
+        Assert.Equal(menu.CompactPaneWidth, pane.Width);
+
+        menu.IsPaneOpen = true;
+        Assert.Equal(menu.OpenPaneWidth, pane.Width);
+
+        menu.IsPaneOpen = false;
+        Assert.Equal(menu.CompactPaneWidth, pane.Width);
+
+        // Animated open
+        menu.IsPaneAnimated = true;
+        menu.AnimationDuration = TimeSpan.FromMilliseconds(50);
+        menu.IsPaneOpen = true;
+        Sta.DoEventsFor(TimeSpan.FromMilliseconds(100));
+        Assert.Equal(menu.OpenPaneWidth, pane.Width);
     });
 
     [Fact]

@@ -745,6 +745,7 @@
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 Width="{TemplateBinding CompactPaneWidth}"
+                                ClipToBounds="True"
                                 SnapsToDevicePixels="True">
                             <DockPanel LastChildFill="True">
                                 <!-- Header area (Logo + Hamburger button) -->
@@ -823,13 +824,13 @@
                     <ControlTemplate.Triggers>
                         <!-- When IsPaneOpen is true -->
                         <Trigger Property="IsPaneOpen" Value="True">
-                            <Setter TargetName="PART_Pane" Property="Width" Value="{Binding OpenPaneWidth, RelativeSource={RelativeSource TemplatedParent}}" />
+
                             <Setter TargetName="OpenHeaderRow" Property="Visibility" Value="Visible" />
                             <Setter TargetName="CompactHeaderRow" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <!-- When IsPaneOpen is false -->
                         <Trigger Property="IsPaneOpen" Value="False">
-                            <Setter TargetName="PART_Pane" Property="Width" Value="{Binding CompactPaneWidth, RelativeSource={RelativeSource TemplatedParent}}" />
+
                             <Setter TargetName="OpenHeaderRow" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="CompactHeaderRow" Property="Visibility" Value="Visible" />
                         </Trigger>

@@ -145,6 +145,8 @@ string? name = CleanMessageBox.Prompt(owner, "Save scenario", "Name", "New scena
 </clean:HamburgerMenu>
 ```
 
+The menu animates open and close transitions smoothly by default (200 ms cubic ease-out). Customize or disable via `IsPaneAnimated="False"`, `AnimationDuration="0:0:0.150"`, or `AnimationEasing`.
+
 **SearchableSettingsView.** A modern settings interface with category tabs, sections, two-column setting rows, and instant live search filtering with `Ctrl+K`:
 
 ```xml
