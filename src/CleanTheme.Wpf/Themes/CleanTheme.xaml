@@ -203,12 +203,12 @@
     <Style x:Key="SegmentButton" TargetType="ToggleButton" BasedOn="{StaticResource ButtonBaseStyle}">
         <Setter Property="Padding" Value="10,0" />
         <Setter Property="MinWidth" Value="40" />
+        <Setter Property="FontWeight" Value="SemiBold" />
         <Style.Triggers>
             <Trigger Property="IsChecked" Value="True">
                 <Setter Property="Background" Value="{DynamicResource AccentSoft}" />
                 <Setter Property="BorderBrush" Value="{DynamicResource Accent}" />
                 <Setter Property="Foreground" Value="{DynamicResource Accent}" />
-                <Setter Property="FontWeight" Value="SemiBold" />
             </Trigger>
         </Style.Triggers>
     </Style>

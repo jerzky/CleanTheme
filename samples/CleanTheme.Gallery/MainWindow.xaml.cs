@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CleanTheme.Gallery;
 
-public partial class MainWindow : Window
+public partial class MainWindow : CustomWindow
 {
     private readonly LogFeed _feed;
     private readonly ILogger<MainWindow> _logger;

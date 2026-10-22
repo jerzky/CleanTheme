@@ -182,6 +182,7 @@
 
     <Style TargetType="controls:SegmentedItem">
         <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Padding" Value="10,0" />
         <Setter Property="MinWidth" Value="36" />
         <Setter Property="Cursor" Value="Hand" />
@@ -205,7 +206,6 @@
                             <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Surface}" />
                             <Setter TargetName="Chrome" Property="BorderBrush" Value="{DynamicResource Border}" />
                             <Setter Property="Foreground" Value="{DynamicResource Accent}" />
-                            <Setter Property="FontWeight" Value="SemiBold" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -1462,6 +1462,162 @@
                                     Style="{StaticResource {x:Type Button}}" Height="28" Padding="10,0" Margin="6,0,0,0" />
                         </StackPanel>
                     </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- CustomWindow TitleBar Button Styles -->
+    <Style x:Key="TitleBarButton" TargetType="Button">
+        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Width" Value="46" />
+        <Setter Property="Height" Value="36" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Chrome" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Hover}" />
+                            <Setter Property="Foreground" Value="{DynamicResource Text}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="{DynamicResource Pressed}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="TitleBarCloseButton" TargetType="Button" BasedOn="{StaticResource TitleBarButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Chrome" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="#E81123" />
+                            <Setter Property="Foreground" Value="#FFFFFF" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Chrome" Property="Background" Value="#C4101E" />
+                            <Setter Property="Foreground" Value="#FFFFFF" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- CustomWindow: modern chromeless window with custom title bar & native snap/drag gestures -->
+    <Style TargetType="controls:CustomWindow">
+        <Setter Property="Background" Value="{DynamicResource AppBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource Text}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Border}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="TextOptions.TextFormattingMode" Value="Display" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:CustomWindow">
+                    <Border x:Name="WindowFrame"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid x:Name="WindowRoot">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <!-- Title Bar -->
+                            <Grid x:Name="PART_TitleBar" Height="{TemplateBinding TitleBarHeight}"
+                                  Background="Transparent">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Left: App Icon & Window Title -->
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,10,0">
+                                    <Image x:Name="WindowIcon" Source="{TemplateBinding Icon}" Width="16" Height="16"
+                                           Margin="0,0,8,0" VerticalAlignment="Center" Visibility="Collapsed" />
+                                    <TextBlock Text="{TemplateBinding Title}" FontWeight="Medium" FontSize="12.5"
+                                               Foreground="{DynamicResource TextMuted}" VerticalAlignment="Center" />
+                                </StackPanel>
+
+                                <!-- Center: Optional TitleBarContent -->
+                                <ContentPresenter Grid.Column="1" Content="{TemplateBinding TitleBarContent}"
+                                                  HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+
+                                <!-- Right: Window Control Buttons -->
+                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Top">
+                                    <Button x:Name="PART_MinimizeButton" Style="{StaticResource TitleBarButton}"
+                                            Height="{TemplateBinding TitleBarHeight}" ToolTip="Minimize">
+                                        <Path Data="M 0 5 L 10 5" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                              StrokeThickness="1.2" />
+                                    </Button>
+
+                                    <Button x:Name="PART_MaximizeButton" Style="{StaticResource TitleBarButton}"
+                                            Height="{TemplateBinding TitleBarHeight}" ToolTip="Maximize">
+                                        <Grid>
+                                            <Path x:Name="MaximizeGlyph" Data="M 0.5 0.5 H 9.5 V 9.5 H 0.5 Z"
+                                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                  StrokeThickness="1.2" />
+                                            <Path x:Name="RestoreGlyph" Data="M 2.5 0.5 H 9.5 V 7.5 H 7.5 M 7.5 2.5 H 0.5 V 9.5 H 7.5 Z"
+                                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                  StrokeThickness="1.2" Visibility="Collapsed" />
+                                        </Grid>
+                                    </Button>
+
+                                    <Button x:Name="PART_CloseButton" Style="{StaticResource TitleBarCloseButton}"
+                                            Height="{TemplateBinding TitleBarHeight}" ToolTip="Close">
+                                        <Path Data="M 0.5 0.5 L 9.5 9.5 M 9.5 0.5 L 0.5 9.5"
+                                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                              StrokeThickness="1.2" />
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Client Content Area -->
+                            <ContentPresenter Grid.Row="1" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasIcon" Value="True">
+                            <Setter TargetName="WindowIcon" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsTitleBarVisible" Value="False">
+                            <Setter TargetName="PART_TitleBar" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="ShowMinimizeButton" Value="False">
+                            <Setter TargetName="PART_MinimizeButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="ShowMaximizeButton" Value="False">
+                            <Setter TargetName="PART_MaximizeButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="ShowCloseButton" Value="False">
+                            <Setter TargetName="PART_CloseButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="WindowState" Value="Maximized">
+                            <Setter TargetName="WindowFrame" Property="BorderThickness" Value="0" />
+                            <Setter TargetName="WindowRoot" Property="Margin" Value="6" />
+                            <Setter TargetName="MaximizeGlyph" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="RestoreGlyph" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_MaximizeButton" Property="ToolTip" Value="Restore" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

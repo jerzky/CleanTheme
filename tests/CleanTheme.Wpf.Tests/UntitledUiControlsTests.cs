@@ -177,4 +177,61 @@ public sealed class UntitledUiControlsTests
         pagination.CurrentPage = -5;
         Assert.Equal(1, pagination.CurrentPage);
     });
+    [Fact]
+    public void SegmentedItem_maintains_consistent_font_weight_when_selected() => Sta.Run(() =>
+    {
+        var control = new SegmentedControl();
+        var item = new SegmentedItem { Content = "Test" };
+        control.Items.Add(item);
+        Sta.Layout(control);
+        var unselectedWeight = item.FontWeight;
+
+        item.IsSelected = true;
+        Sta.Layout(control);
+        var selectedWeight = item.FontWeight;
+
+        Assert.Equal(FontWeights.SemiBold, unselectedWeight);
+        Assert.Equal(FontWeights.SemiBold, selectedWeight);
+    });
+
+    [Fact]
+    public void CustomWindow_template_and_properties() => Sta.Run(() =>
+    {
+        var window = new CustomWindow
+        {
+            Title = "My Application",
+            TitleBarHeight = 38.0,
+            IsTitleBarVisible = true,
+            ShowMinimizeButton = true,
+            ShowMaximizeButton = true,
+            ShowCloseButton = true
+        };
+        window.Resources.MergedDictionaries.Add(new CleanThemeResources());
+        window.Show();
+        Sta.DoEvents();
+
+        Assert.Equal(38.0, window.TitleBarHeight);
+        Assert.True(window.IsTitleBarVisible);
+        Assert.True(window.ShowMinimizeButton);
+        Assert.True(window.ShowMaximizeButton);
+        Assert.True(window.ShowCloseButton);
+
+        var titleBar = (FrameworkElement)window.Template.FindName(CustomWindow.PartTitleBar, window);
+        Assert.NotNull(titleBar);
+        Assert.Equal(Visibility.Visible, titleBar.Visibility);
+
+        var minBtn = (Button)window.Template.FindName(CustomWindow.PartMinimizeButton, window);
+        Assert.NotNull(minBtn);
+        Assert.Equal(Visibility.Visible, minBtn.Visibility);
+
+        var maxBtn = (Button)window.Template.FindName(CustomWindow.PartMaximizeButton, window);
+        Assert.NotNull(maxBtn);
+        Assert.Equal(Visibility.Visible, maxBtn.Visibility);
+
+        var closeBtn = (Button)window.Template.FindName(CustomWindow.PartCloseButton, window);
+        Assert.NotNull(closeBtn);
+        Assert.Equal(Visibility.Visible, closeBtn.Visibility);
+
+        window.Close();
+    });
 }
