@@ -220,6 +220,18 @@ public sealed class HamburgerMenuTests
         Sta.DoEventsFor(TimeSpan.FromMilliseconds(50));
     });
 
+    [Fact]
+    public void HamburgerMenuItem_automation_peer_reports_Text_as_name() => Sta.Run(() =>
+    {
+        var item = new HamburgerMenuItem { Text = "Fleet Units" };
+        Sta.Layout(item);
+
+        var peer = System.Windows.Automation.Peers.UIElementAutomationPeer.CreatePeerForElement(item);
+        Assert.NotNull(peer);
+        Assert.Equal("Fleet Units", peer.GetName());
+        Assert.Equal(System.Windows.Automation.Peers.AutomationControlType.ListItem, peer.GetAutomationControlType());
+    });
+
     private sealed class TestCommand(Action<object?> execute) : ICommand
     {
         public event EventHandler? CanExecuteChanged

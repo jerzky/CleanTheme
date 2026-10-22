@@ -205,4 +205,55 @@ public sealed class SettingsControlTests
         Assert.Equal(2, view.SelectedIndex);
         Assert.Same(cat3, view.SelectedItem);
     });
+
+    [Fact]
+    public void SettingsCategory_supports_keyboard_navigation() => Sta.Run(() =>
+    {
+        var view = new SearchableSettingsView { Title = "Preferences" };
+        var cat1 = new SettingsCategory { Header = "General" };
+        var cat2 = new SettingsCategory { Header = "Security" };
+
+        view.Items.Add(cat1);
+        view.Items.Add(cat2);
+        Sta.Layout(view);
+
+        Assert.True(cat1.IsSelected);
+        Assert.Equal(0, view.SelectedIndex);
+
+        // Press Right arrow on cat1
+        cat1.RaiseEvent(new System.Windows.Input.KeyEventArgs(
+            System.Windows.Input.Keyboard.PrimaryDevice,
+            new System.Windows.Interop.HwndSource(0, 0, 0, 0, 0, "", IntPtr.Zero),
+            0,
+            System.Windows.Input.Key.Right)
+        {
+            RoutedEvent = System.Windows.Input.Keyboard.KeyDownEvent
+        });
+        Sta.Layout(view);
+
+        Assert.False(cat1.IsSelected);
+        Assert.True(cat2.IsSelected);
+        Assert.Equal(1, view.SelectedIndex);
+    });
+
+    [Fact]
+    public void SettingsCategory_automation_peer_reports_TabItem_and_SelectionItemPattern() => Sta.Run(() =>
+    {
+        var cat = new SettingsCategory { Header = "Notifications" };
+        Sta.Layout(cat);
+
+        var peer = System.Windows.Automation.Peers.UIElementAutomationPeer.CreatePeerForElement(cat);
+        Assert.NotNull(peer);
+        Assert.Equal("Notifications", peer.GetName());
+        Assert.Equal(System.Windows.Automation.Peers.AutomationControlType.TabItem, peer.GetAutomationControlType());
+
+        var pattern = peer.GetPattern(System.Windows.Automation.Peers.PatternInterface.SelectionItem)
+            as System.Windows.Automation.Provider.ISelectionItemProvider;
+        Assert.NotNull(pattern);
+        Assert.False(pattern.IsSelected);
+
+        pattern.Select();
+        Assert.True(cat.IsSelected);
+        Assert.True(pattern.IsSelected);
+    });
 }

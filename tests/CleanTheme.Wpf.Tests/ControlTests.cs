@@ -103,5 +103,45 @@ public sealed class ControlTests
         Assert.Equal(10_000, Math.Abs(full), 3);
     });
 
+    private sealed record TestAircraft(string Id, string Name);
+
+    [Fact]
+    public void ComboBox_respects_DisplayMemberPath_in_selection_box() => Sta.Run(() =>
+    {
+        var items = new[] { new TestAircraft("UAV", "Generic UAV"), new TestAircraft("JET", "Fighter Jet") };
+        var combo = new ComboBox
+        {
+            ItemsSource = items,
+            DisplayMemberPath = nameof(TestAircraft.Name),
+            ItemStringFormat = "Aircraft: {0}",
+            SelectedIndex = 0
+        };
+        combo.Resources.MergedDictionaries.Add(new CleanThemeResources());
+        Sta.Layout(combo, 200, 32);
+
+        ContentPresenter? presenter = null;
+        for (int i = 0; i < VisualTreeHelper.GetChildrenCount(combo); i++)
+        {
+            if (VisualTreeHelper.GetChild(combo, i) is Grid grid)
+            {
+                for (int j = 0; j < VisualTreeHelper.GetChildrenCount(grid); j++)
+                {
+                    if (VisualTreeHelper.GetChild(grid, j) is ContentPresenter cp)
+                    {
+                        presenter = cp;
+                        break;
+                    }
+                }
+            }
+        }
+
+        Assert.NotNull(presenter);
+        // DisplayMemberPath populates ItemTemplateSelector
+        Assert.NotNull(presenter.ContentTemplateSelector);
+        Assert.Same(combo.ItemTemplateSelector, presenter.ContentTemplateSelector);
+        // ItemStringFormat populates SelectionBoxItemStringFormat
+        Assert.Equal("Aircraft: {0}", presenter.ContentStringFormat);
+    });
+
     private static Color ColorOf(string hex) => (Color)ColorConverter.ConvertFromString(hex);
 }

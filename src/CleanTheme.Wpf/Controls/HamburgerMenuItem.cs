@@ -156,4 +156,26 @@ public class HamburgerMenuItem : ListBoxItem, ICommandSource
             IsEnabled = canExecute;
         }
     }
+
+    protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
+    {
+        return new HamburgerMenuItemAutomationPeer(this);
+    }
+}
+
+/// <summary>UI Automation peer for <see cref="HamburgerMenuItem"/> reporting its text label as automation name.</summary>
+public class HamburgerMenuItemAutomationPeer : System.Windows.Automation.Peers.FrameworkElementAutomationPeer
+{
+    public HamburgerMenuItemAutomationPeer(HamburgerMenuItem owner) : base(owner) { }
+
+    protected override System.Windows.Automation.Peers.AutomationControlType GetAutomationControlTypeCore() =>
+        System.Windows.Automation.Peers.AutomationControlType.ListItem;
+
+    protected override string GetNameCore()
+    {
+        var name = System.Windows.Automation.AutomationProperties.GetName(Owner);
+        if (!string.IsNullOrEmpty(name)) return name;
+        if (Owner is HamburgerMenuItem item && !string.IsNullOrEmpty(item.Text)) return item.Text;
+        return base.GetNameCore();
+    }
 }
