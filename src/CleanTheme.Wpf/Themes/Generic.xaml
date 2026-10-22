@@ -1517,7 +1517,7 @@
         </Setter>
     </Style>
 
-    <!-- CustomWindow: modern chromeless window with custom title bar & native snap/drag gestures -->
+    <!-- CustomWindow: modern chromeless window with customizable title bar slots & native snap/drag gestures -->
     <Style TargetType="controls:CustomWindow">
         <Setter Property="Background" Value="{DynamicResource AppBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource Text}" />
@@ -1545,24 +1545,45 @@
                                   Background="Transparent">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
                                 <!-- Left: App Icon & Window Title -->
-                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,10,0">
+                                <StackPanel x:Name="PART_TitleArea" Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,10,0">
                                     <Image x:Name="WindowIcon" Source="{TemplateBinding Icon}" Width="16" Height="16"
                                            Margin="0,0,8,0" VerticalAlignment="Center" Visibility="Collapsed" />
-                                    <TextBlock Text="{TemplateBinding Title}" FontWeight="Medium" FontSize="12.5"
+                                    <TextBlock x:Name="WindowTitle" Text="{TemplateBinding Title}" FontWeight="Medium" FontSize="12.5"
                                                Foreground="{DynamicResource TextMuted}" VerticalAlignment="Center" />
                                 </StackPanel>
 
-                                <!-- Center: Optional TitleBarContent -->
-                                <ContentPresenter Grid.Column="1" Content="{TemplateBinding TitleBarContent}"
-                                                  HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                                <!-- Left Content slot (e.g. Navigation icons, tabs, back/forward) -->
+                                <ContentPresenter x:Name="PART_TitleBarLeftContent" Grid.Column="1"
+                                                  Content="{TemplateBinding TitleBarLeftContent}"
+                                                  ContentTemplate="{TemplateBinding TitleBarLeftContentTemplate}"
+                                                  WindowChrome.IsHitTestVisibleInChrome="True"
+                                                  VerticalAlignment="Center" />
 
-                                <!-- Right: Window Control Buttons -->
-                                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Top">
+                                <!-- Center Content slot (e.g. Search Box, SegmentedControl, Command Palette) -->
+                                <ContentPresenter x:Name="PART_TitleBarContent" Grid.Column="2"
+                                                  Content="{TemplateBinding TitleBarContent}"
+                                                  ContentTemplate="{TemplateBinding TitleBarContentTemplate}"
+                                                  WindowChrome.IsHitTestVisibleInChrome="True"
+                                                  HorizontalAlignment="Stretch"
+                                                  VerticalAlignment="Center" />
+
+                                <!-- Right Content slot (e.g. Theme Toggle, User Profile, Action buttons) -->
+                                <ContentPresenter x:Name="PART_TitleBarRightContent" Grid.Column="3"
+                                                  Content="{TemplateBinding TitleBarRightContent}"
+                                                  ContentTemplate="{TemplateBinding TitleBarRightContentTemplate}"
+                                                  WindowChrome.IsHitTestVisibleInChrome="True"
+                                                  VerticalAlignment="Center"
+                                                  Margin="0,0,4,0" />
+
+                                <!-- Window Control Buttons -->
+                                <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Top">
                                     <Button x:Name="PART_MinimizeButton" Style="{StaticResource TitleBarButton}"
                                             Height="{TemplateBinding TitleBarHeight}" ToolTip="Minimize">
                                         <Path Data="M 0 5 L 10 5" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
@@ -1598,6 +1619,16 @@
                         <Trigger Property="HasIcon" Value="True">
                             <Setter TargetName="WindowIcon" Property="Visibility" Value="Visible" />
                         </Trigger>
+                        <Trigger Property="IsTitleVisible" Value="False">
+                            <Setter TargetName="WindowTitle" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsTitleVisible" Value="False" />
+                                <Condition Property="HasIcon" Value="False" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_TitleArea" Property="Visibility" Value="Collapsed" />
+                        </MultiTrigger>
                         <Trigger Property="IsTitleBarVisible" Value="False">
                             <Setter TargetName="PART_TitleBar" Property="Visibility" Value="Collapsed" />
                         </Trigger>

@@ -95,6 +95,15 @@ public partial class MainWindow : CustomWindow
     private void OnAbout(object sender, RoutedEventArgs e) =>
         CleanMessageBox.Show(this, "Every CleanTheme style and control on one page.", "About", "CleanTheme Gallery");
 
+    private void OnOpenGitHub(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://github.com/jerzky/CleanTheme") { UseShellExecute = true });
+        }
+        catch { }
+    }
+
     private void OnOpenSettings(object sender, RoutedEventArgs e) => NavRail.SelectedIndex = 4;
 
     private void OnExit(object sender, RoutedEventArgs e) => Close();

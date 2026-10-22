@@ -7,22 +7,47 @@ using System.Windows.Shell;
 namespace CleanTheme.Wpf.Controls;
 
 /// <summary>
-/// A modern chromeless window with a customizable title bar, window control buttons (minimize, maximize/restore, close),
-/// native dragging/snapping gestures, and automatic theme adaptation.
+/// A modern chromeless window with customizable title bar slots (left, center, right),
+/// interactive title bar controls with automatic chrome hit-testing, window control buttons
+/// (minimize, maximize/restore, close), native dragging/snapping gestures, and automatic theme adaptation.
 /// </summary>
 [TemplatePart(Name = PartTitleBar, Type = typeof(FrameworkElement))]
+[TemplatePart(Name = PartTitleBarLeftContent, Type = typeof(ContentPresenter))]
+[TemplatePart(Name = PartTitleBarContent, Type = typeof(ContentPresenter))]
+[TemplatePart(Name = PartTitleBarRightContent, Type = typeof(ContentPresenter))]
 [TemplatePart(Name = PartMinimizeButton, Type = typeof(Button))]
 [TemplatePart(Name = PartMaximizeButton, Type = typeof(Button))]
 [TemplatePart(Name = PartCloseButton, Type = typeof(Button))]
 public class CustomWindow : Window
 {
     public const string PartTitleBar = "PART_TitleBar";
+    public const string PartTitleBarLeftContent = "PART_TitleBarLeftContent";
+    public const string PartTitleBarContent = "PART_TitleBarContent";
+    public const string PartTitleBarRightContent = "PART_TitleBarRightContent";
     public const string PartMinimizeButton = "PART_MinimizeButton";
     public const string PartMaximizeButton = "PART_MaximizeButton";
     public const string PartCloseButton = "PART_CloseButton";
 
     public static readonly DependencyProperty TitleBarContentProperty = DependencyProperty.Register(
         nameof(TitleBarContent), typeof(object), typeof(CustomWindow), new FrameworkPropertyMetadata(null));
+
+    public static readonly DependencyProperty TitleBarContentTemplateProperty = DependencyProperty.Register(
+        nameof(TitleBarContentTemplate), typeof(DataTemplate), typeof(CustomWindow), new FrameworkPropertyMetadata(null));
+
+    public static readonly DependencyProperty TitleBarLeftContentProperty = DependencyProperty.Register(
+        nameof(TitleBarLeftContent), typeof(object), typeof(CustomWindow), new FrameworkPropertyMetadata(null));
+
+    public static readonly DependencyProperty TitleBarLeftContentTemplateProperty = DependencyProperty.Register(
+        nameof(TitleBarLeftContentTemplate), typeof(DataTemplate), typeof(CustomWindow), new FrameworkPropertyMetadata(null));
+
+    public static readonly DependencyProperty TitleBarRightContentProperty = DependencyProperty.Register(
+        nameof(TitleBarRightContent), typeof(object), typeof(CustomWindow), new FrameworkPropertyMetadata(null));
+
+    public static readonly DependencyProperty TitleBarRightContentTemplateProperty = DependencyProperty.Register(
+        nameof(TitleBarRightContentTemplate), typeof(DataTemplate), typeof(CustomWindow), new FrameworkPropertyMetadata(null));
+
+    public static readonly DependencyProperty IsTitleVisibleProperty = DependencyProperty.Register(
+        nameof(IsTitleVisible), typeof(bool), typeof(CustomWindow), new FrameworkPropertyMetadata(true));
 
     public static readonly DependencyProperty TitleBarHeightProperty = DependencyProperty.Register(
         nameof(TitleBarHeight), typeof(double), typeof(CustomWindow),
@@ -69,10 +94,50 @@ public class CustomWindow : Window
         CommandBindings.Add(new CommandBinding(SystemCommands.RestoreWindowCommand, (_, _) => SystemCommands.RestoreWindow(this)));
     }
 
+    /// <summary>Custom content or controls placed in the center / flexible area of the title bar.</summary>
     public object? TitleBarContent
     {
         get => GetValue(TitleBarContentProperty);
         set => SetValue(TitleBarContentProperty, value);
+    }
+
+    public DataTemplate? TitleBarContentTemplate
+    {
+        get => (DataTemplate?)GetValue(TitleBarContentTemplateProperty);
+        set => SetValue(TitleBarContentTemplateProperty, value);
+    }
+
+    /// <summary>Custom content or controls placed on the left side of the title bar, next to the icon and title.</summary>
+    public object? TitleBarLeftContent
+    {
+        get => GetValue(TitleBarLeftContentProperty);
+        set => SetValue(TitleBarLeftContentProperty, value);
+    }
+
+    public DataTemplate? TitleBarLeftContentTemplate
+    {
+        get => (DataTemplate?)GetValue(TitleBarLeftContentTemplateProperty);
+        set => SetValue(TitleBarLeftContentTemplateProperty, value);
+    }
+
+    /// <summary>Custom content or controls placed on the right side of the title bar, immediately before the minimize/maximize/close buttons.</summary>
+    public object? TitleBarRightContent
+    {
+        get => GetValue(TitleBarRightContentProperty);
+        set => SetValue(TitleBarRightContentProperty, value);
+    }
+
+    public DataTemplate? TitleBarRightContentTemplate
+    {
+        get => (DataTemplate?)GetValue(TitleBarRightContentTemplateProperty);
+        set => SetValue(TitleBarRightContentTemplateProperty, value);
+    }
+
+    /// <summary>Whether the window title text is displayed in the title bar.</summary>
+    public bool IsTitleVisible
+    {
+        get => (bool)GetValue(IsTitleVisibleProperty);
+        set => SetValue(IsTitleVisibleProperty, value);
     }
 
     public double TitleBarHeight

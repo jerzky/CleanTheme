@@ -234,4 +234,69 @@ public sealed class UntitledUiControlsTests
 
         window.Close();
     });
+
+    [Fact]
+    public void CustomWindow_titlebar_controls_and_slots() => Sta.Run(() =>
+    {
+        bool leftClicked = false;
+        bool centerClicked = false;
+        bool rightClicked = false;
+
+        var leftButton = new Button { Content = "Back" };
+        leftButton.Click += (_, _) => leftClicked = true;
+
+        var searchBox = new TextBox { Text = "Search query" };
+        var centerButton = new Button { Content = "Filter" };
+        centerButton.Click += (_, _) => centerClicked = true;
+        var centerPanel = new StackPanel { Orientation = Orientation.Horizontal };
+        centerPanel.Children.Add(searchBox);
+        centerPanel.Children.Add(centerButton);
+
+        var rightButton = new Button { Content = "Theme" };
+        rightButton.Click += (_, _) => rightClicked = true;
+
+        var window = new CustomWindow
+        {
+            Title = "Slot Test Application",
+            IsTitleVisible = false,
+            TitleBarLeftContent = leftButton,
+            TitleBarContent = centerPanel,
+            TitleBarRightContent = rightButton
+        };
+        window.Resources.MergedDictionaries.Add(new CleanThemeResources());
+        window.Show();
+        Sta.DoEvents();
+
+        Assert.False(window.IsTitleVisible);
+        Assert.Same(leftButton, window.TitleBarLeftContent);
+        Assert.Same(centerPanel, window.TitleBarContent);
+        Assert.Same(rightButton, window.TitleBarRightContent);
+
+        var leftPresenter = (ContentPresenter)window.Template.FindName(CustomWindow.PartTitleBarLeftContent, window);
+        var centerPresenter = (ContentPresenter)window.Template.FindName(CustomWindow.PartTitleBarContent, window);
+        var rightPresenter = (ContentPresenter)window.Template.FindName(CustomWindow.PartTitleBarRightContent, window);
+
+        Assert.NotNull(leftPresenter);
+        Assert.NotNull(centerPresenter);
+        Assert.NotNull(rightPresenter);
+
+        // Verify hit-test visibility in WindowChrome is true
+        Assert.True(System.Windows.Shell.WindowChrome.GetIsHitTestVisibleInChrome(leftPresenter));
+        Assert.True(System.Windows.Shell.WindowChrome.GetIsHitTestVisibleInChrome(centerPresenter));
+        Assert.True(System.Windows.Shell.WindowChrome.GetIsHitTestVisibleInChrome(rightPresenter));
+        Assert.True(System.Windows.Shell.WindowChrome.GetIsHitTestVisibleInChrome(leftButton));
+        Assert.True(System.Windows.Shell.WindowChrome.GetIsHitTestVisibleInChrome(searchBox));
+        Assert.True(System.Windows.Shell.WindowChrome.GetIsHitTestVisibleInChrome(rightButton));
+
+        // Verify controls receive clicks
+        leftButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        centerButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        rightButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+
+        Assert.True(leftClicked);
+        Assert.True(centerClicked);
+        Assert.True(rightClicked);
+
+        window.Close();
+    });
 }
