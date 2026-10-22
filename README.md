@@ -147,6 +147,11 @@ string? name = CleanMessageBox.Prompt(owner, "Save scenario", "Name", "New scena
 
 The menu animates open and close transitions smoothly by default (200 ms cubic ease-out). Customize or disable via `IsPaneAnimated="False"`, `AnimationDuration="0:0:0.150"`, or `AnimationEasing`.
 
+<p align="center">
+  <img src="docs/images/hamburger-menu-light.gif" alt="Hamburger Menu Smooth Animation (Light)" width="49%" />
+  <img src="docs/images/hamburger-menu-dark.gif" alt="Hamburger Menu Smooth Animation (Dark)" width="49%" />
+</p>
+
 **SearchableSettingsView.** A modern settings interface with category tabs, sections, two-column setting rows, and instant live search filtering with `Ctrl+K`:
 
 ```xml
@@ -176,6 +181,10 @@ The menu animates open and close transitions smoothly by default (200 ms cubic e
     </clean:SettingsCategory>
 </clean:SearchableSettingsView>
 ```
+
+<p align="center">
+  <img src="docs/images/settings-search.gif" alt="Searchable Settings View Live Filter" width="90%" />
+</p>
 
 The controls carry their own default styles; their colors come from the merged theme.
 
