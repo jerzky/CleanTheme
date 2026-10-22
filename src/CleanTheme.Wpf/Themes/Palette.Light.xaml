@@ -28,6 +28,8 @@
     <SolidColorBrush x:Key="AccentPressed" Color="#123159" />
     <SolidColorBrush x:Key="AccentSoft" Color="#E7EEF7" />
     <SolidColorBrush x:Key="OnAccent" Color="#FFFFFF" />
+    <Color x:Key="FocusRingColor">#1D4B87</Color>
+    <SolidColorBrush x:Key="FocusRing" Color="#1D4B87" Opacity="0.25" />
 
     <SolidColorBrush x:Key="Positive" Color="#16794A" />
     <SolidColorBrush x:Key="PositiveSoft" Color="#E5F3EB" />

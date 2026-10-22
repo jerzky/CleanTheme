@@ -236,6 +236,57 @@
                                             <TabItem Header="Disabled" IsEnabled="False" />
                                         </TabControl>
                                     </clean:Card>
+
+                                    <!-- Badges, Avatars & Groups -->
+                                    <clean:Card Grid.Row="4" Header="Badges and Avatars">
+                                        <StackPanel>
+                                            <TextBlock Style="{StaticResource FieldLabel}" Text="Status Badges with indicator dots &amp; dismiss" Margin="0,0,0,6" />
+                                            <WrapPanel>
+                                                <clean:StatusPill Content="Active" State="Positive" ShowDot="True" Margin="0,0,8,8" />
+                                                <clean:StatusPill Content="Warning" State="Warning" ShowDot="True" Margin="0,0,8,8" />
+                                                <clean:StatusPill Content="Error" State="Negative" ShowDot="True" Margin="0,0,8,8" />
+                                                <clean:StatusPill Content="Dismissible" State="Info" ShowDot="True" IsClosable="True" Margin="0,0,8,8" />
+                                                <clean:StatusPill Content="Neutral" State="Neutral" Margin="0,0,8,8" />
+                                            </WrapPanel>
+
+                                            <TextBlock Style="{StaticResource FieldLabel}" Text="Avatars with presence status" Margin="0,6,0,6" />
+                                            <WrapPanel VerticalAlignment="Center">
+                                                <clean:Avatar Initials="JG" AvatarSize="36" Status="Online" Margin="0,0,12,8" ToolTip="Jens (Online)" />
+                                                <clean:Avatar Initials="AL" AvatarSize="36" Status="Busy" Margin="0,0,12,8" ToolTip="Alice (Busy)" />
+                                                <clean:Avatar Initials="MK" AvatarSize="36" Status="Away" Margin="0,0,12,8" ToolTip="Mark (Away)" />
+                                                <clean:Avatar Initials="ST" AvatarSize="36" Status="Offline" Margin="0,0,12,8" ToolTip="System (Offline)" />
+                                            </WrapPanel>
+
+                                            <TextBlock Style="{StaticResource FieldLabel}" Text="AvatarGroup with +N overflow cutout" Margin="0,6,0,6" />
+                                            <clean:AvatarGroup MaxDisplay="3" AvatarSize="34">
+                                                <clean:Avatar Initials="U1" />
+                                                <clean:Avatar Initials="U2" />
+                                                <clean:Avatar Initials="U3" />
+                                                <clean:Avatar Initials="U4" />
+                                                <clean:Avatar Initials="U5" />
+                                            </clean:AvatarGroup>
+                                        </StackPanel>
+                                    </clean:Card>
+
+                                    <!-- Inline Alerts & Breadcrumbs -->
+                                    <clean:Card Grid.Row="4" Grid.Column="2" Header="Alerts and Breadcrumbs">
+                                        <StackPanel>
+                                            <TextBlock Style="{StaticResource FieldLabel}" Text="BreadcrumbBar hierarchy navigation" Margin="0,0,0,6" />
+                                            <clean:BreadcrumbBar Margin="0,0,0,12">
+                                                <clean:BreadcrumbItem Header="Home" />
+                                                <clean:BreadcrumbItem Header="Fleet Management" />
+                                                <clean:BreadcrumbItem Header="Unit Config" />
+                                            </clean:BreadcrumbBar>
+
+                                            <TextBlock Style="{StaticResource FieldLabel}" Text="Inline banner alerts" Margin="0,6,0,6" />
+                                            <clean:InlineAlert State="Positive" Title="Cluster update applied"
+                                                               Message="All 14 node runners are operating on protocol v2.4."
+                                                               Margin="0,0,0,8" />
+                                            <clean:InlineAlert State="Warning" Title="Elevated latency warning"
+                                                               Message="Average response time exceeded 120 ms over the past 5 minutes."
+                                                               ActionText="Inspect trace" IsDismissible="True" Margin="0" />
+                                        </StackPanel>
+                                    </clean:Card>
                                 </Grid>
                             </ScrollViewer>
                         </TabItem>
@@ -267,30 +318,42 @@
                                     </UniformGrid>
 
                                     <!-- Fleet Data Table -->
-                                    <clean:Card Grid.Row="2" Header="Fleet Status Table" Padding="0,16,0,0">
-                                        <DataGrid x:Name="Rows">
-                                            <DataGrid.Columns>
-                                                <DataGridTextColumn Header="NAME" Binding="{Binding Name}" Width="*" />
-                                                <DataGridTemplateColumn Header="STATE" Width="120">
-                                                    <DataGridTemplateColumn.CellTemplate>
-                                                        <DataTemplate>
-                                                            <clean:StatusPill State="{Binding State}" Content="{Binding State}" />
-                                                        </DataTemplate>
-                                                    </DataGridTemplateColumn.CellTemplate>
-                                                </DataGridTemplateColumn>
-                                                <DataGridTextColumn Header="COUNT" Binding="{Binding Count}" Width="90"
-                                                                    HeaderStyle="{StaticResource NumericHeader}" ElementStyle="{StaticResource NumericCell}" />
-                                                <DataGridTextColumn Header="VALUE" Binding="{Binding Value, StringFormat=N2}" Width="110"
-                                                                    HeaderStyle="{StaticResource NumericHeader}" ElementStyle="{StaticResource NumericCell}" />
-                                                <DataGridTemplateColumn Width="90">
-                                                    <DataGridTemplateColumn.CellTemplate>
-                                                        <DataTemplate>
-                                                            <Button Style="{StaticResource RowButton}" Content="Open" />
-                                                        </DataTemplate>
-                                                    </DataGridTemplateColumn.CellTemplate>
-                                                </DataGridTemplateColumn>
-                                            </DataGrid.Columns>
-                                        </DataGrid>
+                                    <clean:Card Grid.Row="2" Header="Fleet Status Table" Padding="0,16,0,8">
+                                        <StackPanel>
+                                            <DataGrid x:Name="Rows">
+                                                <DataGrid.Columns>
+                                                    <DataGridTemplateColumn Header="NAME" Width="*">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                                    <clean:Avatar Initials="{Binding Name}" AvatarSize="24" Status="Online" Margin="0,0,8,0" />
+                                                                    <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontWeight="Medium" />
+                                                                </StackPanel>
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTemplateColumn Header="STATE" Width="130">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <clean:StatusPill State="{Binding State}" Content="{Binding State}" ShowDot="True" />
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                    <DataGridTextColumn Header="COUNT" Binding="{Binding Count}" Width="90"
+                                                                        HeaderStyle="{StaticResource NumericHeader}" ElementStyle="{StaticResource NumericCell}" />
+                                                    <DataGridTextColumn Header="VALUE" Binding="{Binding Value, StringFormat=N2}" Width="110"
+                                                                        HeaderStyle="{StaticResource NumericHeader}" ElementStyle="{StaticResource NumericCell}" />
+                                                    <DataGridTemplateColumn Width="90">
+                                                        <DataGridTemplateColumn.CellTemplate>
+                                                            <DataTemplate>
+                                                                <Button Style="{StaticResource RowButton}" Content="Open" />
+                                                            </DataTemplate>
+                                                        </DataGridTemplateColumn.CellTemplate>
+                                                    </DataGridTemplateColumn>
+                                                </DataGrid.Columns>
+                                            </DataGrid>
+                                            <clean:PaginationBar TotalPages="8" CurrentPage="1" PageSize="10" TotalItems="78" Margin="12,12,12,4" />
+                                        </StackPanel>
                                     </clean:Card>
                                 </Grid>
                             </ScrollViewer>

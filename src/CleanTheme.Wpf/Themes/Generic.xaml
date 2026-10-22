@@ -22,8 +22,42 @@
             <Setter.Value>
                 <ControlTemplate TargetType="controls:StatusPill">
                     <Border Background="{TemplateBinding Background}" CornerRadius="10" Padding="{TemplateBinding Padding}">
-                        <ContentPresenter />
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Ellipse x:Name="Dot" Width="6" Height="6" Fill="{TemplateBinding Foreground}" Margin="0,0,5,0"
+                                     VerticalAlignment="Center" Visibility="Collapsed" />
+                            <Path x:Name="IconPath" Data="{TemplateBinding Icon}" Fill="{TemplateBinding Foreground}"
+                                  Stretch="Uniform" Width="10" Height="10" Margin="0,0,5,0" VerticalAlignment="Center"
+                                  Visibility="Collapsed" />
+                            <ContentPresenter VerticalAlignment="Center" />
+                            <Button x:Name="PART_CloseButton" Style="{x:Null}" Focusable="False" Margin="5,0,-2,0"
+                                    VerticalAlignment="Center" Cursor="Hand" Visibility="Collapsed">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="Transparent" Width="12" Height="12" SnapsToDevicePixels="True">
+                                            <Path Data="M 2 2 L 10 10 M 10 2 L 2 10" Stroke="{TemplateBinding Foreground}"
+                                                  StrokeThickness="1.5" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Opacity" Value="0.65" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </StackPanel>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="ShowDot" Value="True">
+                            <Setter TargetName="Dot" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="HasIcon" Value="True">
+                            <Setter TargetName="IconPath" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsClosable" Value="True">
+                            <Setter TargetName="PART_CloseButton" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -1127,4 +1161,313 @@
         </Setter>
     </Style>
 
+
+    <!-- Avatar: circular image or fallback initials with status badge -->
+    <Style TargetType="controls:Avatar">
+        <Setter Property="Background" Value="{DynamicResource SurfaceSunken}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Surface}" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:Avatar">
+                    <Grid Width="{TemplateBinding AvatarSize}" Height="{TemplateBinding AvatarSize}" SnapsToDevicePixels="True">
+                        <Border x:Name="RootBorder" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="999" ClipToBounds="True">
+                            <Grid>
+                                <TextBlock x:Name="InitialsBlock" Text="{TemplateBinding Initials}"
+                                           Foreground="{TemplateBinding Foreground}"
+                                           FontFamily="{TemplateBinding FontFamily}"
+                                           FontSize="{TemplateBinding FontSize}"
+                                           FontWeight="{TemplateBinding FontWeight}"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <Image x:Name="ImagePart" Source="{TemplateBinding Source}" Stretch="UniformToFill" Visibility="Collapsed" />
+                            </Grid>
+                        </Border>
+                        <Border x:Name="StatusIndicator" Width="10" Height="10" CornerRadius="5"
+                                HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                                Margin="0,0,-1,-1" BorderBrush="{DynamicResource Surface}" BorderThickness="1.5"
+                                Visibility="Collapsed" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasImage" Value="True">
+                            <Setter TargetName="ImagePart" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="InitialsBlock" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Status" Value="Online">
+                            <Setter TargetName="StatusIndicator" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="StatusIndicator" Property="Background" Value="{DynamicResource Positive}" />
+                        </Trigger>
+                        <Trigger Property="Status" Value="Busy">
+                            <Setter TargetName="StatusIndicator" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="StatusIndicator" Property="Background" Value="{DynamicResource Negative}" />
+                        </Trigger>
+                        <Trigger Property="Status" Value="Away">
+                            <Setter TargetName="StatusIndicator" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="StatusIndicator" Property="Background" Value="{DynamicResource Warning}" />
+                        </Trigger>
+                        <Trigger Property="Status" Value="Offline">
+                            <Setter TargetName="StatusIndicator" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="StatusIndicator" Property="Background" Value="{DynamicResource TextSubtle}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- AvatarGroup: overlapping group of avatars with +N overflow -->
+    <Style TargetType="controls:AvatarGroup">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:AvatarGroup">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <ItemsControl ItemsSource="{TemplateBinding VisibleItems}" Focusable="False">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <ContentPresenter Content="{Binding}" Margin="-8,0,0,0" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <Border x:Name="OverflowPill" Width="{TemplateBinding AvatarSize}" Height="{TemplateBinding AvatarSize}"
+                                CornerRadius="999" Background="{DynamicResource NeutralSoft}"
+                                BorderBrush="{DynamicResource Surface}" BorderThickness="2"
+                                Margin="-8,0,0,0" VerticalAlignment="Center" Visibility="Collapsed">
+                            <TextBlock Text="{Binding OverflowCount, RelativeSource={RelativeSource TemplatedParent}, StringFormat='+{0}'}"
+                                       Foreground="{DynamicResource TextMuted}" FontSize="11.5" FontWeight="SemiBold"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasOverflow" Value="True">
+                            <Setter TargetName="OverflowPill" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- InlineAlert: notification banner card with title, message, semantic styling, and dismiss -->
+    <Style TargetType="controls:InlineAlert">
+        <Setter Property="Background" Value="{DynamicResource AccentSoft}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Accent}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="14,10" />
+        <Setter Property="Margin" Value="0,0,0,12" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:InlineAlert">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="8"
+                            Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Path x:Name="AlertIcon" Width="16" Height="16" Stretch="Uniform"
+                                  Fill="{DynamicResource Accent}" Margin="0,2,12,0" VerticalAlignment="Top"
+                                  Data="M 8 1.5 C 4.41 1.5 1.5 4.41 1.5 8 C 1.5 11.59 4.41 14.5 8 14.5 C 11.59 14.5 14.5 11.59 14.5 8 C 14.5 4.41 11.59 1.5 8 1.5 Z M 8 11.5 C 7.59 11.5 7.25 11.16 7.25 10.75 L 7.25 7.75 C 7.25 7.34 7.59 7 8 7 C 8.41 7 8.75 7.34 8.75 7.75 L 8.75 10.75 C 8.75 11.16 8.41 11.5 8 11.5 Z M 8 5.75 C 7.45 5.75 7 5.3 7 4.75 C 7 4.2 7.45 3.75 8 3.75 C 8.55 3.75 9 4.2 9 4.75 C 9 5.3 8.55 5.75 8 5.75 Z" />
+
+                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                <TextBlock x:Name="TitleBlock" Text="{TemplateBinding Title}"
+                                           FontWeight="SemiBold" FontSize="13" Foreground="{DynamicResource Text}" />
+                                <ContentPresenter x:Name="MessagePresenter" Content="{TemplateBinding Message}"
+                                                  Margin="0,2,0,0" TextElement.FontSize="12.5" TextElement.Foreground="{DynamicResource TextMuted}" />
+                                <Button x:Name="PART_ActionButton" Content="{TemplateBinding ActionText}"
+                                        Style="{StaticResource GhostButton}" HorizontalAlignment="Left"
+                                        Margin="0,6,0,0" Padding="0" Height="Auto" FontWeight="SemiBold"
+                                        Foreground="{DynamicResource Accent}" Visibility="Collapsed" />
+                            </StackPanel>
+
+                            <Button x:Name="PART_CloseButton" Grid.Column="2" Style="{x:Null}" Focusable="False"
+                                    Margin="8,0,0,0" VerticalAlignment="Top" Cursor="Hand" Visibility="Collapsed">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="Transparent" CornerRadius="4" Width="18" Height="18">
+                                            <Path Data="M 4 4 L 12 12 M 12 4 L 4 12" Stroke="{DynamicResource TextMuted}" StrokeThickness="1.5"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Opacity" Value="0.65" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsDismissible" Value="True">
+                            <Setter TargetName="PART_CloseButton" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="HasActionText" Value="True">
+                            <Setter TargetName="PART_ActionButton" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="State" Value="Info">
+                            <Setter Property="Background" Value="{DynamicResource AccentSoft}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource Accent}" />
+                            <Setter TargetName="AlertIcon" Property="Fill" Value="{DynamicResource Accent}" />
+                            <Setter TargetName="AlertIcon" Property="Data" Value="M 8 1.5 C 4.41 1.5 1.5 4.41 1.5 8 C 1.5 11.59 4.41 14.5 8 14.5 C 11.59 14.5 14.5 11.59 14.5 8 C 14.5 4.41 11.59 1.5 8 1.5 Z M 8 11.5 C 7.59 11.5 7.25 11.16 7.25 10.75 L 7.25 7.75 C 7.25 7.34 7.59 7 8 7 C 8.41 7 8.75 7.34 8.75 7.75 L 8.75 10.75 C 8.75 11.16 8.41 11.5 8 11.5 Z M 8 5.75 C 7.45 5.75 7 5.3 7 4.75 C 7 4.2 7.45 3.75 8 3.75 C 8.55 3.75 9 4.2 9 4.75 C 9 5.3 8.55 5.75 8 5.75 Z" />
+                        </Trigger>
+                        <Trigger Property="State" Value="Positive">
+                            <Setter Property="Background" Value="{DynamicResource PositiveSoft}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource Positive}" />
+                            <Setter TargetName="AlertIcon" Property="Fill" Value="{DynamicResource Positive}" />
+                            <Setter TargetName="AlertIcon" Property="Data" Value="M 8 1.5 C 4.41 1.5 1.5 4.41 1.5 8 C 1.5 11.59 4.41 14.5 8 14.5 C 11.59 14.5 14.5 11.59 14.5 8 C 14.5 4.41 11.59 1.5 8 1.5 Z M 6.5 10.8 L 3.8 8.1 L 4.9 7 L 6.5 8.6 L 11.1 4 L 12.2 5.1 Z" />
+                        </Trigger>
+                        <Trigger Property="State" Value="Warning">
+                            <Setter Property="Background" Value="{DynamicResource WarningSoft}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource Warning}" />
+                            <Setter TargetName="AlertIcon" Property="Fill" Value="{DynamicResource Warning}" />
+                            <Setter TargetName="AlertIcon" Property="Data" Value="M 8 1.5 L 15 14 L 1 14 Z M 8 5.5 C 7.5 5.5 7.2 5.8 7.2 6.2 L 7.4 10 C 7.4 10.4 7.7 10.7 8 10.7 C 8.3 10.7 8.6 10.4 8.6 10 L 8.8 6.2 C 8.8 5.8 8.5 5.5 8 5.5 Z M 8 11.7 C 7.5 11.7 7.2 12 7.2 12.4 C 7.2 12.8 7.5 13.1 8 13.1 C 8.5 13.1 8.8 12.8 8.8 12.4 C 8.8 12 8.5 11.7 8 11.7 Z" />
+                        </Trigger>
+                        <Trigger Property="State" Value="Negative">
+                            <Setter Property="Background" Value="{DynamicResource NegativeSoft}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource Negative}" />
+                            <Setter TargetName="AlertIcon" Property="Fill" Value="{DynamicResource Negative}" />
+                            <Setter TargetName="AlertIcon" Property="Data" Value="M 8 1.5 C 4.41 1.5 1.5 4.41 1.5 8 C 1.5 11.59 4.41 14.5 8 14.5 C 11.59 14.5 14.5 11.59 14.5 8 C 14.5 4.41 11.59 1.5 8 1.5 Z M 8 4.5 C 8.41 4.5 8.75 4.84 8.75 5.25 L 8.75 8.25 C 8.75 8.66 8.41 9 8 9 C 7.59 9 7.25 8.66 7.25 8.25 L 7.25 5.25 C 7.25 4.84 7.59 4.5 8 4.5 Z M 8 10.25 C 8.55 10.25 9 10.7 9 11.25 C 9 11.8 8.55 12.25 8 12.25 C 7.45 12.25 7 11.8 7 11.25 C 7 10.7 7.45 10.25 8 10.25 Z" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- BreadcrumbBar: navigation hierarchy trail -->
+    <Style TargetType="controls:BreadcrumbBar">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:BreadcrumbBar">
+                    <ItemsPresenter />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:BreadcrumbItem">
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:BreadcrumbItem">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Path x:Name="IconPath" Data="{TemplateBinding Icon}" Fill="{TemplateBinding Foreground}"
+                              Stretch="Uniform" Width="13" Height="13" Margin="0,0,6,0" VerticalAlignment="Center"
+                              Visibility="Collapsed" />
+                        <ContentPresenter x:Name="HeaderPresenter" Content="{TemplateBinding Header}"
+                                          ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                          VerticalAlignment="Center" RecognizesAccessKey="True" />
+                        <Path x:Name="Separator" Data="M 0 0 L 3.5 4 L 0 8" Stroke="{DynamicResource TextSubtle}"
+                              StrokeThickness="1.2" Margin="8,0,8,0" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsCurrent" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource Text}" />
+                            <Setter Property="FontWeight" Value="SemiBold" />
+                            <Setter Property="Cursor" Value="Arrow" />
+                            <Setter TargetName="Separator" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource Text}" />
+                        </Trigger>
+                        <Trigger Property="HasIcon" Value="True">
+                            <Setter TargetName="IconPath" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- PaginationBar: table/data pagination bar with Previous/Next, page tokens, and record counts -->
+    <Style TargetType="controls:PaginationBar">
+        <Setter Property="Foreground" Value="{DynamicResource Text}" />
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:PaginationBar">
+                    <Grid SnapsToDevicePixels="True" Margin="{TemplateBinding Padding}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="{TemplateBinding SummaryText}" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextMuted}" FontSize="12.5" />
+
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button Content="‹ Previous" Command="controls:PaginationBar.PreviousPageCommand"
+                                    Style="{StaticResource {x:Type Button}}" Height="28" Padding="10,0" Margin="0,0,6,0" />
+
+                            <ItemsControl ItemsSource="{TemplateBinding PageItems}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type controls:PageToken}">
+                                        <Grid Margin="2,0">
+                                            <Button x:Name="PageBtn" Content="{Binding Text}" Command="controls:PaginationBar.GoToPageCommand"
+                                                    CommandParameter="{Binding PageNumber}" Width="30" Height="28" Padding="0"
+                                                    Style="{StaticResource {x:Type Button}}" />
+                                            <TextBlock x:Name="EllipsisText" Text="…" Foreground="{DynamicResource TextMuted}"
+                                                       VerticalAlignment="Center" HorizontalAlignment="Center" Margin="4,0" Visibility="Collapsed" />
+                                        </Grid>
+                                        <DataTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding IsEllipsis}" Value="True">
+                                                <Setter TargetName="PageBtn" Property="Visibility" Value="Collapsed" />
+                                                <Setter TargetName="EllipsisText" Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                                <Setter TargetName="PageBtn" Property="Background" Value="{DynamicResource AccentSoft}" />
+                                                <Setter TargetName="PageBtn" Property="Foreground" Value="{DynamicResource Accent}" />
+                                                <Setter TargetName="PageBtn" Property="BorderBrush" Value="{DynamicResource Accent}" />
+                                                <Setter TargetName="PageBtn" Property="FontWeight" Value="SemiBold" />
+                                            </DataTrigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <Button Content="Next ›" Command="controls:PaginationBar.NextPageCommand"
+                                    Style="{StaticResource {x:Type Button}}" Height="28" Padding="10,0" Margin="6,0,0,0" />
+                        </StackPanel>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

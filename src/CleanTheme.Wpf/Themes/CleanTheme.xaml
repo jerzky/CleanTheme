@@ -16,7 +16,18 @@
     </ResourceDictionary.MergedDictionaries>
 
     <FontFamily x:Key="UiFont">Segoe UI</FontFamily>
-    <FontFamily x:Key="MonoFont">Cascadia Mono, Consolas</FontFamily>
+        <FontFamily x:Key="MonoFont">Cascadia Mono, Consolas</FontFamily>
+
+    <!-- Focus visual for keyboard navigation: subtle rounded outer ring matching Untitled UI -->
+    <Style x:Key="CleanFocusVisual">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border BorderBrush="{DynamicResource FocusRing}" BorderThickness="2.5" CornerRadius="5" Margin="-2.5" SnapsToDevicePixels="True" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <!-- Text -->
     <Style x:Key="CardTitle" TargetType="TextBlock">
