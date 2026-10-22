@@ -1031,6 +1031,7 @@
         <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
         <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
         <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Padding" Value="12,8" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
@@ -1043,10 +1044,10 @@
                             <ContentPresenter Content="{TemplateBinding Header}"
                                               RecognizesAccessKey="True"
                                               TextElement.FontSize="{TemplateBinding FontSize}"
-                                              TextElement.FontWeight="Medium" />
+                                              TextElement.FontWeight="{TemplateBinding FontWeight}" />
                             <Border x:Name="BadgeBorder" Background="{DynamicResource NeutralSoft}"
                                     CornerRadius="8" Padding="6,1" Margin="6,0,0,0" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding Badge, RelativeSource={RelativeSource TemplatedParent}}"
+                                <TextBlock x:Name="BadgeText" Text="{Binding Badge, RelativeSource={RelativeSource TemplatedParent}}"
                                            FontSize="11" FontWeight="SemiBold"
                                            Foreground="{DynamicResource TextMuted}" />
                             </Border>
@@ -1062,7 +1063,8 @@
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="TabChrome" Property="BorderBrush" Value="{DynamicResource Accent}" />
                             <Setter Property="Foreground" Value="{DynamicResource Accent}" />
-                            <Setter Property="FontWeight" Value="SemiBold" />
+                            <Setter TargetName="BadgeBorder" Property="Background" Value="{DynamicResource AccentSoft}" />
+                            <Setter TargetName="BadgeText" Property="Foreground" Value="{DynamicResource Accent}" />
                         </Trigger>
                         <Trigger Property="IsMatch" Value="False">
                             <Setter Property="Visibility" Value="Collapsed" />

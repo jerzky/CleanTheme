@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -10,6 +11,12 @@ namespace CleanTheme.Wpf.Controls;
 /// </summary>
 public class SettingsCategory : HeaderedItemsControl
 {
+    public static readonly RoutedEvent SelectedEvent =
+        Selector.SelectedEvent.AddOwner(typeof(SettingsCategory));
+
+    public static readonly RoutedEvent UnselectedEvent =
+        Selector.UnselectedEvent.AddOwner(typeof(SettingsCategory));
+
     public static readonly DependencyProperty BadgeProperty = DependencyProperty.Register(
         nameof(Badge), typeof(object), typeof(SettingsCategory),
         new FrameworkPropertyMetadata(null));
@@ -23,11 +30,22 @@ public class SettingsCategory : HeaderedItemsControl
             typeof(SettingsCategory),
             new FrameworkPropertyMetadata(
                 false,
-                FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Journal));
+                FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Journal,
+                OnIsSelectedChanged));
 
     static SettingsCategory()
     {
         DefaultStyleKeyProperty.OverrideMetadata(typeof(SettingsCategory), new FrameworkPropertyMetadata(typeof(SettingsCategory)));
+    }
+
+    private static void OnIsSelectedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is SettingsCategory category)
+        {
+            bool isSelected = (bool)e.NewValue;
+            var routedEvent = isSelected ? SelectedEvent : UnselectedEvent;
+            category.RaiseEvent(new RoutedEventArgs(routedEvent, category));
+        }
     }
 
     /// <summary>Optional badge count or label shown next to the category title.</summary>

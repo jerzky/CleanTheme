@@ -154,4 +154,55 @@ public sealed class SettingsControlTests
         Sta.Layout(view);
         Assert.False(view.IsSearching);
     });
+
+    [Fact]
+    public void SettingsCategory_selection_mutually_exclusive_on_click() => Sta.Run(() =>
+    {
+        var view = new SearchableSettingsView { Title = "Preferences" };
+        var cat1 = new SettingsCategory { Header = "General" };
+        var cat2 = new SettingsCategory { Header = "Profile" };
+        var cat3 = new SettingsCategory { Header = "Notifications" };
+
+        view.Items.Add(cat1);
+        view.Items.Add(cat2);
+        view.Items.Add(cat3);
+
+        Sta.Layout(view);
+
+        // Initially first category is selected
+        Assert.Equal(0, view.SelectedIndex);
+        Assert.True(cat1.IsSelected);
+        Assert.False(cat2.IsSelected);
+        Assert.False(cat3.IsSelected);
+
+        // Click second category
+        cat2.RaiseEvent(new System.Windows.Input.MouseButtonEventArgs(
+            System.Windows.Input.Mouse.PrimaryDevice, 0, System.Windows.Input.MouseButton.Left)
+        {
+            RoutedEvent = UIElement.MouseLeftButtonDownEvent
+        });
+        Sta.Layout(view);
+
+        // Only second category should be selected
+        Assert.False(cat1.IsSelected);
+        Assert.True(cat2.IsSelected);
+        Assert.False(cat3.IsSelected);
+        Assert.Equal(1, view.SelectedIndex);
+        Assert.Same(cat2, view.SelectedItem);
+
+        // Click third category
+        cat3.RaiseEvent(new System.Windows.Input.MouseButtonEventArgs(
+            System.Windows.Input.Mouse.PrimaryDevice, 0, System.Windows.Input.MouseButton.Left)
+        {
+            RoutedEvent = UIElement.MouseLeftButtonDownEvent
+        });
+        Sta.Layout(view);
+
+        // Only third category should be selected
+        Assert.False(cat1.IsSelected);
+        Assert.False(cat2.IsSelected);
+        Assert.True(cat3.IsSelected);
+        Assert.Equal(2, view.SelectedIndex);
+        Assert.Same(cat3, view.SelectedItem);
+    });
 }
