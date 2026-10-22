@@ -17,7 +17,7 @@ Originally the Strato Launcher theme.
 
 | Package | What |
 |---|---|
-| `CleanTheme.Wpf` | The theme (palette, Untitled UI focus rings, and styles for the stock WPF controls) and controls: `Card`, `StatusPill`, `Avatar`, `AvatarGroup`, `InlineAlert`, `BreadcrumbBar`, `PaginationBar`, `MetricTile`, `SegmentedControl`, `SearchBox`, `ToggleSwitch`, `NumericUpDown`, `EmptyState`, `ToastHost`, `CleanDialog` / `CleanMessageBox`, `HamburgerMenu`, `SearchableSettingsView` |
+| `CleanTheme.Wpf` | The theme (palette, Untitled UI focus rings, and styles for the stock WPF controls) and controls: `CustomWindow`, `Card`, `StatusPill`, `Avatar`, `AvatarGroup`, `InlineAlert`, `BreadcrumbBar`, `PaginationBar`, `MetricTile`, `SegmentedControl`, `SearchBox`, `ToggleSwitch`, `NumericUpDown`, `EmptyState`, `ToastHost`, `CleanDialog` / `CleanMessageBox`, `HamburgerMenu`, `SearchableSettingsView` |
 | `CleanTheme.Logging` | In-app log: an `ILoggerProvider` feeding a bounded, filterable `LogFeed`, and a `LogView` to show it |
 
 ## Install
@@ -48,11 +48,52 @@ the palette there):
 
 Merging `CleanThemeResources.ThemeUri` by `Source` also works, but gives the light palette only, with no switching.
 
-Give windows the base look (implicit styles don't reach `Window` subclasses):
+### Windows
+
+Give standard windows the base look:
 
 ```xml
 <Window ... Style="{StaticResource CleanWindow}">
 ```
+
+Or use **`CustomWindow`** for modern chromeless windows with custom title bar slots, interactive controls, and native drag/snap behaviors:
+
+```xml
+<clean:CustomWindow x:Class="MyApp.MainWindow"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:clean="https://github.com/jerzky/CleanTheme"
+                    Title="My Application"
+                    Style="{StaticResource {x:Type clean:CustomWindow}}">
+
+    <!-- Center slot: Search bar, command palette (Ctrl+K), or tabs -->
+    <clean:CustomWindow.TitleBarContent>
+        <TextBox Style="{StaticResource BareTextBox}" Text="Search... (Ctrl+K)" MaxWidth="320" />
+    </clean:CustomWindow.TitleBarContent>
+
+    <!-- Right slot: Quick action buttons before minimize/maximize/close -->
+    <clean:CustomWindow.TitleBarRightContent>
+        <Button Style="{StaticResource GhostButton}" Content="Settings" />
+    </clean:CustomWindow.TitleBarRightContent>
+
+    <Grid>
+        <!-- App content here -->
+    </Grid>
+</clean:CustomWindow>
+```
+
+```csharp
+public partial class MainWindow : CustomWindow
+{
+    public MainWindow()
+    {
+        InitializeComponent();
+    }
+}
+```
+
+- **Slots:** `TitleBarLeftContent`, `TitleBarContent` (center), and `TitleBarRightContent`.
+- **Automatic Chrome Hit-Testing:** Controls inside slots are automatically clickable and focusable (`WindowChrome.IsHitTestVisibleInChrome="True"`), while empty title bar areas remain draggable with native Aero Snap gestures.
+- **Title Visibility:** Set `IsTitleVisible="False"` to hide the window title text in the title bar while preserving `Window.Title` for taskbar and Alt+Tab.
 
 The `https://github.com/jerzky/CleanTheme` XML namespace covers both packages.
 
