@@ -26,6 +26,17 @@ public static class Program
         using var host = builder.Build();
         var app = new App(host);
         app.InitializeComponent();
+
+        if (args.Length > 0 && args[0] == "--screenshots")
+        {
+            var outputDir = args.Length > 1 ? args[1] : "docs/images";
+            var window = host.Services.GetRequiredService<MainWindow>();
+            var feed = host.Services.GetRequiredService<LogFeed>();
+            ScreenshotGenerator.Run(window, feed, outputDir);
+            window.Close();
+            return;
+        }
+
         app.Run();
     }
 }

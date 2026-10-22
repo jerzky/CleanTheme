@@ -6,6 +6,15 @@ Templates stay minimal: controls are restyled with setters wherever the stock te
 
 Originally the Strato Launcher theme.
 
+<p align="center">
+  <img src="docs/images/overview-light.png" alt="CleanTheme Overview &amp; Controls (Light)" width="49%" />
+  <img src="docs/images/overview-dark.png" alt="CleanTheme Overview &amp; Controls (Dark)" width="49%" />
+</p>
+<p align="center">
+  <img src="docs/images/settings-light.png" alt="CleanTheme Searchable Settings (Light)" width="49%" />
+  <img src="docs/images/settings-dark.png" alt="CleanTheme Searchable Settings (Dark)" width="49%" />
+</p>
+
 | Package | What |
 |---|---|
 | `CleanTheme.Wpf` | The theme (palette and styles for the stock WPF controls) and controls: `Card`, `StatusPill`, `MetricTile`, `SegmentedControl`, `SearchBox`, `ToggleSwitch`, `NumericUpDown`, `EmptyState`, `ToastHost`, `CleanDialog` / `CleanMessageBox`, `HamburgerMenu`, `SearchableSettingsView` |
@@ -167,6 +176,11 @@ string? name = CleanMessageBox.Prompt(owner, "Save scenario", "Name", "New scena
 ```
 
 The controls carry their own default styles; their colors come from the merged theme.
+
+<p align="center">
+  <img src="docs/images/fleet-light.png" alt="CleanTheme Fleet Units &amp; Cards" width="49%" />
+  <img src="docs/images/logs-dark.png" alt="CleanTheme Activity Logs" width="49%" />
+</p>
 
 ## Log
 
