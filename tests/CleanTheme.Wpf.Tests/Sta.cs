@@ -26,6 +26,11 @@ internal static class Sta
             {
                 failure = ExceptionDispatchInfo.Capture(ex);
             }
+            finally
+            {
+                DoEvents();
+                Dispatcher.CurrentDispatcher.InvokeShutdown();
+            }
         });
         thread.SetApartmentState(ApartmentState.STA);
         thread.Start();

@@ -233,6 +233,7 @@ public sealed class UntitledUiControlsTests
         Assert.Equal(Visibility.Visible, closeBtn.Visibility);
 
         window.Close();
+        Sta.DoEvents();
     });
 
     [Fact]
@@ -298,5 +299,6 @@ public sealed class UntitledUiControlsTests
         Assert.True(rightClicked);
 
         window.Close();
+        Sta.DoEvents();
     });
 }

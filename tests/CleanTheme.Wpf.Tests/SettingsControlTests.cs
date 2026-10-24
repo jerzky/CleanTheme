@@ -221,14 +221,17 @@ public sealed class SettingsControlTests
         Assert.Equal(0, view.SelectedIndex);
 
         // Press Right arrow on cat1
-        cat1.RaiseEvent(new System.Windows.Input.KeyEventArgs(
-            System.Windows.Input.Keyboard.PrimaryDevice,
-            new System.Windows.Interop.HwndSource(0, 0, 0, 0, 0, "", IntPtr.Zero),
-            0,
-            System.Windows.Input.Key.Right)
+        using (var source = new System.Windows.Interop.HwndSource(0, 0, 0, 0, 0, "", IntPtr.Zero))
         {
-            RoutedEvent = System.Windows.Input.Keyboard.KeyDownEvent
-        });
+            cat1.RaiseEvent(new System.Windows.Input.KeyEventArgs(
+                System.Windows.Input.Keyboard.PrimaryDevice,
+                source,
+                0,
+                System.Windows.Input.Key.Right)
+            {
+                RoutedEvent = System.Windows.Input.Keyboard.KeyDownEvent
+            });
+        }
         Sta.Layout(view);
 
         Assert.False(cat1.IsSelected);
