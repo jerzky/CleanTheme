@@ -25,8 +25,8 @@ Originally the Strato Launcher theme.
 The packages are published to GitHub Packages (`https://nuget.pkg.github.com/jerzky/index.json`), not nuget.org.
 
 ```xml
-<PackageReference Include="CleanTheme.Wpf" Version="0.5.0" />
-<PackageReference Include="CleanTheme.Logging" Version="0.5.0" />
+<PackageReference Include="CleanTheme.Wpf" Version="0.6.0" />
+<PackageReference Include="CleanTheme.Logging" Version="0.6.0" />
 ```
 
 ## Use the theme
@@ -362,5 +362,5 @@ The gallery shows every style and control on one page, with a live log.
 
 ## Release
 
-Versions come from git tags through MinVer. Pushing a tag such as `v0.5.0` runs `publish.yml`, which builds, tests,
+Versions come from git tags through MinVer. Pushing a tag such as `v0.6.0` runs `publish.yml`, which builds, tests,
 packs and pushes both packages to GitHub Packages.
