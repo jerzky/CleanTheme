@@ -138,8 +138,8 @@ are for text, lines and tints.
 
 <clean:NumericUpDown Value="{Binding SpeedKts}" Minimum="0" Maximum="900" Increment="10" DecimalPlaces="0" />
 
-<clean:EmptyState Title="No nodes running" Description="Start a scenario to see units here." Icon="M 2,6 H 22 V 18 H 2 Z">
-    <Button Content="Add unit" Style="{StaticResource PrimaryButton}" />
+<clean:EmptyState Title="No projects found" Description="Create a workspace or import a project to get started." Icon="M 2,6 H 22 V 18 H 2 Z">
+    <Button Content="Create project" Style="{StaticResource PrimaryButton}" />
 </clean:EmptyState>
 ```
 
@@ -152,17 +152,17 @@ are for text, lines and tints.
 call `Show` from any thread:
 
 ```csharp
-toasts.Show("Scenario saved", StatusState.Positive);                         // 4 s
-toasts.Show("CHARLIE-3 exited", StatusState.Negative, TimeSpan.Zero);         // until closed
+toasts.Show("Workspace saved", StatusState.Positive);                         // 4 s
+toasts.Show("Connection timeout", StatusState.Negative, TimeSpan.Zero);         // until closed
 ```
 
 **Dialogs.** `CleanDialog` is a themed window with a heading, the content as body, and primary/secondary buttons
 (Enter/Escape); `ShowModal()` returns which one closed it. `CleanMessageBox` has the common cases:
 
 ```csharp
-CleanMessageBox.Show(owner, "The scenario was saved.", "Scenario");
-bool delete = CleanMessageBox.Confirm(owner, "This removes the file.", "Delete scenario", "Delete", isDanger: true);
-string? name = CleanMessageBox.Prompt(owner, "Save scenario", "Name", "New scenario", "Save");   // null when cancelled
+CleanMessageBox.Show(owner, "The workspace was saved.", "Workspace");
+bool delete = CleanMessageBox.Confirm(owner, "This removes the workspace.", "Delete workspace", "Delete", isDanger: true);
+string? name = CleanMessageBox.Prompt(owner, "Save workspace", "Name", "New workspace", "Save");   // null when cancelled
 ```
 
 **HamburgerMenu.** A collapsible navigation rail and expandable drawer with header (logo), footer (profile button / drop-up menu), and content host:
@@ -173,7 +173,7 @@ string? name = CleanMessageBox.Prompt(owner, "Save scenario", "Name", "New scena
         <Image Source="logo.png" Height="36" />
     </clean:HamburgerMenu.Header>
     <clean:HamburgerMenuItem Icon="M 3,12 L 12,3 L 21,12 V 20 H 3 Z" Text="Overview" />
-    <clean:HamburgerMenuItem Icon="..." Text="Fleet" Badge="14" />
+    <clean:HamburgerMenuItem Icon="..." Text="Workspaces" Badge="14" />
     <clean:HamburgerMenu.Footer>
         <clean:HamburgerProfileButton DisplayName="jens" Subtitle="Pro" Avatar="J">
             <clean:HamburgerProfileButton.ContextMenu>
@@ -193,6 +193,25 @@ The menu animates open and close transitions smoothly by default (200 ms cubic e
   <img src="docs/images/hamburger-menu-light.gif" alt="Hamburger Menu Smooth Animation (Light)" width="49%" />
   <img src="docs/images/hamburger-menu-dark.gif" alt="Hamburger Menu Smooth Animation (Dark)" width="49%" />
 </p>
+
+**NavTree & Hierarchical Chat Trees.** A modern hierarchical navigation tree for chat conversations, channels, and workspaces with collapsible groups, chevron expanders, and visual tree branch connector lines (`└──`):
+
+```xml
+<clean:NavTree SelectedItem="{Binding SelectedChat}">
+    <clean:NavTreeGroup Header="Recent Conversations" IsExpanded="True">
+        <clean:NavTreeItem Header="Chat 1: Architecture Review" IsActive="True" IsExpanded="True">
+            <clean:NavTreeItem Header="Sub Chat spawned from 1" />
+            <clean:NavTreeItem Header="Performance Benchmarks" />
+        </clean:NavTreeItem>
+        <clean:NavTreeItem Header="Another Chat: Release Planning" />
+    </clean:NavTreeGroup>
+</clean:NavTree>
+```
+
+- **Tree Branch Lines (`└──`)**: Nested sub-items automatically display crisp branch connector guide lines linking back to their parent conversation.
+- **Expander Chevrons**: Toggle child visibility via `IsExpanded`, chevron click, row double-click, or Left/Right keyboard arrow navigation.
+- **MVVM Hierarchical Binding**: Fully compatible with `HierarchicalDataTemplate` (`ItemsSource="{Binding SubChats}"`).
+- **Unified Selection**: Clicking any parent or spawned sub-chat sets `NavTree.SelectedItem` and activates the indicator bar.
 
 **SearchableSettingsView.** A modern settings interface with category tabs, sections, two-column setting rows, and instant live search filtering with `Ctrl+K`:
 
@@ -244,7 +263,7 @@ The menu animates open and close transitions smoothly by default (200 ms cubic e
 **InlineAlert.** Semantic inline banner cards with geometric icons, action buttons, and dismiss transitions:
 
 ```xml
-<clean:InlineAlert State="Positive" Title="Update applied" Message="All node runners updated to v2.4." />
+<clean:InlineAlert State="Positive" Title="Update applied" Message="All cloud worker nodes updated to v10.0." />
 <clean:InlineAlert State="Warning" Title="High latency" ActionText="Inspect trace" IsDismissible="True" />
 ```
 
@@ -253,8 +272,8 @@ The menu animates open and close transitions smoothly by default (200 ms cubic e
 ```xml
 <clean:BreadcrumbBar>
     <clean:BreadcrumbItem Header="Home" />
-    <clean:BreadcrumbItem Header="Fleet Management" />
-    <clean:BreadcrumbItem Header="Unit Config" />
+    <clean:BreadcrumbItem Header="Workspaces" />
+    <clean:BreadcrumbItem Header="Project Settings" />
 </clean:BreadcrumbBar>
 
 <clean:PaginationBar TotalPages="8" CurrentPage="1" PageSize="10" TotalItems="78" />
@@ -263,7 +282,7 @@ The menu animates open and close transitions smoothly by default (200 ms cubic e
 The controls carry their own default styles; their colors come from the merged theme.
 
 <p align="center">
-  <img src="docs/images/fleet-light.png" alt="CleanTheme Fleet Units &amp; Cards" width="49%" />
+  <img src="docs/images/workspaces-light.png" alt="CleanTheme Workspaces &amp; Cards" width="49%" />
   <img src="docs/images/logs-dark.png" alt="CleanTheme Activity Logs" width="49%" />
 </p>
 

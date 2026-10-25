@@ -20,9 +20,10 @@ public partial class MainWindow : CustomWindow
 
         Rows.ItemsSource = new[]
         {
-            new SampleRow("ALPHA-1", StatusState.Positive, 12, 412.5),
-            new SampleRow("BRAVO-2", StatusState.Warning, 3, 0),
-            new SampleRow("CHARLIE-3", StatusState.Negative, 27, 1288.25),
+            new SampleRow("Core Platform API", StatusState.Positive, 24, 1420.0),
+            new SampleRow("Billing Pipeline", StatusState.Warning, 3, 310.5),
+            new SampleRow("Analytics Worker", StatusState.Negative, 7, 890.0),
+            new SampleRow("Frontend Portal", StatusState.Positive, 18, 2150.0),
         };
         LongList.ItemsSource = Enumerable.Range(1, 60)
             .Select(i => $"Item {i:00}: a line long enough to need the horizontal scroll bar as well as the vertical one")
@@ -39,11 +40,11 @@ public partial class MainWindow : CustomWindow
     {
         try
         {
-            throw new InvalidOperationException("Process exited with code 1");
+            throw new InvalidOperationException("Connection timeout while contacting database");
         }
         catch (InvalidOperationException ex)
         {
-            LogNodeFailed(_logger, ex, "BRAVO-2");
+            LogServiceFailed(_logger, ex, "analytics-worker");
         }
     }
 
@@ -63,37 +64,37 @@ public partial class MainWindow : CustomWindow
         var state = Enum.Parse<StatusState>((string)((Button)sender).Tag);
         var message = state switch
         {
-            StatusState.Positive => "Scenario saved as baltic-cap.json",
-            StatusState.Warning => "BRAVO-2 is low on fuel",
-            StatusState.Negative => "CHARLIE-3 exited with code 1",
-            _ => "3 units spawned",
+            StatusState.Positive => "Workspace saved as workspace-prod.json",
+            StatusState.Warning => "Billing pipeline backlog elevated",
+            StatusState.Negative => "Analytics worker connection timeout",
+            _ => "New workspace created",
         };
         Toasts.Show(message, state);
     }
 
     private void OnMessage(object sender, RoutedEventArgs e) =>
-        CleanMessageBox.Show(this, "The scenario was saved to the Scenarios folder.", "Scenario", "Saved");
+        CleanMessageBox.Show(this, "The workspace was saved to the Projects folder.", "Workspace", "Saved");
 
     private void OnConfirmDelete(object sender, RoutedEventArgs e)
     {
-        var confirmed = CleanMessageBox.Confirm(this, "This removes the file from disk. Running units are not affected.",
-            "Delete scenario", "Delete", heading: "Delete baltic-cap.json?", isDanger: true);
-        Toasts.Show(confirmed ? "Scenario deleted" : "Kept the scenario", confirmed ? StatusState.Positive : StatusState.Neutral);
+        var confirmed = CleanMessageBox.Confirm(this, "This removes the workspace configuration from disk. Cloud services are not affected.",
+            "Delete workspace", "Delete", heading: "Delete workspace-prod.json?", isDanger: true);
+        Toasts.Show(confirmed ? "Workspace deleted" : "Kept the workspace", confirmed ? StatusState.Positive : StatusState.Neutral);
     }
 
     private void OnPrompt(object sender, RoutedEventArgs e)
     {
-        var name = CleanMessageBox.Prompt(this, "Save scenario", "Name for a scenario of the 3 running units", "New scenario", "Save");
+        var name = CleanMessageBox.Prompt(this, "Save workspace", "Name for the new workspace configuration", "New workspace", "Save");
         if (name != null)
         {
             Toasts.Show($"Saved \"{name}\"", StatusState.Positive);
         }
     }
 
-    private void OnNewScenario(object sender, RoutedEventArgs e) => Toasts.Show("New scenario (just a sample)");
+    private void OnNewScenario(object sender, RoutedEventArgs e) => Toasts.Show("New workspace (sample template)");
 
     private void OnAbout(object sender, RoutedEventArgs e) =>
-        CleanMessageBox.Show(this, "Every CleanTheme style and control on one page.", "About", "CleanTheme Gallery");
+        CleanMessageBox.Show(this, "Clean, modern Windows desktop presentation theme for WPF.", "About", "CleanTheme Gallery");
 
     private void OnOpenGitHub(object sender, RoutedEventArgs e)
     {
@@ -114,8 +115,8 @@ public partial class MainWindow : CustomWindow
     [LoggerMessage(Level = LogLevel.Information, Message = "Theme set to {Mode} ({ActualMode})")]
     private static partial void LogThemeChanged(ILogger logger, CleanThemeMode mode, CleanThemeMode actualMode);
 
-    [LoggerMessage(Level = LogLevel.Error, Message = "Node {Callsign} failed")]
-    private static partial void LogNodeFailed(ILogger logger, Exception exception, string callsign);
+    [LoggerMessage(Level = LogLevel.Error, Message = "Service {ServiceName} failed")]
+    private static partial void LogServiceFailed(ILogger logger, Exception exception, string serviceName);
 
     private sealed record SampleRow(string Name, StatusState State, int Count, double Value);
 }

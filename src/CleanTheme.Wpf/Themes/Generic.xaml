@@ -213,24 +213,6 @@
         </Setter>
     </Style>
 
-    <!-- A text box with no chrome, for use inside composite controls. -->
-    <Style x:Key="BareTextBox" TargetType="TextBox">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Foreground" Value="{DynamicResource Text}" />
-        <Setter Property="CaretBrush" Value="{DynamicResource Text}" />
-        <Setter Property="SelectionBrush" Value="{DynamicResource Accent}" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="TextBox">
-                    <ScrollViewer x:Name="PART_ContentHost" Background="Transparent" Focusable="False" VerticalAlignment="Center"
-                                  HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" Padding="{TemplateBinding Padding}" />
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <!-- Small borderless icon button (clear, close, spin). -->
     <Style x:Key="IconButton" TargetType="ButtonBase">
         <Setter Property="Focusable" Value="False" />
@@ -1655,6 +1637,296 @@
                             <Setter TargetName="MaximizeGlyph" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="RestoreGlyph" Property="Visibility" Value="Visible" />
                             <Setter TargetName="PART_MaximizeButton" Property="ToolTip" Value="Restore" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- NavTree: sidebar navigation container -->
+    <Style TargetType="controls:NavTree">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:NavTree">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Padding="{TemplateBinding Padding}">
+                        <ItemsPresenter />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- NavTreeGroup: collapsible group section with header, chevron, badge, and optional action -->
+    <Style TargetType="controls:NavTreeGroup">
+        <Setter Property="Foreground" Value="{DynamicResource TextMuted}" />
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Margin" Value="0,0,0,8" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:NavTreeGroup">
+                    <StackPanel>
+                        <!-- Group Header Row Button -->
+                        <Button x:Name="PART_HeaderButton"
+                                Style="{StaticResource GhostButton}"
+                                HorizontalContentAlignment="Stretch"
+                                Padding="4,4"
+                                Margin="0,0,0,3"
+                                Cursor="Hand">
+                            <DockPanel LastChildFill="True">
+                                <!-- Chevron -->
+                                <Path x:Name="Chevron"
+                                      DockPanel.Dock="Left"
+                                      Data="M6 9l6 6 6-6"
+                                      Stroke="{DynamicResource TextSubtle}"
+                                      StrokeThickness="1.5"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round"
+                                      Width="8" Height="6"
+                                      Stretch="Uniform"
+                                      VerticalAlignment="Center"
+                                      Margin="2,0,6,0" />
+
+                                <!-- Header Action Button (e.g. +) -->
+                                <ContentPresenter x:Name="ActionPresenter"
+                                                  DockPanel.Dock="Right"
+                                                  Content="{TemplateBinding Action}"
+                                                  ContentTemplate="{TemplateBinding ActionTemplate}"
+                                                  VerticalAlignment="Center"
+                                                  Margin="4,0,0,0" />
+
+                                <!-- Badge (e.g. count) -->
+                                <Border x:Name="BadgeBorder"
+                                        DockPanel.Dock="Right"
+                                        Background="{DynamicResource SurfaceCard}"
+                                        CornerRadius="8"
+                                        Padding="5,0"
+                                        VerticalAlignment="Center"
+                                        Margin="4,0,0,0">
+                                    <ContentPresenter Content="{TemplateBinding Badge}"
+                                                      TextBlock.FontSize="10"
+                                                      TextBlock.Foreground="{DynamicResource TextMuted}" />
+                                </Border>
+
+                                <!-- Title / Header -->
+                                <ContentPresenter Content="{TemplateBinding Header}"
+                                                  ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                                  TextBlock.FontWeight="SemiBold"
+                                                  TextBlock.FontSize="{TemplateBinding FontSize}"
+                                                  TextBlock.Foreground="{TemplateBinding Foreground}"
+                                                  VerticalAlignment="Center" />
+                            </DockPanel>
+                        </Button>
+
+                        <!-- Child Items Container -->
+                        <ItemsPresenter x:Name="PART_ItemsHost"
+                                        Margin="0,0,0,2" />
+                    </StackPanel>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsExpanded" Value="False">
+                            <Setter TargetName="PART_ItemsHost" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="Chevron" Property="Data" Value="M9 6l6 6-6 6" />
+                        </Trigger>
+                        <Trigger Property="Badge" Value="{x:Null}">
+                            <Setter TargetName="BadgeBorder" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Action" Value="{x:Null}">
+                            <Setter TargetName="ActionPresenter" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- NavTreeItem: selectable item with icon, title, badge, active indicator, hover actions, and hierarchical subitems -->
+    <Style TargetType="controls:NavTreeItem">
+        <Setter Property="Foreground" Value="{DynamicResource Text}" />
+        <Setter Property="FontFamily" Value="{StaticResource UiFont}" />
+        <Setter Property="FontSize" Value="12.5" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="6,5" />
+        <Setter Property="Margin" Value="0,1" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:NavTreeItem">
+                    <Grid SnapsToDevicePixels="True">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <!-- Content Card & Highlight -->
+                        <Border x:Name="ItemBorder"
+                                Grid.Row="0"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Branch Connector for subitems ("└──" shape) -->
+                                <Path x:Name="BranchConnector"
+                                      Grid.Column="0"
+                                      Data="M 0,-12 L 0,8 L 10,8"
+                                      Stroke="{DynamicResource BorderStrong}"
+                                      StrokeThickness="1"
+                                      VerticalAlignment="Center"
+                                      Margin="0,0,6,0"
+                                      SnapsToDevicePixels="True"
+                                      Visibility="Collapsed" />
+
+                                <!-- Expander Chevron Toggle (only shown when HasItems=True) -->
+                                <ToggleButton x:Name="PART_Expander"
+                                              Grid.Column="1"
+                                              Style="{StaticResource ChevronToggle}"
+                                              Focusable="False"
+                                              ClickMode="Press"
+                                              IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                              Margin="0,0,4,0"
+                                              VerticalAlignment="Center"
+                                              Visibility="Collapsed" />
+
+                                <!-- Icon (vector) -->
+                                <Path x:Name="IconPath"
+                                      Grid.Column="2"
+                                      Data="{TemplateBinding Icon}"
+                                      Fill="{TemplateBinding Foreground}"
+                                      Stretch="Uniform"
+                                      Width="14" Height="14"
+                                      Margin="0,0,7,0"
+                                      VerticalAlignment="Center"
+                                      Visibility="Collapsed" />
+
+                                <!-- Icon (custom visual element) -->
+                                <ContentPresenter x:Name="IconElementPresenter"
+                                                  Grid.Column="2"
+                                                  Content="{TemplateBinding IconElement}"
+                                                  Margin="0,0,7,0"
+                                                  VerticalAlignment="Center"
+                                                  Visibility="Collapsed" />
+
+                                <!-- Header / Label -->
+                                <ContentPresenter Grid.Column="3"
+                                                  Content="{TemplateBinding Header}"
+                                                  ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                                  TextBlock.Foreground="{TemplateBinding Foreground}"
+                                                  TextBlock.FontSize="{TemplateBinding FontSize}"
+                                                  VerticalAlignment="Center"
+                                                  RecognizesAccessKey="False" />
+
+                                <!-- Badge -->
+                                <Border x:Name="BadgeBorder"
+                                        Grid.Column="4"
+                                        Background="{DynamicResource SurfaceSunken}"
+                                        CornerRadius="8"
+                                        Padding="5,1"
+                                        Margin="6,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Visibility="Collapsed">
+                                    <ContentPresenter Content="{TemplateBinding Badge}"
+                                                      TextBlock.FontSize="10"
+                                                      TextBlock.Foreground="{DynamicResource TextMuted}" />
+                                </Border>
+
+                                <!-- Hover Actions -->
+                                <ContentPresenter x:Name="HoverActionsPresenter"
+                                                  Grid.Column="5"
+                                                  Content="{TemplateBinding HoverActions}"
+                                                  ContentTemplate="{TemplateBinding HoverActionsTemplate}"
+                                                  VerticalAlignment="Center"
+                                                  Margin="4,0,0,0"
+                                                  Opacity="0" />
+                            </Grid>
+                        </Border>
+
+                        <!-- Active Indicator Bar on Left Edge (Overlaid independently so it never shifts content layout) -->
+                        <Border x:Name="ActivePill"
+                                Grid.Row="0"
+                                Width="3"
+                                CornerRadius="1.5"
+                                Background="{DynamicResource Accent}"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Stretch"
+                                Margin="0,3"
+                                Visibility="Collapsed" />
+
+                        <!-- Child Items Host for sub-items -->
+                        <Grid x:Name="ChildItemsGrid" Grid.Row="1" Margin="12,0,0,2">
+                            <!-- Vertical guide line running down through child items -->
+                            <Border Width="1"
+                                    HorizontalAlignment="Left"
+                                    Margin="0,0,0,0"
+                                    Background="{DynamicResource BorderStrong}" />
+
+                            <!-- Child items presenter indented past the guide line -->
+                            <ItemsPresenter x:Name="ItemsHost" Margin="6,0,0,0" />
+                        </Grid>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <!-- Icon Triggers -->
+                        <Trigger Property="Icon" Value="{x:Null}">
+                            <Setter TargetName="IconPath" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IconElement" Value="{x:Null}">
+                            <Setter TargetName="IconElementPresenter" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <!-- Badge Trigger -->
+                        <Trigger Property="Badge" Value="{x:Null}">
+                            <Setter TargetName="BadgeBorder" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <!-- SubItem Branch Connector -->
+                        <Trigger Property="IsSubItem" Value="True">
+                            <Setter TargetName="BranchConnector" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <!-- Expander Visibility for Items -->
+                        <Trigger Property="HasItems" Value="True">
+                            <Setter TargetName="PART_Expander" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="HasItems" Value="False">
+                            <Setter TargetName="ChildItemsGrid" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <!-- Collapsed state for child items -->
+                        <Trigger Property="IsExpanded" Value="False">
+                            <Setter TargetName="ChildItemsGrid" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <!-- Hover State -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource SurfaceHover}" />
+                            <Setter TargetName="HoverActionsPresenter" Property="Opacity" Value="1.0" />
+                        </Trigger>
+                        <!-- Selected State -->
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="ItemBorder" Property="Background" Value="{DynamicResource SurfaceActive}" />
+                            <Setter TargetName="ActivePill" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="HoverActionsPresenter" Property="Opacity" Value="1.0" />
+                        </Trigger>
+                        <!-- Active State -->
+                        <Trigger Property="IsActive" Value="True">
+                            <Setter TargetName="ActivePill" Property="Visibility" Value="Visible" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

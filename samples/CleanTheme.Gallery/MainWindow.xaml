@@ -70,7 +70,7 @@
 
             <!-- Primary Navigation Items -->
             <clean:HamburgerMenuItem Icon="M 3,12 L 12,3 L 21,12 V 20 H 3 Z" Text="Overview &amp; Controls" />
-            <clean:HamburgerMenuItem Icon="M 4,4 H 10 V 10 H 4 Z M 14,4 H 20 V 10 H 14 Z M 4,14 H 10 V 20 H 4 Z M 14,14 H 20 V 20 H 14 Z" Text="Fleet Units" Badge="3" />
+            <clean:HamburgerMenuItem Icon="M 4,4 H 10 V 10 H 4 Z M 14,4 H 20 V 10 H 14 Z M 4,14 H 10 V 20 H 4 Z M 14,14 H 20 V 20 H 14 Z" Text="Workspaces" Badge="3" />
             <clean:HamburgerMenuItem Icon="M 4,6 H 20 M 4,12 H 20 M 4,18 H 14" Text="Activity Logs" />
             <clean:HamburgerMenuItem Icon="M 2,4 H 22 V 16 H 6 L 2,20 Z" Text="Feedback &amp; Dialogs" />
             <clean:HamburgerMenuItem Icon="M 19.14,12.94 C 19.18,12.63 19.2,12.32 19.2,12 C 19.2,11.68 19.18,11.37 19.14,11.06 L 21.16,9.48 C 21.34,9.34 21.39,9.08 21.28,8.88 L 19.36,5.56 C 19.24,5.36 19,5.28 18.79,5.36 L 16.42,6.32 C 15.93,5.94 15.39,5.63 14.81,5.39 L 14.45,2.87 C 14.41,2.64 14.21,2.47 13.98,2.47 L 10.02,2.47 C 9.79,2.47 9.59,2.64 9.55,2.87 L 9.19,5.39 C 8.61,5.63 8.07,5.94 7.58,6.32 L 5.21,5.36 C 5,5.28 4.76,5.36 4.64,5.56 L 2.72,8.88 C 2.61,9.08 2.66,9.34 2.84,9.48 L 4.86,11.06 C 4.82,11.37 4.8,11.68 4.8,12 C 4.8,12.32 4.82,12.63 4.86,12.94 L 2.84,14.52 C 2.66,14.66 2.61,14.92 2.72,15.12 L 4.64,18.44 C 4.76,18.64 5,18.72 5.21,18.64 L 7.58,17.68 C 8.07,18.06 8.61,18.37 9.19,18.61 L 9.55,21.13 C 9.59,21.36 9.79,21.53 10.02,21.53 L 13.98,21.53 C 14.21,21.53 14.41,21.36 14.45,21.13 L 14.81,18.61 C 15.39,18.37 15.93,18.06 16.42,17.68 L 18.79,18.64 C 19,18.72 19.24,18.64 19.36,18.44 L 21.28,15.12 C 21.39,14.92 21.34,14.66 21.16,14.52 L 19.14,12.94 Z M 12,15.5 C 10.07,15.5 8.5,13.93 8.5,12 C 8.5,10.07 10.07,8.5 12,8.5 C 13.93,8.5 15.5,10.07 15.5,12 C 15.5,13.93 13.93,15.5 12,15.5 Z" Text="Settings" />
@@ -120,10 +120,10 @@
 
                             <Menu HorizontalAlignment="Right" VerticalAlignment="Center">
                                 <MenuItem Header="_File">
-                                    <MenuItem Header="_New scenario" InputGestureText="Ctrl+N" Click="OnNewScenario" />
+                                    <MenuItem Header="_New workspace" InputGestureText="Ctrl+N" Click="OnNewScenario" />
                                     <MenuItem Header="Open _recent">
-                                        <MenuItem Header="baltic-cap.json" />
-                                        <MenuItem Header="north-sea-patrol.json" />
+                                        <MenuItem Header="workspace-prod.json" />
+                                        <MenuItem Header="staging-environment.json" />
                                     </MenuItem>
                                     <Separator />
                                     <MenuItem Header="E_xit" InputGestureText="Alt+F4" Click="OnExit" />
@@ -235,10 +235,10 @@
                                                 <CheckBox Content="Disabled" IsEnabled="False" Margin="0,0,16,8" />
                                             </WrapPanel>
                                             <WrapPanel Margin="0,4,0,0">
-                                                <RadioButton Content="Blue" GroupName="Team" IsChecked="True" Margin="0,0,16,8" />
-                                                <RadioButton Content="Red" GroupName="Team" Margin="0,0,16,8" />
-                                                <RadioButton Content="Neutral" GroupName="Team" Margin="0,0,16,8" />
-                                                <RadioButton Content="Disabled" GroupName="Team" IsEnabled="False" Margin="0,0,16,8" />
+                                                <RadioButton Content="Primary" GroupName="Option" IsChecked="True" Margin="0,0,16,8" />
+                                                <RadioButton Content="Secondary" GroupName="Option" Margin="0,0,16,8" />
+                                                <RadioButton Content="Custom" GroupName="Option" Margin="0,0,16,8" />
+                                                <RadioButton Content="Disabled" GroupName="Option" IsEnabled="False" Margin="0,0,16,8" />
                                             </WrapPanel>
                                             <TextBlock Style="{StaticResource FieldLabel}" Text="ToggleSwitch" />
                                             <WrapPanel>
@@ -253,8 +253,20 @@
                                     </clean:Card>
 
                                     <!-- Navigation & Details -->
-                                    <clean:Card Grid.Row="2" Grid.Column="2" Header="Tabs and Expander">
+                                    <clean:Card Grid.Row="2" Grid.Column="2" Header="Conversations and Tabs">
                                         <TabControl>
+                                            <TabItem Header="Chats">
+                                                <clean:NavTree Margin="0,8,0,0">
+                                                    <clean:NavTreeGroup Header="Recent Conversations" IsExpanded="True">
+                                                        <clean:NavTreeItem Header="Chat 1: Architecture Review" IsActive="True" IsExpanded="True">
+                                                            <clean:NavTreeItem Header="Sub Chat spawned from 1" />
+                                                            <clean:NavTreeItem Header="Performance Benchmarks" />
+                                                        </clean:NavTreeItem>
+                                                        <clean:NavTreeItem Header="Another Chat: Release v0.6.0" />
+                                                        <clean:NavTreeItem Header="Design System Sync" />
+                                                    </clean:NavTreeGroup>
+                                                </clean:NavTree>
+                                            </TabItem>
                                             <TabItem Header="Details">
                                                 <StackPanel Margin="0,12,0,0">
                                                     <TextBlock Text="A TabControl hosts arbitrary pages with clean, subtle indicator styling." TextWrapping="Wrap" Foreground="{DynamicResource TextMuted}" />
@@ -269,7 +281,6 @@
                                             <TabItem Header="List">
                                                 <ListBox x:Name="LongList" SelectionMode="Extended" Height="140" />
                                             </TabItem>
-                                            <TabItem Header="Disabled" IsEnabled="False" />
                                         </TabControl>
                                     </clean:Card>
 
@@ -310,13 +321,13 @@
                                             <TextBlock Style="{StaticResource FieldLabel}" Text="BreadcrumbBar hierarchy navigation" Margin="0,0,0,6" />
                                             <clean:BreadcrumbBar Margin="0,0,0,12">
                                                 <clean:BreadcrumbItem Header="Home" />
-                                                <clean:BreadcrumbItem Header="Fleet Management" />
-                                                <clean:BreadcrumbItem Header="Unit Config" />
+                                                <clean:BreadcrumbItem Header="Workspaces" />
+                                                <clean:BreadcrumbItem Header="Project Settings" />
                                             </clean:BreadcrumbBar>
 
                                             <TextBlock Style="{StaticResource FieldLabel}" Text="Inline banner alerts" Margin="0,6,0,6" />
                                             <clean:InlineAlert State="Positive" Title="Cluster update applied"
-                                                               Message="All 14 node runners are operating on protocol v2.4."
+                                                               Message="All cloud worker nodes are operating on runtime v10.0."
                                                                Margin="0,0,0,8" />
                                             <clean:InlineAlert State="Warning" Title="Elevated latency warning"
                                                                Message="Average response time exceeded 120 ms over the past 5 minutes."
@@ -327,7 +338,7 @@
                             </ScrollViewer>
                         </TabItem>
 
-                        <!-- Page 1: Fleet Units -->
+                        <!-- Page 1: Workspaces -->
                         <TabItem>
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <Grid Margin="20">
@@ -340,25 +351,25 @@
                                     <!-- Metric Tiles -->
                                     <UniformGrid Columns="4">
                                         <clean:Card Margin="0,0,12,0">
-                                            <clean:MetricTile Label="Active Units" Value="3" Unit="online" />
+                                            <clean:MetricTile Label="Workspaces" Value="8" Unit="active" />
                                         </clean:Card>
                                         <clean:Card Margin="0,0,12,0">
-                                            <clean:MetricTile Label="Server Tick" Value="16.2" Unit="ms" />
+                                            <clean:MetricTile Label="API Latency" Value="18.2" Unit="ms" />
                                         </clean:Card>
                                         <clean:Card Margin="0,0,12,0">
-                                            <clean:MetricTile Label="Payload Rate" Value="128.4" Unit="kB/s" />
+                                            <clean:MetricTile Label="Throughput" Value="1.4k" Unit="req/s" />
                                         </clean:Card>
                                         <clean:Card>
-                                            <clean:MetricTile Label="UDP Port" Value="9050" Unit="open" />
+                                            <clean:MetricTile Label="Cloud Storage" Value="94.2" Unit="GB" />
                                         </clean:Card>
                                     </UniformGrid>
 
                                     <!-- Fleet Data Table -->
-                                    <clean:Card Grid.Row="2" Header="Fleet Status Table" Padding="0,16,0,8">
+                                    <clean:Card Grid.Row="2" Header="Workspace Projects" Padding="0,16,0,8">
                                         <StackPanel>
                                             <DataGrid x:Name="Rows">
                                                 <DataGrid.Columns>
-                                                    <DataGridTemplateColumn Header="NAME" Width="*">
+                                                    <DataGridTemplateColumn Header="PROJECT" Width="*">
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -368,16 +379,16 @@
                                                             </DataTemplate>
                                                         </DataGridTemplateColumn.CellTemplate>
                                                     </DataGridTemplateColumn>
-                                                    <DataGridTemplateColumn Header="STATE" Width="130">
+                                                    <DataGridTemplateColumn Header="STATUS" Width="130">
                                                         <DataGridTemplateColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <clean:StatusPill State="{Binding State}" Content="{Binding State}" ShowDot="True" />
                                                             </DataTemplate>
                                                         </DataGridTemplateColumn.CellTemplate>
                                                     </DataGridTemplateColumn>
-                                                    <DataGridTextColumn Header="COUNT" Binding="{Binding Count}" Width="90"
+                                                    <DataGridTextColumn Header="SERVICES" Binding="{Binding Count}" Width="90"
                                                                         HeaderStyle="{StaticResource NumericHeader}" ElementStyle="{StaticResource NumericCell}" />
-                                                    <DataGridTextColumn Header="VALUE" Binding="{Binding Value, StringFormat=N2}" Width="110"
+                                                    <DataGridTextColumn Header="BUDGET" Binding="{Binding Value, StringFormat=C2}" Width="110"
                                                                         HeaderStyle="{StaticResource NumericHeader}" ElementStyle="{StaticResource NumericCell}" />
                                                     <DataGridTemplateColumn Width="90">
                                                         <DataGridTemplateColumn.CellTemplate>
@@ -564,7 +575,7 @@
                                             <clean:SettingRow Header="Desktop Push Alerts" Description="Show floating toast notifications for incoming logs.">
                                                 <clean:ToggleSwitch IsChecked="True" />
                                             </clean:SettingRow>
-                                            <clean:SettingRow Header="Weekly Digest" Description="A weekly summary of fleet analytics and crash reports.">
+                                            <clean:SettingRow Header="Weekly Digest" Description="A weekly summary of workspace analytics and performance reports.">
                                                 <clean:ToggleSwitch IsChecked="False" />
                                             </clean:SettingRow>
                                         </clean:SettingsGroup>

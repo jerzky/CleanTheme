@@ -110,6 +110,16 @@ public class HamburgerMenuItem : ListBoxItem, ICommandSource
         ExecuteCommand();
     }
 
+    protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
+    {
+        base.OnMouseLeftButtonUp(e);
+        if (!e.Handled)
+        {
+            IsSelected = true;
+            ExecuteCommand();
+        }
+    }
+
     private void ExecuteCommand()
     {
         if (Command is null) return;

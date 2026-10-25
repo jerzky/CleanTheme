@@ -22,12 +22,12 @@ internal static class ScreenshotGenerator
         PumpEvents();
 
         // Feed some realistic log entries for the activity logs screenshot
-        feed.Post(new LogEntry(DateTime.UtcNow.AddMinutes(-5), Microsoft.Extensions.Logging.LogLevel.Information, "FleetSupervisor", "Initialized fleet manager with 3 active nodes"));
-        feed.Post(new LogEntry(DateTime.UtcNow.AddMinutes(-4), Microsoft.Extensions.Logging.LogLevel.Debug, "SimulatedServer", "Listening on UDP socket 0.0.0.0:9050"));
-        feed.Post(new LogEntry(DateTime.UtcNow.AddMinutes(-3), Microsoft.Extensions.Logging.LogLevel.Information, "ALPHA-1", "Waypoint ALPHA-WP1 reached; speed 420 kts"));
-        feed.Post(new LogEntry(DateTime.UtcNow.AddMinutes(-2), Microsoft.Extensions.Logging.LogLevel.Warning, "BRAVO-2", "Low fuel threshold warning (12% remaining)"));
-        feed.Post(new LogEntry(DateTime.UtcNow.AddMinutes(-1), Microsoft.Extensions.Logging.LogLevel.Error, "CHARLIE-3", "Engine actuator synchronization fault; code 0x80070005"));
-        feed.Post(new LogEntry(DateTime.UtcNow, Microsoft.Extensions.Logging.LogLevel.Information, "TelemetrySink", "Synchronized 142 metric samples to local storage"));
+        feed.Post(new LogEntry(DateTime.UtcNow.AddMinutes(-5), Microsoft.Extensions.Logging.LogLevel.Information, "WorkspaceSupervisor", "Initialized workspace coordinator with 4 active pipelines"));
+        feed.Post(new LogEntry(DateTime.UtcNow.AddMinutes(-4), Microsoft.Extensions.Logging.LogLevel.Debug, "SimulatedServer", "Listening on HTTPS socket 0.0.0.0:8080"));
+        feed.Post(new LogEntry(DateTime.UtcNow.AddMinutes(-3), Microsoft.Extensions.Logging.LogLevel.Information, "CoreAPI", "Batch synchronization completed; 1,420 events processed"));
+        feed.Post(new LogEntry(DateTime.UtcNow.AddMinutes(-2), Microsoft.Extensions.Logging.LogLevel.Warning, "BillingPipeline", "Elevated queue backlog warning (84% buffer capacity)"));
+        feed.Post(new LogEntry(DateTime.UtcNow.AddMinutes(-1), Microsoft.Extensions.Logging.LogLevel.Error, "AnalyticsWorker", "Connection timeout to analytical database; code 0x80070005"));
+        feed.Post(new LogEntry(DateTime.UtcNow, Microsoft.Extensions.Logging.LogLevel.Information, "TelemetrySink", "Synchronized 184 metric samples to local storage"));
         PumpEvents();
 
         // 1. Overview & Controls (Light Mode)
@@ -52,11 +52,12 @@ internal static class ScreenshotGenerator
         PumpEvents();
         Capture(window, Path.Combine(outputDir, "settings-dark.png"));
 
-        // 5. Fleet Units (Light Mode)
+        // 5. Workspaces (Light Mode)
         SetTheme(CleanThemeMode.Light);
         window.NavRail.SelectedIndex = 1;
         PumpEvents();
         Capture(window, Path.Combine(outputDir, "fleet-light.png"));
+        Capture(window, Path.Combine(outputDir, "workspaces-light.png"));
 
         // 6. Activity Logs (Dark Mode)
         SetTheme(CleanThemeMode.Dark);

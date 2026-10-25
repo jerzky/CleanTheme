@@ -20,7 +20,7 @@ public static class Program
         builder.Logging.AddFilter<LogFeedLoggerProvider>(null, LogLevel.Debug);
 
         builder.Services.AddHostedService<SimulatedServer>();
-        builder.Services.AddHostedService<SimulatedFleet>();
+        builder.Services.AddHostedService<SimulatedWorkspaceActivity>();
         builder.Services.AddSingleton<MainWindow>();
 
         using var host = builder.Build();
